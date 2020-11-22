@@ -1,4 +1,4 @@
-# python Tkinter code generator
+# python Tkinter GUI designer
 Python Tkinter GUI designer
 
 It uses tkinter Grid geometry manager. (https://effbot.org/tkinterbook/grid.htm)
