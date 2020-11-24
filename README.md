@@ -24,7 +24,7 @@ Hint:
   option window.
 
 Supported widgets: 
-menu, button, canvas, text with scroll, entry, label, combobox, optionmenu,
+menuButton, button, canvas, text with scroll, entry, label, combobox, optionmenu,
 radio, message, frame (universal 2x2 widget selection)
 
 << please download the user maual >>
