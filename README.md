@@ -17,14 +17,14 @@ Hint:
   (rowspan/col.span=5)
 - if you use col.span and/or rowspan press "Check" button to check your selection.
   (all missplaced span selection will be reseted and common merged cells disabled)
-- Canvas does not accept col./rowspan
+- Canvas, Menubar does not accept col./rowspan
 - Open second session of Python IDLE and use it for checking the generated code
   without closing the running GUI generator
 - widget name with (s) means simple. It uses default parameters and does not open
   option window.
 
 Supported widgets: 
-menuButton, button, canvas, text with scroll, entry, label, combobox, optionmenu,
+Menubar, menuButton, button, canvas, text with scroll, entry, label, combobox, optionmenu,
 radio, message, frame (universal 2x2 widget selection)
 
 << please download the user maual >>
