@@ -39,6 +39,7 @@
 # v0.8.3  Universal frame with text: LabelFrame; without: Frame
 # v0.8.4  tk and ttk import optimalization (for slide)
 # v0.8.5  Menubar and Menubutton supported
+# v0.8.6  new Menubar function: separate and checkbox
 #
 # plans:
 #      * add more widgets: slide, spinbox, listbox, progressbar
@@ -53,16 +54,16 @@ from tkinter import colorchooser
 # --- Windows moduls
 class Boxablak:
     "Checkbox and option selection window modul"
-    def __init__(self,abl1,tipus,rc,frame_name):
+    def __init__(self,abl1,rc,frame_name):
         self.frame_name=frame_name
-        self.tipus=tipus # 0=combobox, 1=optionmenu, 2=radio
         self.rc=rc
         self.c=rc[0]
         self.r=rc[1]
+        self.cspan=rc[2]
+        self.rspan=rc[3]        
         self.base_c=rc[4]
         self.base_r=rc[5]
-        self.cspan=rc[2]
-        self.rspan=rc[3]
+        self.tipus=rc[6] # (0)9=combobox, (1)11=optionmenu, (2)13=radio
         self.o=''
         self.x=''
         self.output=['','','',      #value lines
@@ -73,11 +74,11 @@ class Boxablak:
                      '','']            #orient.
         self.abl1=abl1
         self.abl2=Toplevel(self.abl1)
-        if(self.tipus==0):
+        if(self.tipus==9):
             self.abl2.title('ComboBox options: c'+str(self.c)+', r'+str(self.r))
-        if(self.tipus==1):
+        if(self.tipus==11):
             self.abl2.title('Option menu options: c'+str(self.c)+', r'+str(self.r))
-        if(self.tipus==2):
+        if(self.tipus==13):
             self.abl2.title('Radio options: c'+str(self.c)+', r'+str(self.r))
         self.ablak=Frame(self.abl2, relief='flat', borderwidth=1)
         self.ablak.grid(row=0, column=0)
@@ -108,7 +109,7 @@ class Boxablak:
         self.bmezo2_2_3=Entry(self.ablak)
         self.bmezo2_2_3.grid(row=6, column=4,sticky=N)
 
-        if(self.tipus!=2):
+        if(self.tipus==9 or self.tipus==11):
             self.bmezo1=Entry(self.ablak)
             self.bmezo1.grid(row=1, column=1,sticky=N)
             self.bmezo2=Entry(self.ablak)
@@ -146,7 +147,7 @@ class Boxablak:
         self.chbox2['values']=('auto','4','6','10','12','14','')
         self.chbox2.current(0)
         self.chbox2.grid(row=4, column=0,sticky=S)
-        if (self.tipus>0):
+        if (self.tipus==11 or self.tipus==13):
             self.chbox2.configure(state=DISABLED)
             
     def cb_ertek(self):
@@ -154,18 +155,18 @@ class Boxablak:
         self.output[3],self.output[4],self.output[5]=self.bmezo1_2_1.get(),self.bmezo1_2_2.get(),self.bmezo1_2_3.get() #first 12 elements of combox values
         self.output[6],self.output[7],self.output[8]=self.bmezo2_1_1.get(),self.bmezo2_1_2.get(),self.bmezo2_1_3.get()
         self.output[9],self.output[10],self.output[11]=self.bmezo2_2_1.get(),self.bmezo2_2_2.get(),self.bmezo2_2_3.get()
-        if(self.tipus!=2):
+        if(self.tipus==9 or self.tipus==11):
             self.output[12],self.output[13],self.output[14],self.output[15]=self.bmezo1.get(),self.bmezo2.get(),self.bmezo3.get(),self.bmezo4.get() #label texts
         self.output[16]=self.chbox1.get() #oriantation
         self.output[17]=self.chbox2.get() #cell width
         if (self.output[17]):
             self.output[17]=self.cellaw()
         self.abl2.destroy()
-        if (self.tipus==0):
+        if (self.tipus==9):
             self.comboxablak()
-        if (self.tipus==1):
+        if (self.tipus==11):
             self.omenuablak()
-        if (self.tipus==2):
+        if (self.tipus==13):
             self.radioboxablak()
     def kiir(self,x):
         self.x=x
@@ -247,7 +248,15 @@ class Menbar:
         while(self.menuszam<len(self.mainm)):
             self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'=Menu(menubar'+self.keretszam+', tearoff=0)\nmenubar'+self.keretszam+'.add_cascade(label='+"'"+str(self.mainm[self.menuszam])+"'"+', menu=submenu'+self.keretszam+str(self.menuszam)+')\n'
             while(self.x<len(self.subm[self.menuszam])):
-                self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+', command=k_ablak.destroy)\n'
+                if(self.subm[self.menuszam][self.x]=='-'): # '-' = separator
+                    self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'.add_separator()\n'
+                try:
+                    if(self.subm[self.menuszam][self.x][0]=='#'): #first char of text is # checkbox
+                        self.msz1=self.msz1+'v'+self.keretszam+str(self.menuszam)+str(self.x)+'= BooleanVar(ablak)\nsubmenu'+self.keretszam+str(self.menuszam)+'.add_checkbutton(label='+"'"+str(self.subm[self.menuszam][self.x][1:])+"'"+', variable=v'+self.keretszam+str(self.menuszam)+str(self.x)+')\n'
+                    if((self.subm[self.menuszam][self.x][0]!='#') and (self.subm[self.menuszam][self.x]!='-')):   
+                        self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+', command=k_ablak.destroy)\n'
+                except:
+                    pass
                 self.x=self.x+1
             self.x=0
             self.menuszam=self.menuszam+1
@@ -810,7 +819,7 @@ def menbarablak(rc,frame_name='ablak'):
     cmke10aa0=Label(ablak, text='Mainmenu (1st row) ->')
     cmke10aa0.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
     #------Label: c0, r2------
-    cmke20aa0=Label(ablak, text='Submenus ->{')
+    cmke20aa0=Label(ablak, text='Submenus ->{\nseparate:  -\ncheckbox: # (e.g: #yes)')
     cmke20aa0.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=E)
     #------Label: c0, r3------
     cmke30aa0=Label(ablak, text='orient.')
@@ -1163,10 +1172,10 @@ def uzenablak(rc):
 
         
 def comboxablak(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
+#    c=rc[0]              
+#    r=rc[1]
     tipus=0
-    cmbx1=Boxablak(abl1,tipus,rc,frame_name) 
+    cmbx1=Boxablak(abl1,rc,frame_name) 
 
 def comboxablak_s(rc,frame_name='ablak'):
     c=rc[0]              
@@ -1183,10 +1192,10 @@ def comboxablak_s(rc,frame_name='ablak'):
     kiir(osszes)
 
 def omenuablak(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
+#    c=rc[0]              
+#    r=rc[1]
     tipus=1
-    optmenu=Boxablak(abl1,tipus,rc,frame_name)
+    optmenu=Boxablak(abl1,rc,frame_name)
 
 
 def omenuablak_s(rc,frame_name='ablak'):
@@ -1204,10 +1213,10 @@ def omenuablak_s(rc,frame_name='ablak'):
     kiir(osszes)
 
 def radioxablak(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
+#    c=rc[0]              
+#    r=rc[1]
     tipus=2
-    radio=Boxablak(abl1,tipus,rc,frame_name)
+    radio=Boxablak(abl1,rc,frame_name)
 
 
 def radioxablak_s(rc,frame_name='ablak'):
@@ -1338,11 +1347,12 @@ def kivalaszto_uni(base_rc,cells_uni,output):
         keretszam=keretablak(base_rc,output)
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
-                rc=['','','','',base_rc[0],base_rc[1]] #c,r,rspan,cspan,base_c, base_r
+                rc=['','','','',base_rc[0],base_rc[1],0] #c,r,rspan,cspan,base_c, base_r
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
                 rc[3]=cstat[i][2][1] #rowspan
+                rc[6]=cstat[i][0]    #save type selector
 #                if(cstat[i][0]==1):
 #                    menbarablak(rc,keretszam)
                 if(cstat[i][0]==2):
@@ -1667,11 +1677,12 @@ def kivalaszto2():
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
-                rc=['','','','','a','a'] #c,r,rspan,cspan
+                rc=['','','','','a','a',0] #c,r,rspan,cspan,base_c,base_r, type
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
                 rc[3]=cstat[i][2][1] #rowspan
+                rc[6]=cstat[i][0]    #save type selector
                 
                 if(cstat[i][0]==1):
                     menbarablak(rc)
@@ -1820,7 +1831,7 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.8.5")
+abl1.title("Tkinter GUI designer v0.8.6")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
