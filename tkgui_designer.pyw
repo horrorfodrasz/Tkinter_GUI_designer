@@ -40,6 +40,7 @@
 # v0.8.4  tk and ttk import optimalization (for slide)
 # v0.8.5  Menubar and Menubutton supported
 # v0.8.6  new Menubar function: separate and checkbox
+# v0.8.7  new Menubutton options menu
 #
 # plans:
 #      * add more widgets: slide, spinbox, listbox, progressbar
@@ -59,6 +60,7 @@ class Boxablak:
         self.rc=rc
         self.c=rc[0]
         self.r=rc[1]
+        self.m=rc[7]                   
         self.cspan=rc[2]
         self.rspan=rc[3]        
         self.base_c=rc[4]
@@ -75,11 +77,11 @@ class Boxablak:
         self.abl1=abl1
         self.abl2=Toplevel(self.abl1)
         if(self.tipus==9):
-            self.abl2.title('ComboBox options: c'+str(self.c)+', r'+str(self.r))
+            self.abl2.title('ComboBox options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
         if(self.tipus==11):
-            self.abl2.title('Option menu options: c'+str(self.c)+', r'+str(self.r))
+            self.abl2.title('Option menu options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
         if(self.tipus==13):
-            self.abl2.title('Radio options: c'+str(self.c)+', r'+str(self.r))
+            self.abl2.title('Radio options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
         self.ablak=Frame(self.abl2, relief='flat', borderwidth=1)
         self.ablak.grid(row=0, column=0)
         self.bmezo1_1_1=Entry(self.ablak)
@@ -185,17 +187,17 @@ class Boxablak:
     def comboxablak(self):
         self.combox=Combox(self.rc,self.output,self.frame_name)
         self.osszes=self.combox.generator()
-        self.kiir('#------ComboBox: c'+str(self.c)+', r'+str(self.r)+'------')
+        self.kiir('#-'+str(self.m)+'----ComboBox: c'+str(self.c)+', r'+str(self.r)+'------')
         self.kiir(self.osszes)
     def omenuablak(self):
         self.optmenu=Optmenu(self.rc,self.output,self.frame_name)
         self.osszes=self.optmenu.generator()
-        self.kiir('#------Option menu: c'+str(self.c)+', r'+str(self.r)+'------')
+        self.kiir('#-'+str(self.m)+'----Option menu: c'+str(self.c)+', r'+str(self.r)+'------')
         self.kiir(self.osszes)
     def radioboxablak(self):
         self.radiobox=Radiobox(self.rc,self.output,self.frame_name)
         self.osszes=self.radiobox.generator()
-        self.kiir('#------Radio: c'+str(self.c)+', r'+str(self.r)+'------')
+        self.kiir('#-'+str(self.m)+'----Radio: c'+str(self.c)+', r'+str(self.r)+'------')
         self.kiir(self.osszes)
         
 # ------ MenuBar generator
@@ -205,15 +207,12 @@ class Menbar:
         self.frame_name=frame_name
         self.col=rc[0]
         self.row=rc[1]
-#        self.cspan=rc[2]
-#        self.rspan=rc[3]
         self.base_c=rc[4]
         self.base_r=rc[5]
         self.menuszam=0
         self.keretszam=''
         self.inputlist=inputlist
         self.kret=''
-#        self.o=self.inputlist[4]
         self.inputlist.pop(-1) #remove orientation from the list
         self.msz1=''
     def proc(self):
@@ -265,11 +264,9 @@ class Menbar:
         return self.osszes
            
 
-
-
 # ------ MenuButton generator
 class Menuk:
-    "Menu generator modul"
+    "Menubuton generator modul"
     def __init__(self,rc,inputlist,frame_name):
         self.frame_name=frame_name
         self.col=rc[0]
@@ -282,47 +279,51 @@ class Menuk:
         self.keretszam=''
         self.inputlist=inputlist
         self.kret=''
-        self.f1, self.f2, self.f3=inputlist[0],inputlist[1],inputlist[2]
-        self.f11, self.f21, self.f31=inputlist[3],inputlist[4],inputlist[5]
-        self.f12, self.f22, self.f32=inputlist[6],inputlist[7],inputlist[8]
-        self.f13, self.f23, self.f33=inputlist[9],inputlist[10],inputlist[11]
-        self.o=self.inputlist[12]
-    def generator(self):
+        self.o=self.inputlist[4]
+        self.inputlist.pop(-1) #remove orientation from the list
+        self.msz1=''
+        self.msz2=''
+        self.msz3=''
+    def proc(self):
+        self.i2=[] #temporary list for work
+        self.x=0 #counter
+        
+        while (self.x<len(self.inputlist)): #create emptyt list that contains exactly as much empty [] list as mush element its have
+            self.i2.append([]) 
+            self.x=self.x+1
+        self.subm=[]  #empty list for sub elements (submenu)
+        self.mainm=[] #empty list for first elements (mainmenu)  
+        for self.i in range(len(self.inputlist)):  # read all list in inputlist
+            for self.j in self.inputlist[self.i]:      #read all sub list
+                if (self.j!=''):
+                    self.i2[self.i].append(self.j)    #put all valid values to i2 temporary list
+        for self.i in range(len(self.i2)):         
+            if (self.i2[self.i]!=[]):		    #if element of i2 is not ''
+                   self.subm.append(self.i2[self.i]) #put it into the subm list
+            
+        for self.i in range(len(self.subm)):       #first element of subm put into mainm list and...
+            self.mainm.append(self.subm[self.i][0])
+            self.subm[self.i].pop(0)                #... remove it from subm list
+                            
+        for self.i in self.subm:  # if there was only 1 main menu it create an empty '' text element in the list
+            if (self.i==[]):
+                self.i.append('')
+#        print('main: ',self.mainm,'\nsubm: ',self.subm)
+        self.x=0
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'"+'raised'+"'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
-        self.msz1='menu'+self.keretszam+str(self.menuszam)+'=ttk.Menubutton(kret'+str(self.keretszam)+',text='+"'"+str(self.f1)+"'"+')'
-        self.msz2='mf'+self.keretszam+str(self.menuszam)+'=Menu(menu'+self.keretszam+str(self.menuszam)+')'
-        self.msz3='mf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.f11)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-        if(self.f12!=''):
-            self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.f12)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-            if(self.f13!=''):
-                self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.f13)+"'"+',command=k_ablak.destroy, state=NORMAL)'    
-        self.msz5='menu'+self.keretszam+str(self.menuszam)+'.configure(menu=mf'+self.keretszam+str(self.menuszam)+')'
-        self.mszv='menu'+self.keretszam+str(self.menuszam)+'.grid(row=0, column=0, sticky=NW)'
-
-        if(self.f2!=''):
-            self.msz1=self.msz1+'\nmenu'+self.keretszam+str(self.menuszam+1)+'=ttk.Menubutton(kret'+str(self.keretszam)+',text='+"'"+str(self.f2)+"'"+')'
-            self.msz2=self.msz2+'\nmf'+self.keretszam+str(self.menuszam+1)+'=Menu(menu'+self.keretszam+str(self.menuszam+1)+')'
-            self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+1)+'.add_command(label='+"'"+str(self.f21)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-            if(self.f22!=''):
-                self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+1)+'.add_command(label='+"'"+str(self.f22)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-                if(self.f23!=''):
-                    self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+1)+'.add_command(label='+"'"+str(self.f23)+"'"+',command=k_ablak.destroy, state=NORMAL)'    
-            self.msz5=self.msz5+'\nmenu'+self.keretszam+str(self.menuszam+1)+'.configure(menu=mf'+self.keretszam+str(self.menuszam+1)+')'
-            self.mszv=self.mszv+'\nmenu'+self.keretszam+str(self.menuszam+1)+'.grid(row=0, column=1, sticky=NW)'
-
-            if(self.f3!=''):
-                self.msz1=self.msz1+'\nmenu'+self.keretszam+str(self.menuszam+2)+'=ttk.Menubutton(kret'+str(self.keretszam)+',text='+"'"+str(self.f3)+"'"+')'
-                self.msz2=self.msz2+'\nmf'+self.keretszam+str(self.menuszam+2)+'=Menu(menu'+self.keretszam+str(self.menuszam+2)+')'
-                self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+2)+'.add_command(label='+"'"+str(self.f31)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-                if(self.f32!=''):
-                    self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+2)+'.add_command(label='+"'"+str(self.f32)+"'"+',command=k_ablak.destroy, state=NORMAL)'
-                    if(self.f33!=''):
-                        self.msz3=self.msz3+'\nmf'+self.keretszam+str(self.menuszam+2)+'.add_command(label='+"'"+str(self.f33)+"'"+',command=k_ablak.destroy, state=NORMAL)'    
-                self.msz5=self.msz5+'\nmenu'+self.keretszam+str(self.menuszam+2)+'.configure(menu=mf'+self.keretszam+str(self.menuszam+2)+')'
-                self.mszv=self.mszv+'\nmenu'+self.keretszam+str(self.menuszam+2)+'.grid(row=0, column=2, sticky=NW)'   
-        self.osszes=self.kret+'\n'+self.msz1+'\n'+self.msz2+'\n'+self.msz3+'\n'+self.msz5+'\n'+self.mszv
+        while(self.menuszam<len(self.mainm)):
+            self.msz1=self.msz1+'menu'+self.keretszam+str(self.menuszam)+'=ttk.Menubutton(kret'+str(self.keretszam)+',text='+"'"+str(self.mainm[self.menuszam])+"'"+')\nmf'+self.keretszam+str(self.menuszam)+'=Menu(menu'+self.keretszam+str(self.menuszam)+')\n'
+            self.msz3=self.msz3+'menu'+self.keretszam+str(self.menuszam)+'.configure(menu=mf'+self.keretszam+str(self.menuszam)+')\n'
+            self.msz3=self.msz3+'menu'+self.keretszam+str(self.menuszam)+'.grid(row=0, column='+str(self.menuszam)+', sticky=NW)\n'
+            while(self.x<len(self.subm[self.menuszam])):
+                self.msz2=self.msz2+'mf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+',command=k_ablak.destroy, state=NORMAL)\n'
+                self.x=self.x+1
+            self.x=0
+            self.menuszam=self.menuszam+1
+        self.osszes=self.kret+'\n'+self.msz1+self.msz2+self.msz3
         return self.osszes
+
 
 class Gombokx:
     "Button generator modul"
@@ -785,10 +786,12 @@ class Radiobox:
         return self.osszes
 
 #---- Option windows
-# menubar windows    
+# menubar/menubutton windows    
 def menbarablak(rc,frame_name='ablak'):
+    tipus=rc[6]
     c=rc[0]              
-    r=rc[1]    
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
     def mb_ertek():
         field1=(text11aa0.get(0.0,END).split('\n'))
         field2=(text12aa0.get(0.0,END).split('\n'))
@@ -796,39 +799,47 @@ def menbarablak(rc,frame_name='ablak'):
         field4=(text14aa0.get(0.0,END).split('\n'))
         labo=chboxaa0.get()
         output=[field1,field2,field3,field4,labo]
-        m=Menbar(rc,output,frame_name)
-        osszes=m.proc()
-        kiir('#----Menubar: c'+str(c)+', r'+str(r)+'----')
-        kiir(osszes)
-        abl2.destroy()
+        if(tipus==1):
+            mbar=Menbar(rc,output,frame_name)
+            osszes=mbar.proc()
+            kiir('#-'+str(m)+'----Menubar: c'+str(c)+', r'+str(r)+'----')
+            kiir(osszes)
+            abl2.destroy()
+        if(tipus==2):
+            mbutt=Menuk(rc,output,frame_name)
+            osszes=mbutt.proc()
+            kiir('#-'+str(m)+'----Menubutton: c'+str(c)+', r'+str(r)+'----')
+            kiir(osszes)
+            abl2.destroy()
     abl2=Toplevel(abl1)
-    abl2.title('Menubar options: c'+str(c)+', r'+str(r))        
+    if(tipus==1):
+        abl2.title('Menubar options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
+    else:
+        abl2.title('Menubutton options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
-    #------ComboBox: c0, r4------
     kretaa=Frame(ablak, relief='flat', borderwidth=1)
     kretaa.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=N)
-
-    chboxaa0=Combobox(kretaa, width=4, state=DISABLED)
+    if(tipus==1):
+        chboxaa0=Combobox(kretaa, width=4, state=DISABLED)
+    else:
+        chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
     chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
     chboxaa0.current(0)
     chboxaa0.grid(row=0, column=1,sticky=N)
     cmkeaa0=Label(kretaa, text='')
     cmkeaa0.grid(row=0, column=0,sticky=N)
-    #------Label: c0, r1------
     cmke10aa0=Label(ablak, text='Mainmenu (1st row) ->')
     cmke10aa0.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
-    #------Label: c0, r2------
-    cmke20aa0=Label(ablak, text='Submenus ->{\nseparate:  -\ncheckbox: # (e.g: #yes)')
+    if(tipus==1):
+        cmke20aa0=Label(ablak, text='Submenus ->{\nseparate:  -\ncheckbox: # (e.g: #yes)')
+    else:
+        cmke20aa0=Label(ablak, text='Submenus ->{')
     cmke20aa0.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=E)
-    #------Label: c0, r3------
     cmke30aa0=Label(ablak, text='orient.')
     cmke30aa0.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=S)
-    #------Button: c0, r5------
-
     gmb50aa0=Button(ablak,text='Apply',command=mb_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=S)
-    #------Text: c4, r1------
     kret14aa=Frame(ablak, relief='flat', borderwidth=1)
     kret14aa.grid(row=1, column=4, columnspan=1, rowspan=4, sticky=N)
     text14aa0=Text(kret14aa,height=10,width=10,bg='light yellow',fg='black')
@@ -836,7 +847,6 @@ def menbarablak(rc,frame_name='ablak'):
     text14aa0['yscrollcommand']=scrolly14aa0.set
     text14aa0.grid(row=0, column=0,sticky=N)
     scrolly14aa0.grid(row=0, column=1 ,sticky=N+S)
-    #------Text: c1, r1------
     kret11aa=Frame(ablak, relief='flat', borderwidth=1)
     kret11aa.grid(row=1, column=1, columnspan=1, rowspan=4, sticky=N)
     text11aa0=Text(kret11aa,height=10,width=10,bg='light yellow',fg='black')
@@ -845,7 +855,6 @@ def menbarablak(rc,frame_name='ablak'):
     text11aa0.grid(row=0, column=0,sticky=N)
     text11aa0.insert(INSERT,'File\nOpen')
     scrolly11aa0.grid(row=0, column=1 ,sticky=N+S)
-    #------Text: c2, r1------
     kret12aa=Frame(ablak, relief='flat', borderwidth=1)
     kret12aa.grid(row=1, column=2, columnspan=1, rowspan=4, sticky=N)
     text12aa0=Text(kret12aa,height=10,width=10,bg='light yellow',fg='black')
@@ -854,7 +863,6 @@ def menbarablak(rc,frame_name='ablak'):
     text12aa0.grid(row=0, column=0,sticky=N)
     text12aa0.insert(INSERT,'Settings')
     scrolly12aa0.grid(row=0, column=1 ,sticky=N+S)
-    #------Text: c3, r1------
     kret13aa=Frame(ablak, relief='flat', borderwidth=1)
     kret13aa.grid(row=1, column=3, columnspan=1, rowspan=4, sticky=N)
     text13aa0=Text(kret13aa,height=10,width=10,bg='light yellow',fg='black')
@@ -863,75 +871,15 @@ def menbarablak(rc,frame_name='ablak'):
     text13aa0.grid(row=0, column=0,sticky=N)
     scrolly13aa0.grid(row=0, column=1 ,sticky=N+S)    
 
-    
-def menuablak(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
-#    rspan=rc[2]
-#    cspan=rc[3]
 
-    def m_ertek():
-        output=['','','', #Főmenü 1   ,2   ,3
-                '','','', #almenü 1.1 ,2.1 ,3.1
-                '','','',  #almenü 1.2 ,2.2 ,3.2
-                '','','',  #almenü 1.3 ,2.3 ,3.3
-                '']        #orientation
-        output[0],output[1],output[2]=bmezof1.get(),bmezof2.get(),bmezof3.get()
-        output[3],output[4],output[5]=bmezof1_1.get(),bmezof2_1.get(),bmezof3_1.get()
-        output[6],output[7],output[8]=bmezof1_2.get(),bmezof2_2.get(),bmezof3_2.get()
-        output[9],output[10],output[11]=bmezof1_3.get(),bmezof2_3.get(),bmezof3_3.get()
-        output[12]=chbox1m.get()
-        menuk=Menuk(rc,output,frame_name)
-        osszes=menuk.generator()
-        kiir('#----MenuButton: c'+str(c)+', r'+str(r)+'----')
-        kiir(osszes)
-        abl2.destroy()
-        
-    abl2=Toplevel(abl1)
-    abl2.title('MenuButton options: c'+str(c)+', r'+str(r))
-    gmb=Button(abl2,text='Apply',command=m_ertek)
-    cmke1=Label(abl2, text='Main menu:')
-    cmke2=Label(abl2, text='Submenu:')
-    bmezof1=Entry(abl2, textvariable=f1)
-    bmezof1.insert(0,"File")
-    bmezof2=Entry(abl2, textvariable=f2)
-    bmezof3=Entry(abl2, textvariable=f3)
-    bmezof1_1=Entry(abl2, textvariable=f11)
-    bmezof1_1.insert(0,"Close")
-    bmezof2_1=Entry(abl2, textvariable=f21)
-    bmezof3_1=Entry(abl2, textvariable=f31)
-    bmezof1_2=Entry(abl2, textvariable=f12)
-    bmezof2_2=Entry(abl2, textvariable=f22)
-    bmezof3_2=Entry(abl2, textvariable=f32)
-    bmezof1_3=Entry(abl2, textvariable=f13)
-    bmezof2_3=Entry(abl2, textvariable=f23)
-    bmezof3_3=Entry(abl2, textvariable=f33)
-    cmke1.grid(row=0, column=0)
-    cmke2.grid(row=1, column=0)
-    bmezof1.grid(row=0, column=1)
-    bmezof2.grid(row=0, column=2)
-    bmezof3.grid(row=0, column=3)
-    bmezof1_1.grid(row=1, column=1)
-    bmezof2_1.grid(row=1, column=2)
-    bmezof3_1.grid(row=1, column=3)
-    bmezof1_2.grid(row=2, column=1)
-    bmezof2_2.grid(row=2, column=2)
-    bmezof3_2.grid(row=2, column=3)
-    bmezof1_3.grid(row=3, column=1)
-    bmezof2_3.grid(row=3, column=2)
-    bmezof3_3.grid(row=3, column=3)
-    chbox1m=Combobox(abl2, width=4)
-    chbox1m['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
-    chbox1m.current(0)
-    chbox1m.grid(row=2, column=0,sticky=S)
-    gmb.grid(row=3,column=0)
-    bmezof1.configure(foreground='blue')
-    bmezof2.configure(foreground='blue')
-    bmezof3.configure(foreground='blue')
+def menuablak(rc,frame_name='ablak'):
+    menbarablak(rc,frame_name)
+
 
 def gombablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
     def g_ertek():
@@ -947,12 +895,12 @@ def gombablak(rc,frame_name='ablak'):
         output[12]=chbox1g.get()
         gombokx=Gombokx(rc,output,frame_name)
         osszes=gombokx.generator()
-        kiir('#------Button: c'+str(c)+', r'+str(r)+'------')
+        kiir('#-'+str(m)+'----Button: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
 
     abl2=Toplevel(abl1)
-    abl2.title('Button options: c'+str(c)+', r'+str(r))
+    abl2.title('Button options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     gmb=Button(abl2,text='Apply',command=g_ertek)
     cmke1=Label(abl2, text='Label:')
     bmezof1=Entry(abl2, textvariable=f1)
@@ -990,6 +938,7 @@ def gombablak(rc,frame_name='ablak'):
 def vaszonablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
     def v_ertek():
@@ -1006,12 +955,12 @@ def vaszonablak(rc,frame_name='ablak'):
         output[3]=chbox1.get()
         vaszon=Vaszon(rc,output,frame_name)
         osszes=vaszon.generator()
-        kiir('#------Canvas: c'+str(c)+', r'+str(r)+'------')
+        kiir('#-'+str(m)+'----Canvas: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
     
     abl2=Toplevel(abl1)
-    abl2.title('Canvas options: c'+str(c)+', r'+str(r))       
+    abl2.title('Canvas options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')       
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     chbox1=Combobox(ablak, width=4)
@@ -1038,6 +987,7 @@ def vaszonablak(rc,frame_name='ablak'):
 def szovegmezablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
     def t_ertek():
@@ -1059,12 +1009,12 @@ def szovegmezablak(rc,frame_name='ablak'):
            output[6]=colorset()
        szovegmezo=Szovegmezocs(rc,output,frame_name)
        osszes=szovegmezo.generator()
-       kiir('#------Text: c'+str(c)+', r'+str(r)+'------')
+       kiir('#-'+str(m)+'----Text: c'+str(c)+', r'+str(r)+'------')
        kiir(osszes) 
        abl2.destroy()
     
     abl2=Toplevel(abl1)
-    abl2.title('Text options: c'+str(c)+', r'+str(r))        
+    abl2.title('Text options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')        
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     bmezo0=Entry(ablak)
@@ -1108,25 +1058,27 @@ def szovegmezablak(rc,frame_name='ablak'):
 def beviteliablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     beviteli=Beviteli(rc,frame_name)
     osszes=beviteli.generator()
-    kiir('#------Entry: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'----Entry: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 
 def cimkeablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     def c_ertek():
         labtxt=bmezo0.get()
         labo=chbox0.get()
         cimke=Cimke(rc,labtxt,labo,frame_name)
         osszes=cimke.generator()
-        kiir('#------Label: c'+str(c)+', r'+str(r)+'------')
+        kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
     abl2=Toplevel(abl1)
-    abl2.title('Label options: c'+str(c)+', r'+str(r))        
+    abl2.title('Label options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')        
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     cmke0=Label(ablak, text='Text')
@@ -1146,40 +1098,42 @@ def cimkeablak(rc,frame_name='ablak'):
 def cimkeablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     labtxt='title'
     labo='N'
     cimke=Cimke(rc,labtxt,labo,frame_name)
     osszes=cimke.generator()
-    kiir('#------Label: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def keretablak(rc,output): #col-row, orientation
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     keret=Keret(rc,output)
     osszes,keretszam=keret.generator()
-    kiir('#------Frame: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'----Univ.Frame: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
     return keretszam
 
 def uzenablak(rc):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     uzi=Uzenet(rc)
     osszes=uzi.generator()
-    kiir('#------Message: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'----Message: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
         
 def comboxablak(rc,frame_name='ablak'):
-#    c=rc[0]              
-#    r=rc[1]
     tipus=0
     cmbx1=Boxablak(abl1,rc,frame_name) 
 
 def comboxablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     lista=['One','Two','Three', #cells 0-11
            '','','',
            '','','',
@@ -1188,12 +1142,10 @@ def comboxablak_s(rc,frame_name='ablak'):
            'N','16']      #orientation, cell width
     combox=Combox(rc,lista,frame_name)
     osszes=combox.generator()
-    kiir('#------ComboBox: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'----ComboBox: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def omenuablak(rc,frame_name='ablak'):
-#    c=rc[0]              
-#    r=rc[1]
     tipus=1
     optmenu=Boxablak(abl1,rc,frame_name)
 
@@ -1201,6 +1153,7 @@ def omenuablak(rc,frame_name='ablak'):
 def omenuablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     lista=['One','Two','Three', #cells 0-11
            '','','',
            '','','',
@@ -1209,12 +1162,10 @@ def omenuablak_s(rc,frame_name='ablak'):
            'N','16']      #orientation, cell width
     optmenu=Optmenu(rc,lista,frame_name)
     osszes=optmenu.generator()
-    kiir('#------Option menu: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'-----Option menu: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def radioxablak(rc,frame_name='ablak'):
-#    c=rc[0]              
-#    r=rc[1]
     tipus=2
     radio=Boxablak(abl1,rc,frame_name)
 
@@ -1222,6 +1173,7 @@ def radioxablak(rc,frame_name='ablak'):
 def radioxablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
+    m=rc[7] #started from main or univ.frame
     lista=['One','Two','Three', #cells 0-11
            '','','',
            '','','',
@@ -1230,7 +1182,7 @@ def radioxablak_s(rc,frame_name='ablak'):
            'N','16']      #orientation, cell width
     radiobox=Radiobox(rc,lista,frame_name)
     osszes=radiobox.generator()
-    kiir('#------Radio: c'+str(c)+', r'+str(r)+'------')
+    kiir('#-'+str(m)+'-----Radio: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def univablak(rc):
@@ -1347,7 +1299,7 @@ def kivalaszto_uni(base_rc,cells_uni,output):
         keretszam=keretablak(base_rc,output)
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
-                rc=['','','','',base_rc[0],base_rc[1],0] #c,r,rspan,cspan,base_c, base_r
+                rc=['','','','',base_rc[0],base_rc[1],0,'uni'] #c,r,rspan,cspan,base_c, base_r
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
@@ -1386,7 +1338,7 @@ def kivalaszto_uni(base_rc,cells_uni,output):
       
                
 def updatecell():
-        cstat=[['',[0,0],[1,1]],['',[1,0],[1,1]],['',[2,0],[1,1]],['',[3,0],[1,1]],['',[4,0],[1,1]], #cells: ['content',[col,row],[colspan=1,rowspan=1]]
+        cstat=[['',[0,0],[1,1]],['',[1,0],[1,1]],['',[2,0],[1,1]],['',[3,0],[1,1]],['',[4,0],[1,1]], #cells: ['id',[col,row],[colspan=1,rowspan=1]]
                ['',[0,1],[1,1]],['',[1,1],[1,1]],['',[2,1],[1,1]],['',[3,1],[1,1]],['',[4,1],[1,1]],
                ['',[0,2],[1,1]],['',[1,2],[1,1]],['',[2,2],[1,1]],['',[3,2],[1,1]],['',[4,2],[1,1]],
                ['',[0,3],[1,1]],['',[1,3],[1,1]],['',[2,3],[1,1]],['',[3,3],[1,1]],['',[4,3],[1,1]],
@@ -1446,9 +1398,20 @@ def updatecell():
                 if(i>1 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<17 and cstat[i-3][0]>1 and cstat[i-3][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-3][2][0]=cstat[i-3][2][0]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
                 if(i>2 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<17 and cstat[i-4][0]>1 and cstat[i-4][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
-                    cstat[i-4][2][0]=cstat[i-4][2][0]+1  
+                    cstat[i-4][2][0]=cstat[i-4][2][0]+1
+        #check menubar only one widget possible
+        counter=0
+        for i in range(len(cstat)):
+            if (cstat[i][0]==1 and counter==1):    #if counter increased and find manubar reset it
+                    cellak[i].current(0)
+            if (cstat[i][0]==1 and counter==0): #in case of first manubar increase the counter
+                    counter=counter+1
         letilto(cstat)
         return cstat
+               
+
+            
+
                 
 def letilto(cstat):
 
@@ -1677,7 +1640,7 @@ def kivalaszto2():
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
-                rc=['','','','','a','a',0] #c,r,rspan,cspan,base_c,base_r, type
+                rc=['','','','','a','a',0,'m'] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
@@ -1831,7 +1794,7 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.8.6")
+abl1.title("Tkinter GUI designer v0.8.7")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
