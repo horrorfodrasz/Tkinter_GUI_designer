@@ -43,9 +43,10 @@
 # v0.8.7  new Menubutton options menu
 # v0.8.8  Listbox
 # v0.8.9  Scale
+# v0.9    Spinbox
 #
 # plans:
-#      * add more widgets: spinbox, progressbar
+#      * add more widgets: progressbar, toolbar
 #      * save cell selection
 #
 #
@@ -817,7 +818,36 @@ class Listboxgen:
         self.osszes=self.kret+self.lbx1
         return self.osszes
 
+class Spinboxgen:
+    "SpinBox generator modul"
+    def __init__(self,rc,inputlist,frame_name):
+        self.frame_name=frame_name
+        self.inputlist=inputlist
+        self.items=inputlist[0]   # list items
+        self.orient=inputlist[1]  #orien
+        self.w=inputlist[2]       #width
+        self.wrp=inputlist[3]     #wrap
+        self.from_=inputlist[4]   #from
+        self.to_=inputlist[5]     #to
+        self.col=rc[0]
+        self.row=rc[1]
+        self.cspan=rc[2]
+        self.rspan=rc[3]
+        self.base_c=rc[4]
+        self.base_r=rc[5]
+        self.kret=''
+        self.keretszam=''
+        self.sbx1=''
+    def generator(self):
+        self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
+        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.sbx1=self.sbx1+'spb'+self.keretszam+'=Spinbox(kret'+str(self.keretszam)+', width='+str(self.w)+', from_='+str(self.from_)+', to='+str(self.to_)+', wrap='+str(self.wrp)+', values='+str(self.items)+')\n'      
+        self.sbx1=self.sbx1+'spb'+self.keretszam+'.grid(row=0, column=0, sticky=N)'
+        self.osszes=self.kret+self.sbx1
+        return self.osszes
+
 class Scalegen:
+    "Scale generator modul"
     def __init__(self,rc,inputlist,frame_name):
         self.frame_name=frame_name
         self.inputlist=inputlist
@@ -952,7 +982,7 @@ def listboxablak(rc,frame_name='ablak'):
         labo=chboxaa0.get()
         w=lbmezo1.get()
         output=[field1,labo,w]
-        print(output)
+#        print(output)
         mlb=Listboxgen(rc,output,frame_name)
         osszes=mlb.proc()
         kiir('#-'+str(m)+'----Listbox: c'+str(c)+', r'+str(r)+'----')
@@ -963,22 +993,22 @@ def listboxablak(rc,frame_name='ablak'):
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     kretaa=Frame(ablak, relief='flat', borderwidth=1)
-    kretaa.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=N)
+    kretaa.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=N)
     chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
     chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
     chboxaa0.current(0)
-    chboxaa0.grid(row=0, column=1,sticky=N)
-    lbmezo1=Entry(kretaa, width=5)
-    lbmezo1.grid(row=2, column=1,sticky=N)
+    chboxaa0.grid(row=2, column=0,sticky=N)
+    lbmezo1=Entry(kretaa, width=6)
+    lbmezo1.grid(row=4, column=0,sticky=N)
     lbmezo1.insert(0,'14')
     cmkeaa0=Label(kretaa, text='width')
-    cmkeaa0.grid(row=1, column=1,sticky=N)
+    cmkeaa0.grid(row=3, column=0,sticky=N)
     cmke10aa0=Label(ablak, text='List ->')
     cmke10aa0.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
-    cmke30aa0=Label(ablak, text='orient.')
-    cmke30aa0.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=S)
+    cmke30aa0=Label(kretaa, text='orient.')
+    cmke30aa0.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=S)
     gmb50aa0=Button(ablak,text='Apply',command=mb_ertek)
-    gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=S)
+    gmb50aa0.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=S)
     kret11aa=Frame(ablak, relief='flat', borderwidth=1)
     kret11aa.grid(row=1, column=1, columnspan=1, rowspan=4, sticky=N)
     text11aa0=Text(kret11aa,height=10,width=20,bg='light yellow',fg='black')
@@ -1016,19 +1046,19 @@ def gombablak(rc,frame_name='ablak'):
     abl2.title('Button options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     gmb=Button(abl2,text='Apply',command=g_ertek)
     cmke1=Label(abl2, text='Label:')
-    bmezof1=Entry(abl2, textvariable=f1)
+    bmezof1=Entry(abl2)
     bmezof1.insert(0,"Ok")
-    bmezof2=Entry(abl2, textvariable=f2)
-    bmezof3=Entry(abl2, textvariable=f3)
-    bmezof1_1=Entry(abl2, textvariable=f11)
-    bmezof2_1=Entry(abl2, textvariable=f21)
-    bmezof3_1=Entry(abl2, textvariable=f31)
-    bmezof1_2=Entry(abl2, textvariable=f12)
-    bmezof2_2=Entry(abl2, textvariable=f22)
-    bmezof3_2=Entry(abl2, textvariable=f32)
-    bmezof1_3=Entry(abl2, textvariable=f13)
-    bmezof2_3=Entry(abl2, textvariable=f23)
-    bmezof3_3=Entry(abl2, textvariable=f33)
+    bmezof2=Entry(abl2)
+    bmezof3=Entry(abl2)
+    bmezof1_1=Entry(abl2)
+    bmezof2_1=Entry(abl2)
+    bmezof3_1=Entry(abl2)
+    bmezof1_2=Entry(abl2)
+    bmezof2_2=Entry(abl2)
+    bmezof3_2=Entry(abl2)
+    bmezof1_3=Entry(abl2)
+    bmezof2_3=Entry(abl2)
+    bmezof3_3=Entry(abl2)
     cmke1.grid(row=0, column=0)
     bmezof1.grid(row=0, column=1)
     bmezof2.grid(row=0, column=2)
@@ -1392,6 +1422,76 @@ def scaleablak(rc,frame_name='ablak'):
     gmb50aa0=Button(ablak,text='Apply',command=sc_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
     
+def spinablak(rc,frame_name='ablak'):
+    tipus=rc[6]
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    def sp_ertek():
+        output=['','','','','','']
+        lista=text11aa0.get(0.0,END).split('\n')
+        output[0]=clearlist(lista,1) #list area
+        output[1]=chboxaa0.get() #orient
+        output[2]=lbmezo1.get() #width
+        if(chbox33.get()=='off'): #wrap
+            output[3]='0'
+        else:
+            output[3]='1'
+        output[4]=bmezo31.get() #from
+        output[5]=bmezo32.get() #to
+        print(output)
+        spbox=Spinboxgen(rc,output,frame_name)
+        osszes=spbox.generator()
+        kiir('#-'+str(m)+'----Spinbox: c'+str(c)+', r'+str(r)+'----')
+        kiir(osszes)
+        abl2.destroy()
+    abl2=Toplevel(abl1, width=300)
+    abl2.title('Spinbox options: c'+str(c)+', r'+str(r)+' ('+str(m)+')')
+    ablak=Frame(abl2, relief='flat', borderwidth=1)
+    ablak.grid(row=0, column=0)
+    kretaa=Frame(ablak, relief='flat', borderwidth=1)
+    kretaa.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmke30aa0=Label(kretaa, text='orient.')
+    cmke30aa0.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=S)
+    chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
+    chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chboxaa0.current(0)
+    chboxaa0.grid(row=1, column=0,sticky=N)
+    lbmezo1=Entry(kretaa, width=6)
+    lbmezo1.grid(row=3, column=0,sticky=N)
+    lbmezo1.insert(0,'14')
+    cmkeaa0=Label(kretaa, text='width')
+    cmkeaa0.grid(row=2, column=0,sticky=N)
+    cmke10aa0=Label(ablak, text='List ->')
+    cmke10aa0.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmke33=Label(kretaa, text='wrap')
+    cmke33.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=N)
+    chbox33=Combobox(ablak, width=4, state=NORMAL)
+    chbox33['values']=('off','on')
+    chbox33.current(0)
+    chbox33.grid(row=5, column=0,sticky=N)
+    gmb50aa0=Button(ablak,text='Apply',command=sp_ertek)
+    gmb50aa0.grid(row=6, column=0, columnspan=1, rowspan=1, sticky=S)
+    kret11aa=Frame(ablak, relief='flat', borderwidth=1)
+    kret11aa.grid(row=0, column=1, columnspan=1, rowspan=7, sticky=N)
+    text11aa0=Text(kret11aa,height=10,width=20,bg='light yellow',fg='black')
+    scrolly11aa0=Scrollbar(kret11aa, orient=VERTICAL,command=text11aa0.yview)
+    text11aa0['yscrollcommand']=scrolly11aa0.set
+    text11aa0.grid(row=0, column=0,sticky=N)
+    text11aa0.insert(INSERT,'#if it is empty\n#use "'"from"'" and "'"to"'"\n#fields for numbers')
+    scrolly11aa0.grid(row=0, column=1 ,sticky=N+S)
+    kretab=Frame(ablak, relief='flat', borderwidth=1)
+    kretab.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+    cmke31=Label(kretab, text='from')
+    cmke31.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=S)
+    bmezo31=Entry(kretab, width=7)
+    bmezo31.grid(row=1, column=0, sticky=N)
+    bmezo31.insert(0,'1')
+    cmke32=Label(kretab, text='to')
+    cmke32.grid(row=2, column=0, sticky=N)
+    bmezo32=Entry(kretab, width=7)
+    bmezo32.grid(row=3, column=0, sticky=N)
+    bmezo32.insert(0,'10')
 
 
 def univablak(rc):
@@ -1405,24 +1505,24 @@ def univablak(rc):
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox','18: Scale')
+                '14: Radio (s)', '17: Listbox','18: Scale', '19: Spinbox')
     selection_uni1_2=('00: ---','02: MenuButton','03: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale',
+                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
                 '98: colspan <')
     selection_uni2_1=('00: ---','02: MenuButton','03: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale',
+                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
                 '99: rowspan ^')
     selection_uni2_2=('00: ---','02: MenuButton','04: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale',
+                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
                 '98: colspan <', '99: rowspan ^')
     base_col=rc[0]              
     base_row=rc[1]
@@ -1489,13 +1589,13 @@ def updatecell_uni(cells_uni):
         for i in range(len(cstat)):
 ###rowspan
             if((i>1) and (cstat[i][0]==99)): #rowspan must be in valid place/area
-                if(cstat[i-2][0]<19 and cstat[i-2][0]!=0):                          # above rs (the 1st cell) there is valid cell (between 1-17) 
+                if(cstat[i-2][0]<20 and cstat[i-2][0]!=0):                          # above rs (the 1st cell) there is valid cell (between 1-17) 
                     cstat[i-2][2][1]=cstat[i-2][2][1]+1                             # fölötte lévő cella rowspan értékét növelje 1-el
                 if(cstat[i-2][0]==0 or cstat[i-2][0]==98 or cstat[i-2][0]==4):      # ha rs fölött üres cella vagy cs vagy canvas van akkor törölje
                        cells_uni[i].current(0)
 ###colspan            
             if((i!=0 and i!=2) and (cstat[i][0]==98)):                            #colspan must be in valid place/area
-                if(cstat[i-1][0]<19 and cstat[i-1][0]!=0):                          #on the left side there is valid cell
+                if(cstat[i-1][0]<20 and cstat[i-1][0]!=0):                          #on the left side there is valid cell
                     cstat[i-1][2][0]=cstat[i-1][2][0]+1                             #balra lévő cella colspan értékét növelje 1-el
                 if(cstat[i-1][0]==0 or cstat[i-1][0]==99 or cstat[i-1][0]==4):                          # ha cs -től balra üres cella vagy rs vagy canvas van akkor törölje
                     cells_uni[i].current(0)
@@ -1549,6 +1649,8 @@ def kivalaszto_uni(base_rc,cells_uni,output):
                     listboxablak(rc,keretszam)
                 if(cstat[i][0]==18): 
                     scaleablak(rc,keretszam)
+                if(cstat[i][0]==19): 
+                    spinablak(rc,keretszam)
             
 
       
@@ -1578,7 +1680,7 @@ def updatecell():
                 cellak[i].current(0)
 ###rowspan
             if((i>4) and (cstat[i][0]==99)): #rowspan must be in valid place/area
-                if(cstat[i-5][0]<19 and cstat[i-5][0]>1 and cstat[i-5][0]!=4):                          # ha fölötte 1-el érvényes (1-17 közötti) cella van 
+                if(cstat[i-5][0]<20 and cstat[i-5][0]>1 and cstat[i-5][0]!=4):                          # ha fölötte 1-el érvényes (1-17 közötti) cella van 
                     cstat[i-5][2][1]=cstat[i-5][2][1]+1                             # fölötte lévő cella rowspan értékét növelje 1-el
                 if(cstat[i-5][0]<2 or cstat[i-5][0]==98 or cstat[i-5][0]==4):                          # ha rs fölött üres cella vagy cs vagy canvas,menubar van akkor törölje
                        cellak[i].current(0)
@@ -1590,16 +1692,16 @@ def updatecell():
                        cellak[i].current(0)
                 if(cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and cstat[i-20][0]==99):  # az 5.rs kijelölés már nem engedélyezett
                        cellak[i].current(0)
-                if(i>9 and cstat[i-5][0]==99 and (cstat[i-10][0]<19 and cstat[i-10][0]>1 and cstat[i-10][0]!=4)): #ha a cella fölött rs utána érvényes cella 
+                if(i>9 and cstat[i-5][0]==99 and (cstat[i-10][0]<20 and cstat[i-10][0]>1 and cstat[i-10][0]!=4)): #ha a cella fölött rs utána érvényes cella 
                    cstat[i-10][2][1]=cstat[i-10][2][1]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>14 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and (cstat[i-15][0]<19 and cstat[i-15][0]>1 and cstat[i-15][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
+                if(i>14 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and (cstat[i-15][0]<20 and cstat[i-15][0]>1 and cstat[i-15][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
                    cstat[i-15][2][1]=cstat[i-15][2][1]+1                            # 2-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>19 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and (cstat[i-20][0]<19 and cstat[i-20][0]>1 and cstat[i-20][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
+                if(i>19 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and (cstat[i-20][0]<20 and cstat[i-20][0]>1 and cstat[i-20][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
                    cstat[i-20][2][1]=cstat[i-20][2][1]+1 
 
 ###colspan            
             if((i!=0 and i%5!=0) and (cstat[i][0]==98)):                            #colspan must be in valid place/area
-                if(cstat[i-1][0]<19 and cstat[i-1][0]>1 and cstat[i-1][0]!=4):                          #ha balra érvényes cella van
+                if(cstat[i-1][0]<20 and cstat[i-1][0]>1 and cstat[i-1][0]!=4):                          #ha balra érvényes cella van
                     cstat[i-1][2][0]=cstat[i-1][2][0]+1                             #balra lévő cella colspan értékét növelje 1-el
                 if(cstat[i-1][0]<2 or cstat[i-1][0]==99 or cstat[i-1][0]==4):                          # ha cs -től balra üres cella vagy rs vagy canvas,menubar van akkor törölje
                     cellak[i].current(0)
@@ -1609,11 +1711,11 @@ def updatecell():
                     cellak[i].current(0)
                 if(cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<2 or cstat[i-4][0]==99 or cstat[i-4][0]==4)):  # ha cs -től balra 3-al cs, de utána üres cella vagy rs van akkor törölje
                     cellak[i].current(0)
-                if(i>0 and cstat[i-1][0]==98 and (cstat[i-2][0]<19 and cstat[i-2][0]>1 and cstat[i-2][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>0 and cstat[i-1][0]==98 and (cstat[i-2][0]<20 and cstat[i-2][0]>1 and cstat[i-2][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-2][2][0]=cstat[i-2][2][0]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>1 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<19 and cstat[i-3][0]>1 and cstat[i-3][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>1 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<20 and cstat[i-3][0]>1 and cstat[i-3][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-3][2][0]=cstat[i-3][2][0]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>2 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<19 and cstat[i-4][0]>1 and cstat[i-4][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>2 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<20 and cstat[i-4][0]>1 and cstat[i-4][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-4][2][0]=cstat[i-4][2][0]+1
         #check menubar only one widget possible
         counter=0
@@ -1899,7 +2001,23 @@ def kivalaszto2():
                     listboxablak(rc)
                 if(cstat[i][0]==18): 
                     scaleablak(rc)
+                if(cstat[i][0]==19): 
+                    spinablak(rc)
                 
+
+def clearlist(list,out_type):
+    list_new=[]
+    "remove '' and #... elements form list. It can return list (0) or tuple (1)"
+    for i in range(len(list)):
+            try:
+                if(list[i][0]!='#' and list[i]!=''):
+                    list_new.append(list[i])
+            except:
+                pass
+    if(out_type==1):
+        return tuple(list_new)
+    else:
+        return list_new
 
 
 def kiir(x):
@@ -1993,15 +2111,14 @@ def def_status():
 
 
 # Menu arguments
-f1, f2, f3, f11, f21, f31, f12, f22, f32, f13, f23, f33='','','','','','','','','','','',''
 welcometext='Tkinter GUI designer\nIt uses tkinter Grid geometry manager. (https://effbot.org/tkinterbook/grid.htm)\nYou will get pure Python tkinter code.\n\n1. Select the desired widgets*\n2. If you use rowsapan/colspan press "'"Check"'" button\n3. Press "'"Start"'" to generate codes\
 \n4. Set the opened options windows and Apply\n5. Press "'"Finalize"'" and copy the generated code with Ctrl+C\
 \n\nHint:\n- rowspan must be placed under the expanded widget\n- columnspan must be placed to right side of the widget\n- maximum 4 column and 4 rowspan cells can be selected for one widget \n  (rowspan/col.span=5)\
 \n- if you use col.span and/or rowspan press "'"Check"'" button to check your selection.\n  (all missplaced span selection will be reseted and common merged cells disabled)\
 \n- Canvas, Manubar does not accept col./rowspan\n- Open second session of Python IDLE and use it for checking the generated code\n\
-  without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas, Text with slide, Entry, Label, Combobox, Optionmenu,\nRadio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale\n'
+  without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas, Text with slide, Entry, Label, Combobox, Optionmenu,\nRadio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale, Spinbox\n'
 
-labtxt,labo='This is a label','N'
+#labtxt,labo='This is a label','N'
 su='k_ablak.mainloop()'
 
 selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
@@ -2009,13 +2126,13 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
                 '14: Radio (s)', '15: Message', '16: Univ.Frame',
-                '17: Listbox', '18: Scale', '98: colspan <',
-                '99: rowspan ^')
+                '17: Listbox', '18: Scale', '19: Spinbox',
+                '98: colspan <', '99: rowspan ^')
 
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.8.9")
+abl1.title("Tkinter GUI designer v0.9")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
