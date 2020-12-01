@@ -1741,13 +1741,8 @@ def toolbarablak(rc,frame_name='ablak'):
     gmb40aa0.grid(row=4, column=1, columnspan=1, rowspan=1, sticky=W)
     cmkei=Label(ablak, text='hint', foreground='black', background='orange')
     cmkei.grid(row=4, column=2,sticky=W)
-    toolbar_tip='First row: PNG file name (without extension name)\n\
-Select button images from prepared PNG icon file list or write\nthe name of your file (without extension) into entry field.\n\
-In this case please put your PNG files into ico folder.\n\
-For example: If path of your file is c\\myprog\\myprog.py, PNG files\n\
-must be in c:\\myprog\\ico\\\n\n\
-Second row: Tooltip text'
-
+    toolbar_tip='Select button images from prepared PNG icon file list or write\nthe name (without extension) of your own file into\n\
+entry field. In this case please put your PNG files into ico folder.'
     CreateToolTip(cmkei, text=toolbar_tip)
 
 
