@@ -25,6 +25,7 @@ Hint:
 
 Supported widgets: 
 Menubar, MenuButton, Button, Canvas, Text with scroll, Entry, Label, Combobox, Optionmenu,
-Radio, Message, Frame/LabelFrame (universal 2x2 widget selection), Listbox, Scale, Spinbox
+Radio, Message, Frame/LabelFrame (universal 2x2 widget selection), Listbox, Scale, Spinbox,
+Toolbar with Tooltip text (sample PNG files are in the package)
 
 << please download the user maual >>
