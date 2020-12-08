@@ -46,6 +46,7 @@
 # v0.9    Spinbox
 # v0.9.1  Progressbar
 # v0.9.2  Toolbar (buttons with images and tolltip text)
+# v0.9.3  Notebook added
 #
 # plans:
 #      * add more widgets: notebook
@@ -586,9 +587,10 @@ class Cimke:
         self.osszes=self.c1+'\n'+self.cv
         return self.osszes
 
-class Keret():
+class Keret:
     "Frame generator modul"
-    def __init__(self,rc,output):
+    def __init__(self,rc,output,nbframe):
+        self.nbframe=nbframe #notebook_frame name
         self.ftext=output[1] #frame text
         self.labo=output[0] #orientation
         self.keretszam=0
@@ -604,13 +606,17 @@ class Keret():
         self.krt_name=''
     def generator(self):
         self.krtszam=str(self.row)+str(self.col)
+        if(self.nbframe!='ablak'):
+            self.krt_name='kret'+self.krtszam+str(self.keretszam)+str(self.nbframe)
+        else:
+            self.krt_name='kret'+self.krtszam+str(self.keretszam)
+
         if(self.ftext==''): # if there is not any text: (normal) Frame
-            self.k1='kret'+self.krtszam+str(self.keretszam)+'=Frame(ablak, height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
+             self.k1=str(self.krt_name)+'=Frame('+str(self.nbframe)+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
         else:  # if there is any text: LabelFrame
-            self.k1='kret'+self.krtszam+str(self.keretszam)+'=ttk.LabelFrame(ablak, text='+"'"+self.ftext+"'"+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
-        self.kv='kret'+self.krtszam+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
+             self.k1=str(self.krt_name)+'=ttk.LabelFrame('+str(self.nbframe)+', text='+"'"+self.ftext+"'"+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
+        self.kv=str(self.krt_name)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
         self.osszes=self.k1+'\n'+self.kv
-        self.krt_name='kret'+self.krtszam+str(self.keretszam)
         return self.osszes, self.krt_name
 
 class Uzenet:
@@ -970,7 +976,38 @@ class Progressgen:
         self.osszes=self.pb1
         return self.osszes
 
-
+class Nbookgen:
+    "Progressbar generator modul"
+    def __init__(self,rc,inputlist):
+        self.nbframe=''
+        self.rc=rc
+        self.inputlist=inputlist
+        self.col=rc[0]
+        self.row=rc[1]
+        self.cspan=rc[2]
+        self.rspan=rc[3]
+        self.base_c=rc[4]
+        self.base_r=rc[5]
+        self.kret=''
+        self.keretszam=''
+        self.orient=inputlist[0] #widget orient.
+        self.count=int(inputlist[1]) #tab counter
+        self.nb1=''
+        self.nb2=''
+        self.nv=''
+    def generator(self):
+        self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
+        self.nb1=self.nb1+'nb'+str(self.keretszam)+'=ttk.Notebook(ablak)\nnb'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        for self.i in range(self.count):
+            self.nbframe='f'+str(self.i)
+            univablak(self.rc,self.nbframe)
+            self.nb2=self.nb2+'f'+str(self.i)+'=Frame(nb'+str(self.keretszam)+')\n'
+            self.nb2=self.nb2+'nb'+str(self.keretszam)+'.add(f'+str(self.i)+',text='+"'tab"+str(self.i)+"'"+')\n'
+        self.nv=self.nv+'nb'+str(self.keretszam)+'.select(f0)\n'
+        self.nv=self.nv+'nb'+str(self.keretszam)+'.enable_traversal()'
+        self.osszes=self.nb1+self.nb2+self.nv
+        return self.osszes
+    
         
 #---- Option windows
 # menubar/menubutton windows    
@@ -1334,13 +1371,16 @@ def cimkeablak_s(rc,frame_name='ablak'):
     kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
-def keretablak(rc,output): #col-row, orientation
+def keretablak(rc,output,nbframe): #col-row, orientation
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
-    keret=Keret(rc,output)
+    keret=Keret(rc,output,nbframe)
     osszes,keretszam=keret.generator()
-    kiir('#-'+str(m)+'----Univ.Frame: c'+str(c)+', r'+str(r)+'------')
+    if (nbframe=='ablak'):
+        kiir('#-'+str(m)+'----Univ.Frame: c'+str(c)+', r'+str(r)+'------')
+    else:
+        kiir('#-'+str(m)+'----Notebook: (tab'+str(nbframe)[1:]+') c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
     return keretszam
 
@@ -1747,16 +1787,49 @@ In this case please put your PNG files into ico folder.\n\
 For example: If path of your file is c\\myprog\\myprog.py, PNG files\n\
 must be in c:\\myprog\\ico\\\n\n\
 Second row: Tooltip text'
-
     CreateToolTip(cmkei, text=toolbar_tip)
 
+def nbookablak(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    def nb_ertek():
+        output=['','','','','',''] 
+        output[0]=chbox51aa0.get() #widget orien
+        output[1]=bmezo11.get() #tab nr
+        if(int(bmezo11.get())>10):
+            output[1]=10
+        nbk=Nbookgen(rc,output)
+        osszes=nbk.generator()
+        kiir('#-'+str(m)+'----Notebook: c'+str(c)+', r'+str(r)+'------')
+        kiir(osszes)
+        abl2.destroy()
+    abl2=Toplevel(abl1, width=250)
+    abl2.title('Notebook: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
+    ablak=Frame(abl2, relief='flat', borderwidth=1)
+    ablak.grid(row=0, column=0)
+    bmezo11=Entry(ablak, width=3) #length
+    bmezo11.grid(row=5, column=4, columnspan=1, rowspan=1, sticky=N)
+    bmezo11.insert(0,'2')
 
-def univablak(rc):
+    chbox51aa0=Combobox(ablak, width=4)
+    chbox51aa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox51aa0.current(0)
+    chbox51aa0.grid(row=5, column=2,sticky=N)
+    cmke03aa0=Label(ablak, text='Orient.:')
+    cmke03aa0.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=NW)
+    cmke03aa1=Label(ablak, text='Tab number:\n   (max 10)')
+    cmke03aa1.grid(row=5, column=3, columnspan=1, rowspan=1, sticky=W)
+    gmb50aa0=Button(ablak,text='Apply',command=nb_ertek)
+    gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    
+
+def univablak(rc,nbframe='ablak'):
     def uni_ertek():
         output=['',''] # orientation, frameText
         output[0]=chbox200.get() #orientaion
         output[1]=bmezo.get()    #frame text
-        kivalaszto_uni(rc,cells_uni,output)
+        kivalaszto_uni(rc,cells_uni,output,nbframe)
         abl2.destroy()
     selection_uni1_1=('00: ---','02: MenuButton','03: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
@@ -1782,10 +1855,14 @@ def univablak(rc):
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
                 '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
                 '20: Progressbar','21: Toolbar','98: colspan <', '99: rowspan ^')
+    nb_select=0
     base_col=rc[0]              
     base_row=rc[1]
     abl2=Toplevel(abl1)
-    abl2.title('Universal widget frame: c'+str(base_col)+', r'+str(base_row))        
+    if (nbframe=='ablak'):
+        abl2.title('Universal widget frame: c'+str(base_col)+', r'+str(base_row))
+    else:
+        abl2.title('Notebook widget frame (tab '+str(nbframe)[1:]+'): c'+str(base_col)+', r'+str(base_row))
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     kret12=Frame(ablak, relief='flat', borderwidth=1)
@@ -1901,12 +1978,15 @@ def updatecell_uni(cells_uni):
                 cells_uni[i+3].current(0)
         return cstat
 
-def kivalaszto_uni(base_rc,cells_uni,output):
+def kivalaszto_uni(base_rc,cells_uni,output,nbframe):
         cstat=updatecell_uni(cells_uni)
-        keretszam=keretablak(base_rc,output)
+        keretszam=keretablak(base_rc,output,nbframe)
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
-                rc=['','','','',base_rc[0],base_rc[1],0,'uni'] #c,r,rspan,cspan,base_c, base_r
+                if (nbframe!='ablak'): # if it is opened from Notebook
+                    rc=['','','','',str(base_rc[0])+str(nbframe),base_rc[1],0,'nbook/uni'] #c,r,rspan,cspan,base_c, base_r
+                else:    
+                    rc=['','','','',base_rc[0],base_rc[1],0,'uni'] #c,r,rspan,cspan,base_c, base_r
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
@@ -2304,6 +2384,8 @@ def kivalaszto2():
                     progressablak(rc)
                 if(cstat[i][0]==21): 
                     toolbarablak(rc)
+                if(cstat[i][0]==22): 
+                    nbookablak(rc)
 
 def clearenter(text):
     "replace in text enters with space"
@@ -2428,7 +2510,7 @@ welcometext='Tkinter GUI designer\nIt uses tkinter Grid geometry manager. (https
 \n- if you use col.span and/or rowspan press "'"Check"'" button to check your selection.\n  (all missplaced span selection will be reseted and common merged cells disabled)\
 \n- Canvas, Manubar does not accept col./rowspan\n- Open second session of Python IDLE and use it for checking the generated code\n\
   without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas, Text with slide, Entry, Label, Combobox, Optionmenu,\nRadio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale, Spinbox, Progressbar,\n\
-Toolbar (buttons with images and Tooltip texts)'
+Toolbar (buttons with images and Tooltip texts), Notebook'
 
 su='k_ablak.mainloop()'
 toolbar_counter=0
@@ -2438,12 +2520,13 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
                 '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
                 '14: Radio (s)', '15: Message', '16: Univ.Frame',
                 '17: Listbox', '18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar', '98: colspan <', '99: rowspan ^')
+                '20: Progressbar','21: Toolbar', '22: Notebook',
+                '98: colspan <', '99: rowspan ^')
 
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.2")
+abl1.title("Tkinter GUI designer v0.9.3")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
