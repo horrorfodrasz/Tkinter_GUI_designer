@@ -47,16 +47,15 @@
 # v0.9.1  Progressbar
 # v0.9.2  Toolbar (buttons with images and tolltip text)
 # v0.9.3  Notebook added
+# v0.9.4  Widget selection save/load
 #
-# plans:
-#      * add more widgets: notebook
-#      * save cell selection
 #
 #
 from tkinter import *
 import tkinter as tk
 from tkinter.ttk import *
 from tkinter import colorchooser
+from tkinter import filedialog
 
 class ToolTip(object):
 #source:
@@ -2335,6 +2334,7 @@ def kivalaszto2():
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
+                submenu00aa1.entryconfig(2,label="Restart") # Start menu to Restart
                 rc=['','','','','a','a',0,'m'] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
@@ -2415,6 +2415,7 @@ def clearlist(list,out_type):
 def kiir(x):
     if(x!=''):
         gomb2.configure(state=NORMAL) #Finalize button to normal state
+        submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
         text1.insert(INSERT,x)        #text insert
         text1.insert(INSERT,'\n')
 
@@ -2425,6 +2426,7 @@ def finalize():
     text1.insert(1.0,s1_f) #insert to the begining
     text1.insert(END,su)   #insert to the end
     gomb2.configure(state=DISABLED) # Disable to avoid repeated button click
+    submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
 
 def colorset(): #color selection modul
     a=colorchooser.askcolor(initialcolor='#ff0000')
@@ -2445,11 +2447,55 @@ def reset2():
         i.configure(state=NORMAL)
     def_status() # reset all selction cells
     gomb.configure(text="Start")
-    gomb2.configure(state=DISABLED) #Finalize button ON
+    submenu00aa1.entryconfig(2,label="Start") # Start menu
+    gomb2.configure(state=DISABLED) #Finalize button OFF
+    submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
     text1.delete(1.0,END) #Erase text area
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
             widget.destroy()
+
+def fileopen(): #load widget selection
+    filename=filedialog.askopenfilename(filetypes=[("TKinterGUI","*.tki"),("All","*.*")])
+    if (filename!=''): 
+        fileobjekt=open(filename,'r') 
+        tk_file=fileobjekt.read()
+        fileobjekt.close() 
+        savestr2cell(tk_file)
+        
+  
+def filesave(): # save widget selection
+    tk_file=cell2savestr()
+    filename=filedialog.asksaveasfilename(filetypes=[("TKinterGUI","*.tki")],defaultextension='.tki') 
+    if (filename!=''): 
+        fileobjekt=open(filename,'w')
+        fileobjekt.write(tk_file)
+        fileobjekt.close() 
+
+def cell2savestr(): # cell state list convert string
+    cstr=''
+    cstat=updatecell()
+    for i in range(len(cstat)):
+        cstr=cstr+str(cstat[i][0])+','
+    return cstr
+
+def savestr2cell(cstr): # save string convert to cell state list
+    x=''
+    counter=0
+    for i in range(len(cstr)):
+        if (cstr[i]!=','):
+            x=x+cstr[i]
+        else:
+            if(x=='98'): # colspan index 23
+                x='23'
+            if(x=='99'): # rowspan index 24 
+                x='24'
+            cellak[counter].current(int(x))
+            counter=counter+1
+            x=''
+    updatecell()
+        
+        
 
 def def_status():
     i1_1.current(0)
@@ -2526,7 +2572,7 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.3")
+abl1.title("Tkinter GUI designer v0.9.4")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
@@ -2685,6 +2731,21 @@ title_entry=Entry(titlekeret, width=30)
 title_entry.insert(0, "My window")
 title_entry.grid(row=0, column=1, sticky=E)
 
+menubar00aa=Menu(abl1)
+submenu00aa0=Menu(menubar00aa, tearoff=0)
+menubar00aa.add_cascade(label='File', menu=submenu00aa0)
+submenu00aa0.add_separator()
+submenu00aa0.add_command(label='Open widget selection', command=fileopen)
+submenu00aa0.add_command(label='Save widget selection', command=filesave)
+submenu00aa1=Menu(menubar00aa, tearoff=0)
+menubar00aa.add_cascade(label='Function', menu=submenu00aa1)
+submenu00aa1.add_separator()
+submenu00aa1.add_command(label='Check', command=updatecell)
+submenu00aa1.add_command(label='Start', command=kivalaszto2)
+submenu00aa1.add_command(label='Finalize', command=finalize, state=DISABLED)
+submenu00aa1.add_separator()
+submenu00aa1.add_command(label='Reset', command=reset2)
+abl1.config(menu=menubar00aa)
 
 
 textkeret=Frame(abl1, relief='flat', borderwidth=1)
