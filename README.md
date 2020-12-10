@@ -22,6 +22,7 @@ Hint:
   without closing the running GUI generator
 - widget name with (s) means simple. It uses default parameters and does not open
   option window.
+- You can save and load widget selection
 
 Supported widgets: 
 Menubar, MenuButton, Button, Canvas, Text with scroll, Entry, Label, Combobox, Optionmenu,
