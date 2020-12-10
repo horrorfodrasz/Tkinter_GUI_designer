@@ -48,6 +48,7 @@
 # v0.9.2  Toolbar (buttons with images and tolltip text)
 # v0.9.3  Notebook added
 # v0.9.4  Widget selection save/load
+# v0.9.5  interface improved
 #
 #
 #
@@ -56,6 +57,7 @@ import tkinter as tk
 from tkinter.ttk import *
 from tkinter import colorchooser
 from tkinter import filedialog
+import webbrowser
 
 class ToolTip(object):
 #source:
@@ -98,11 +100,14 @@ def CreateToolTip(widget, text):
 class Boxablak:
     "Checkbox and option selection window modul"
     def __init__(self,abl1,rc,frame_name):
+        global window_counter
+        window_counter=window_counter+1
         self.frame_name=frame_name
         self.rc=rc
         self.c=rc[0]
         self.r=rc[1]
-        self.m=rc[7]                   
+        self.m=rc[7]
+        self.name=selection[rc[6]][3:]
         self.cspan=rc[2]
         self.rspan=rc[3]        
         self.base_c=rc[4]
@@ -191,7 +196,9 @@ class Boxablak:
         self.chbox2.grid(row=4, column=0,sticky=S)
         if (self.tipus==11 or self.tipus==13):
             self.chbox2.configure(state=DISABLED)
+        self.abl2.protocol('WM_DELETE_WINDOW', self.on_exit)
     def cb_ertek(self):
+        global window_counter
         self.output[0],self.output[1],self.output[2]=self.bmezo1_1_1.get(),self.bmezo1_1_2.get(),self.bmezo1_1_3.get() #field value to output list
         self.output[3],self.output[4],self.output[5]=self.bmezo1_2_1.get(),self.bmezo1_2_2.get(),self.bmezo1_2_3.get() #first 12 elements of combox values
         self.output[6],self.output[7],self.output[8]=self.bmezo2_1_1.get(),self.bmezo2_1_2.get(),self.bmezo2_1_3.get()
@@ -203,6 +210,9 @@ class Boxablak:
         if (self.output[17]):
             self.output[17]=self.cellaw()
         self.abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget code generated')
+        check_state()
         if (self.tipus==9):
             self.comboxablak()
         if (self.tipus==11):
@@ -212,7 +222,7 @@ class Boxablak:
     def kiir(self,x):
         self.x=x
         if(self.x!=''):
-            gomb2.configure(state=NORMAL) #activate Finalize button
+            #gomb2.configure(state=NORMAL) #activate Finalize button
             text1.insert(INSERT,self.x)   #text insert
             text1.insert(INSERT,'\n')
     def cellaw(self): #determine cell width
@@ -236,6 +246,12 @@ class Boxablak:
         self.osszes=self.radiobox.generator()
         self.kiir('#-'+str(self.m)+'----Radio: c'+str(self.c)+', r'+str(self.r)+'------')
         self.kiir(self.osszes)
+    def on_exit(self):
+        global window_counter
+        cellak[self.rc[8]].current(0)
+        self.abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget closed.')
         
 # ------ MenuBar generator
 class Menbar:
@@ -1011,11 +1027,15 @@ class Nbookgen:
 #---- Option windows
 # menubar/menubutton windows    
 def menbarablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     tipus=rc[6]
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def mb_ertek():
+        global window_counter
         field1=(text11aa0.get(0.0,END).split('\n'))
         field2=(text12aa0.get(0.0,END).split('\n'))
         field3=(text13aa0.get(0.0,END).split('\n'))
@@ -1028,12 +1048,25 @@ def menbarablak(rc,frame_name='ablak'):
             kiir('#-'+str(m)+'----Menubar: c'+str(c)+', r'+str(r)+'----')
             kiir(osszes)
             abl2.destroy()
+            window_counter=window_counter-1
+            msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+            check_state()
         if(tipus==2):
             mbutt=Menuk(rc,output,frame_name)
             osszes=mbutt.proc()
             kiir('#-'+str(m)+'----Menubutton: c'+str(c)+', r'+str(r)+'----')
             kiir(osszes)
             abl2.destroy()
+            window_counter=window_counter-1
+            msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+            check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     if(tipus==1):
         abl2.title('Menubar options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
@@ -1092,18 +1125,23 @@ def menbarablak(rc,frame_name='ablak'):
     scrolly13aa0=Scrollbar(kret13aa, orient=VERTICAL,command=text13aa0.yview)
     text13aa0['yscrollcommand']=scrolly13aa0.set
     text13aa0.grid(row=0, column=0,sticky=N)
-    scrolly13aa0.grid(row=0, column=1 ,sticky=N+S)    
+    scrolly13aa0.grid(row=0, column=1 ,sticky=N+S)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 
 def menuablak(rc,frame_name='ablak'):
     menbarablak(rc,frame_name)
 
 def listboxablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     tipus=rc[6]
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def mb_ertek():
+        global window_counter
         field1=(text11aa0.get(0.0,END).split('\n'))
         labo=chboxaa0.get()
         w=lbmezo1.get()
@@ -1113,6 +1151,16 @@ def listboxablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Listbox: c'+str(c)+', r'+str(r)+'----')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1, width=300)
     abl2.title('c'+str(c)+', r'+str(r)+' ('+str(m)+') Listbox options')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1142,15 +1190,20 @@ def listboxablak(rc,frame_name='ablak'):
     text11aa0.grid(row=0, column=0,sticky=N)
     text11aa0.insert(INSERT,'List element1\nList element2')
     scrolly11aa0.grid(row=0, column=1 ,sticky=N+S)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 
 def gombablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
+    name=selection[rc[6]][3:]
     def g_ertek():
+        global window_counter
         output=['','','', #button1, 2 ,3
                 '','','', #button4, 5 ,6
                 '','','', #button7, 8 ,9
@@ -1166,6 +1219,16 @@ def gombablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Button: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Button options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     gmb=Button(abl2,text='Apply',command=g_ertek)
@@ -1201,14 +1264,19 @@ def gombablak(rc,frame_name='ablak'):
     chbox1g['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
     chbox1g.current(0)
     chbox1g.grid(row=2, column=0,sticky=S)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def vaszonablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
+    name=selection[rc[6]][3:]
     def v_ertek():
+        global window_counter
         output=['','','',''] # width, height, color, irány
         try:
             output[0]=int(bmezo1.get())
@@ -1225,6 +1293,16 @@ def vaszonablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Canvas: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Canvas options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')       
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1249,14 +1327,19 @@ def vaszonablak(rc,frame_name='ablak'):
     gmb0.grid(row=0, column=0)
     cmke1=Label(ablak, text='orientation/width/height/color:')
     cmke1.grid(row=1, column=0,sticky=E)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 def szovegmezablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
     rspan=rc[2]
     cspan=rc[3]
+    name=selection[rc[6]][3:]
     def t_ertek():
+       global window_counter
        output=['','','','','','',''] # w,h,orient,slide,def.text,bg.color, text.color
        try:
            output[0]=int(bmezo3.get())
@@ -1278,7 +1361,16 @@ def szovegmezablak(rc,frame_name='ablak'):
        kiir('#-'+str(m)+'----Text: c'+str(c)+', r'+str(r)+'------')
        kiir(osszes) 
        abl2.destroy()
-    
+       window_counter=window_counter-1
+       msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+       check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Text options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')        
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1317,6 +1409,7 @@ def szovegmezablak(rc,frame_name='ablak'):
     cmke2.grid(row=2, column=0,sticky=E)
     cmke3=Label(ablak, text='bg color/text color')
     cmke3.grid(row=3, column=1, columnspan=2, sticky=E)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 
 def beviteliablak(rc,frame_name='ablak'):
@@ -1330,10 +1423,14 @@ def beviteliablak(rc,frame_name='ablak'):
 
 
 def cimkeablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def c_ertek():
+        global window_counter
         labtxt=bmezo0.get()
         labo=chbox0.get()
         cimke=Cimke(rc,labtxt,labo,frame_name)
@@ -1341,6 +1438,16 @@ def cimkeablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Label options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')        
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1358,6 +1465,7 @@ def cimkeablak(rc,frame_name='ablak'):
     chbox0.grid(row=1, column=2, sticky=EW)
     gmb0=Button(ablak,text='Apply',command=c_ertek)
     gmb0.grid(row=1, column=0, sticky=S)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
  
 def cimkeablak_s(rc,frame_name='ablak'):
     c=rc[0]              
@@ -1421,6 +1529,7 @@ def omenuablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     lista=['One','Two','Three', #cells 0-11
            '','','',
            '','','',
@@ -1441,6 +1550,7 @@ def radioxablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     lista=['One','Two','Three', #cells 0-11
            '','','',
            '','','',
@@ -1453,10 +1563,14 @@ def radioxablak_s(rc,frame_name='ablak'):
     kiir(osszes)
 
 def scaleablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def sc_ertek():
+        global window_counter
         output=['','','','','','','','','','',''] 
         output[0]=bmezo12.get() #from
         output[1]=bmezo13.get() #to
@@ -1474,6 +1588,16 @@ def scaleablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Scale: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Sacale options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1544,12 +1668,17 @@ def scaleablak(rc,frame_name='ablak'):
     cmke43aa0.grid(row=4, column=3, columnspan=1, rowspan=1, sticky=N)
     gmb50aa0=Button(ablak,text='Apply',command=sc_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def progressablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def sc_ertek():
+        global window_counter
         output=['','','','','',''] 
         output[0]=bmezo12.get() #maximum
         output[1]=bmezo13.get() #value
@@ -1562,6 +1691,16 @@ def progressablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Progressbar: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1)
     abl2.title('Progressbar options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1609,13 +1748,18 @@ def progressablak(rc,frame_name='ablak'):
     cmke43aa0.grid(row=4, column=3, columnspan=1, rowspan=1, sticky=N)
     gmb50aa0=Button(ablak,text='Apply',command=sc_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 def spinablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     tipus=rc[6]
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def sp_ertek():
+        global window_counter
         output=['','','','','','']
         lista=text11aa0.get(0.0,END).split('\n')
         output[0]=clearlist(lista,1) #list area
@@ -1632,6 +1776,16 @@ def spinablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Spinbox: c'+str(c)+', r'+str(r)+'----')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1, width=300)
     abl2.title('Spinbox options: c'+str(c)+', r'+str(r)+' ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1679,17 +1833,21 @@ def spinablak(rc,frame_name='ablak'):
     bmezo32=Entry(kretab, width=7)
     bmezo32.grid(row=3, column=0, sticky=N)
     bmezo32.insert(0,'10')
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def toolbarablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     v=('---','addressbook','advanced','archive','back','bookmarked','calculator','copy','deletearchive',
        'down','edit','exclamation','folder','forward','help','ichat','info','install','lock',
        'newarchive','newdoc','newmail','notebook','ok','open','pause','picture','play','plus',
        'preferences','refresh','save','search','server','smiley','smileysad','stop')
     def tb_ertek():
-        global toolbar_counter
+        global toolbar_counter, window_counter
         toolbar_counter=toolbar_counter+1
         output=['','','','','','','','','','',''] 
         output[0]=chbox11aa0.get() #button 1. image name
@@ -1710,6 +1868,16 @@ def toolbarablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Toolbar: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1, width=300)
     abl2.title('Toolbar options: c'+str(c)+', r'+str(r)+' ('+str(m)+')')        
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1787,12 +1955,17 @@ For example: If path of your file is c\\myprog\\myprog.py, PNG files\n\
 must be in c:\\myprog\\ico\\\n\n\
 Second row: Tooltip text'
     CreateToolTip(cmkei, text=toolbar_tip)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def nbookablak(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
     def nb_ertek():
+        global window_counter
         output=['','','','','',''] 
         output[0]=chbox51aa0.get() #widget orien
         output[1]=bmezo11.get() #tab nr
@@ -1803,6 +1976,16 @@ def nbookablak(rc,frame_name='ablak'):
         kiir('#-'+str(m)+'----Notebook: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: Notebook frame widget(s) opened / code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
     abl2=Toplevel(abl1, width=250)
     abl2.title('Notebook: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
@@ -1821,15 +2004,30 @@ def nbookablak(rc,frame_name='ablak'):
     cmke03aa1.grid(row=5, column=3, columnspan=1, rowspan=1, sticky=W)
     gmb50aa0=Button(ablak,text='Apply',command=nb_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 
 def univablak(rc,nbframe='ablak'):
+    global window_counter
+    window_counter=window_counter+1
+    name=selection[rc[6]][3:]
     def uni_ertek():
+        global window_counter
         output=['',''] # orientation, frameText
         output[0]=chbox200.get() #orientaion
         output[1]=bmezo.get()    #frame text
         kivalaszto_uni(rc,cells_uni,output,nbframe)
         abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: univ frame widget(s) opened / code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(base_col)+', r'+str(base_row)+' '+str(name)+' widget closed')
+        check_state()
     selection_uni1_1=('00: ---','02: MenuButton','03: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
@@ -1858,6 +2056,7 @@ def univablak(rc,nbframe='ablak'):
     base_col=rc[0]              
     base_row=rc[1]
     abl2=Toplevel(abl1)
+    
     if (nbframe=='ablak'):
         abl2.title('Universal widget frame: c'+str(base_col)+', r'+str(base_row))
     else:
@@ -1909,7 +2108,15 @@ def univablak(rc,nbframe='ablak'):
     cmke200=Label(kret20, text='')
     cmke200.grid(row=0, column=0,sticky=N)
     cells_uni=[u1_1, u1_2,
-               u2_1, u2_2] 
+               u2_1, u2_2]
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
+
+
+def github():
+    webbrowser.open_new(r"https://github.com/horrorfodrasz/Tkinter_GUI_designer")
+
+def contact():
+    msg.configure(text='Gmiki (2020) --- email: epromirok(a)gmail(.)com')
 
 #ToolTip class for button w. image (toolbar) tooltip
 str_tooltip='class ToolTip(object):\n\
@@ -1983,14 +2190,15 @@ def kivalaszto_uni(base_rc,cells_uni,output,nbframe):
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 if (nbframe!='ablak'): # if it is opened from Notebook
-                    rc=['','','','',str(base_rc[0])+str(nbframe),base_rc[1],0,'nbook/uni'] #c,r,rspan,cspan,base_c, base_r
+                    rc=['','','','',str(base_rc[0])+str(nbframe),base_rc[1],0,'nbook/uni',0] #c,r,rspan,cspan,base_c, base_r, marker
                 else:    
-                    rc=['','','','',base_rc[0],base_rc[1],0,'uni'] #c,r,rspan,cspan,base_c, base_r
+                    rc=['','','','',base_rc[0],base_rc[1],0,'uni',0] #c,r,rspan,cspan,base_c, base_r, marker
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
                 rc[3]=cstat[i][2][1] #rowspan
                 rc[6]=cstat[i][0]    #save type selector
+                rc[8]=i              #cell index
                 if(cstat[i][0]==2):
                     menuablak(rc,keretszam)
                 if(cstat[i][0]==3):
@@ -2335,13 +2543,13 @@ def kivalaszto2():
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
                 submenu00aa1.entryconfig(2,label="Restart") # Start menu to Restart
-                rc=['','','','','a','a',0,'m'] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv
+                rc=['','','','','a','a',0,'m',0] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv, cell index
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
                 rc[2]=cstat[i][2][0] #colspan
                 rc[3]=cstat[i][2][1] #rowspan
                 rc[6]=cstat[i][0]    #save type selector
-                
+                rc[8]=i              #cell index
                 if(cstat[i][0]==1):
                     menbarablak(rc)
                 if(cstat[i][0]==2):
@@ -2386,6 +2594,22 @@ def kivalaszto2():
                     toolbarablak(rc)
                 if(cstat[i][0]==22): 
                     nbookablak(rc)
+#        window_counter=countwindows()
+#        msg.configure(text='opened windows: '+str(window_counter)+'; message:')
+#        started=1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: Adjust all option windows')
+        gomb2.configure(state=DISABLED) #Finalize button to normal state
+        submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu to normal state
+        check_state()
+
+def check_state():
+    global window_counter
+    if(window_counter==0):
+        gomb2.configure(state=NORMAL) #Finalize button to normal state
+        submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: All code generated. Press Finalize')
+
+        
 
 def clearenter(text):
     "replace in text enters with space"
@@ -2414,8 +2638,9 @@ def clearlist(list,out_type):
 
 def kiir(x):
     if(x!=''):
-        gomb2.configure(state=NORMAL) #Finalize button to normal state
-        submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
+        check_state()
+        #gomb2.configure(state=NORMAL) #Finalize button to normal state
+        #submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
         text1.insert(INSERT,x)        #text insert
         text1.insert(INSERT,'\n')
 
@@ -2427,22 +2652,25 @@ def finalize():
     text1.insert(END,su)   #insert to the end
     gomb2.configure(state=DISABLED) # Disable to avoid repeated button click
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
+    msg.configure(text='opened windows: '+str(window_counter)+'; message: Code finalized')
 
 def colorset(): #color selection modul
     a=colorchooser.askcolor(initialcolor='#ff0000')
     return a[1] # the needed color code is in a[1]
 
 def reset():
-    global toolbar_counter
+    global toolbar_counter, window_counter
     toolbar_counter=0
+    window_counter=0
     text1.delete(1.0,END) #erase text area
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
             widget.destroy()
 
 def reset2():
-    global toolbar_counter
+    global toolbar_counter, window_counter
     toolbar_counter=0
+    window_counter=0
     for i in cellak:
         i.configure(state=NORMAL)
     def_status() # reset all selction cells
@@ -2454,6 +2682,7 @@ def reset2():
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
             widget.destroy()
+    msg.configure(text='opened windows: '+str(window_counter)+'; message: Select widgets')
 
 def fileopen(): #load widget selection
     filename=filedialog.askopenfilename(filetypes=[("TKinterGUI","*.tki"),("All","*.*")])
@@ -2462,6 +2691,7 @@ def fileopen(): #load widget selection
         tk_file=fileobjekt.read()
         fileobjekt.close() 
         savestr2cell(tk_file)
+    msg.configure(text='opened windows: '+str(window_counter)+'; message: Widget selection file loaded')
         
   
 def filesave(): # save widget selection
@@ -2470,7 +2700,8 @@ def filesave(): # save widget selection
     if (filename!=''): 
         fileobjekt=open(filename,'w')
         fileobjekt.write(tk_file)
-        fileobjekt.close() 
+        fileobjekt.close()
+    msg.configure(text='opened windows: '+str(window_counter)+'; message: Widget selection file saved')
 
 def cell2savestr(): # cell state list convert string
     cstr=''
@@ -2495,6 +2726,16 @@ def savestr2cell(cstr): # save string convert to cell state list
             x=''
     updatecell()
         
+def countwindows():
+    counter=0
+    for widget in abl1.winfo_children(): #close all sub-windows
+        if isinstance(widget, tk.Toplevel):
+            counter=counter+1
+    print(counter)
+    return counter
+
+
+
         
 
 def def_status():
@@ -2560,6 +2801,8 @@ Toolbar (buttons with images and Tooltip texts), Notebook'
 
 su='k_ablak.mainloop()'
 toolbar_counter=0
+window_counter=0
+started=0
 selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
                 '05: Text', '06: Entry','07: Label',
                 '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
@@ -2572,7 +2815,7 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.4")
+abl1.title("Tkinter GUI designer v0.9.5")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
@@ -2704,7 +2947,7 @@ cmke2x=Label(frame1, foreground='green',text='c1')
 cmke3x=Label(frame1, foreground='green',text='c2')
 cmke4x=Label(frame1, foreground='green',text='c3')
 cmke5x=Label(frame1, foreground='green',text='c4')
-cmkemsg=Label(abl1, foreground='black',text='Gmiki (2020) (epromirok(a)gmail(.)com)        ---       https://github.com/horrorfodrasz/Tkinter_GUI_designer')
+msg=Label(abl1, foreground='black',text='opened windows: '+str(window_counter)+'; message: Select widgets')
 
 
 cmke1.grid(row=1, column=0,sticky=N)
@@ -2721,8 +2964,7 @@ cmke2x.grid(row=0, column=2,sticky=N)
 cmke3x.grid(row=0, column=3,sticky=N)
 cmke4x.grid(row=0, column=4,sticky=N)
 cmke5x.grid(row=0, column=5,sticky=N)
-cmkemsg.grid(row=6, column=1, columnspan=5 ,sticky=W)
-
+msg.grid(row=6, column=1, columnspan=5 ,sticky=W)
 titlekeret=Frame(abl1, borderwidth=0)
 titlekeret.grid(row=0, column=1)
 titlcmke=Label(titlekeret, text='Window title:')
@@ -2745,6 +2987,11 @@ submenu00aa1.add_command(label='Start', command=kivalaszto2)
 submenu00aa1.add_command(label='Finalize', command=finalize, state=DISABLED)
 submenu00aa1.add_separator()
 submenu00aa1.add_command(label='Reset', command=reset2)
+submenu00aa2=Menu(menubar00aa, tearoff=0)
+menubar00aa.add_cascade(label='Info', menu=submenu00aa2)
+submenu00aa2.add_separator()
+submenu00aa2.add_command(label='Open Github', command=github)
+submenu00aa2.add_command(label='Contact', command=contact)
 abl1.config(menu=menubar00aa)
 
 
