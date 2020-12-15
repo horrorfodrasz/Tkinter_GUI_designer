@@ -49,7 +49,7 @@
 # v0.9.3  Notebook added
 # v0.9.4  Widget selection save/load
 # v0.9.5  interface improved
-#
+# v0.9.6  hints
 #
 #
 from tkinter import *
@@ -120,7 +120,7 @@ class Boxablak:
                      '','','',
                      '','','',
                      '','','','',   #text field texts 1,2,3,4
-                     '','']            #orient.
+                     '','']         #orient.
         self.abl1=abl1
         self.abl2=Toplevel(self.abl1)
         if(self.tipus==9):
@@ -187,7 +187,7 @@ class Boxablak:
         self.gmb1=Button(self.kret60,text='Apply',command=self.cb_ertek)
         self.gmb1.grid(row=0, column=0)
         self.chbox1=Combobox(self.ablak, width=4)
-        self.chbox1['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+        self.chbox1['values']=orient_values
         self.chbox1.current(0)
         self.chbox1.grid(row=2, column=0,sticky=S)
         self.chbox2=Combobox(self.ablak, width=4)
@@ -196,6 +196,9 @@ class Boxablak:
         self.chbox2.grid(row=4, column=0,sticky=S)
         if (self.tipus==11 or self.tipus==13):
             self.chbox2.configure(state=DISABLED)
+        self.cmkei=Label(self.ablak, text='hint', foreground='black', background='orange')
+        self.cmkei.grid(row=0, column=0,sticky=S)
+        CreateToolTip(self.cmkei, text=combox_tip)
         self.abl2.protocol('WM_DELETE_WINDOW', self.on_exit)
     def cb_ertek(self):
         global window_counter
@@ -1080,17 +1083,21 @@ def menbarablak(rc,frame_name='ablak'):
         chboxaa0=Combobox(kretaa, width=4, state=DISABLED)
     else:
         chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
-    chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chboxaa0['values']=orient_values
     chboxaa0.current(0)
     chboxaa0.grid(row=0, column=1,sticky=N)
     cmkeaa0=Label(kretaa, text='')
     cmkeaa0.grid(row=0, column=0,sticky=N)
     cmke10aa0=Label(ablak, text='Mainmenu (1st row) ->')
     cmke10aa0.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=5, column=1,sticky=W)
     if(tipus==1):
-        cmke20aa0=Label(ablak, text='Submenus ->{\nseparate:  -\ncheckbox: # (e.g: #yes)')
+        cmke20aa0=Label(ablak, text='Submenus ->{\nseparate:  -\ncheckbox: #')
+        CreateToolTip(cmkei, text=menubar_tip)
     else:
         cmke20aa0=Label(ablak, text='Submenus ->{')
+        CreateToolTip(cmkei, text=menubutton_tip)
     cmke20aa0.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=E)
     cmke30aa0=Label(ablak, text='orient.')
     cmke30aa0.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=S)
@@ -1168,7 +1175,7 @@ def listboxablak(rc,frame_name='ablak'):
     kretaa=Frame(ablak, relief='flat', borderwidth=1)
     kretaa.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=N)
     chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
-    chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chboxaa0['values']=orient_values
     chboxaa0.current(0)
     chboxaa0.grid(row=2, column=0,sticky=N)
     lbmezo1=Entry(kretaa, width=6)
@@ -1190,6 +1197,9 @@ def listboxablak(rc,frame_name='ablak'):
     text11aa0.grid(row=0, column=0,sticky=N)
     text11aa0.insert(INSERT,'List element1\nList element2')
     scrolly11aa0.grid(row=0, column=1 ,sticky=N+S)
+    cmkei=Label(kretaa, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=5, column=0,sticky=S)
+    CreateToolTip(cmkei, text=listbox_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 
@@ -1261,9 +1271,12 @@ def gombablak(rc,frame_name='ablak'):
     bmezof3_3.grid(row=3, column=3)
     gmb.grid(row=3,column=0)
     chbox1g=Combobox(abl2, width=4)
-    chbox1g['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox1g['values']=orient_values
     chbox1g.current(0)
     chbox1g.grid(row=2, column=0,sticky=S)
+    cmkei=Label(abl2, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=1, column=0,sticky=N)
+    CreateToolTip(cmkei, text=button_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def vaszonablak(rc,frame_name='ablak'):
@@ -1308,7 +1321,7 @@ def vaszonablak(rc,frame_name='ablak'):
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     chbox1=Combobox(ablak, width=4)
-    chbox1['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox1['values']=orient_values
     chbox1.current(0)
     chbox1.grid(row=1, column=1,sticky=W)
     bmezo1=Entry(ablak, width=14)
@@ -1325,8 +1338,17 @@ def vaszonablak(rc,frame_name='ablak'):
     kret60.grid(row=6, column=0, sticky=N)
     gmb0=Button(kret60,text='Apply',command=v_ertek)
     gmb0.grid(row=0, column=0)
-    cmke1=Label(ablak, text='orientation/width/height/color:')
-    cmke1.grid(row=1, column=0,sticky=E)
+    cmke1=Label(ablak, text='orient:')
+    cmke1.grid(row=0, column=1,sticky=S)
+    cmke2=Label(ablak, text='width:')
+    cmke2.grid(row=0, column=2,sticky=S)
+    cmke3=Label(ablak, text='height:')
+    cmke3.grid(row=0, column=3,sticky=S)
+    cmke4=Label(ablak, text='color:')
+    cmke4.grid(row=0, column=4,sticky=S)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=0, column=0,sticky=S)
+    CreateToolTip(cmkei, text=canvas_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 def szovegmezablak(rc,frame_name='ablak'):
@@ -1376,39 +1398,50 @@ def szovegmezablak(rc,frame_name='ablak'):
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     bmezo0=Entry(ablak)
-    bmezo0.grid(row=0, column=1,columnspan=4,sticky=E+W)
+    bmezo0.grid(row=1, column=1,columnspan=4,sticky=E+W)
     chbox3=Combobox(ablak, width=4)
-    chbox3['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox3['values']=orient_values
     chbox3.current(0)
-    chbox3.grid(row=2, column=1,sticky=W)
+    chbox3.grid(row=3, column=1,sticky=E)
     bmezo3=Entry(ablak, width=14)
-    bmezo3.grid(row=2, column=2,sticky=N)
+    bmezo3.grid(row=3, column=2,sticky=N)
     bmezo3.insert(0,'10')
     bmezo4=Entry(ablak, width=14)
-    bmezo4.grid(row=2, column=3,sticky=N)
+    bmezo4.grid(row=3, column=3,sticky=N)
     bmezo4.insert(0,'10')
     chbox4=Combobox(ablak)
-    chbox4['values']=('1: w/o slide','2: w vertical slide','3: w horizontal slide','4: with v/h slide')
+    chbox4['values']=('1: w/o scroll','2: w vertical scroll','3: w horizontal scroll','4: with v/h scroll')
     chbox4.current(0)
-    chbox4.grid(row=2, column=4,sticky=W)
+    chbox4.grid(row=3, column=4,sticky=W)
     chbox5=Combobox(ablak, width=11)
     chbox5['values']=('white','light yellow','snow','bisque','gray','cyan','sienna1','thistle','pick a color')
     chbox5.current(0)
-    chbox5.grid(row=3, column=3,sticky=W)
+    chbox5.grid(row=5, column=3,sticky=W)
     chbox6=Combobox(ablak)
     chbox6['values']=('black','gray','cyan','thistle','pick a color')
     chbox6.current(0)
-    chbox6.grid(row=3, column=4,sticky=W)
+    chbox6.grid(row=5, column=4,sticky=W)
     kret60=Frame(ablak, relief='flat', borderwidth=1)
-    kret60.grid(row=6, column=0, sticky=N)
+    kret60.grid(row=5, column=0, sticky=N)
     gmb0=Button(kret60,text='Apply',command=t_ertek)
     gmb0.grid(row=0, column=0)
     cmke0=Label(ablak, text='default text')
-    cmke0.grid(row=0, column=0,sticky=E)
-    cmke2=Label(ablak, text='orientation/width/height/slide')
-    cmke2.grid(row=2, column=0,sticky=E)
-    cmke3=Label(ablak, text='bg color/text color')
-    cmke3.grid(row=3, column=1, columnspan=2, sticky=E)
+    cmke0.grid(row=0, column=1,sticky=S)
+    cmke2=Label(ablak, text='orient:')
+    cmke2.grid(row=2, column=1,sticky=E)
+    cmke2=Label(ablak, text='width:')
+    cmke2.grid(row=2, column=2,sticky=S)
+    cmke2=Label(ablak, text='height:')
+    cmke2.grid(row=2, column=3,sticky=S)
+    cmke2=Label(ablak, text='scrollbar')
+    cmke2.grid(row=2, column=4,sticky=S)
+    cmke3=Label(ablak, text='bg color:')
+    cmke3.grid(row=4, column=3, sticky=S)
+    cmke4=Label(ablak, text='text color:')
+    cmke4.grid(row=4, column=4, sticky=S)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=4, column=0,sticky=S)
+    CreateToolTip(cmkei, text=text_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 
@@ -1460,11 +1493,14 @@ def cimkeablak(rc,frame_name='ablak'):
     bmezo0.grid(row=1, column=1,sticky=E)
     bmezo0.insert(0, "Label")
     chbox0=Combobox(ablak, width=4)
-    chbox0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox0['values']=orient_values
     chbox0.current(0)
     chbox0.grid(row=1, column=2, sticky=EW)
     gmb0=Button(ablak,text='Apply',command=c_ertek)
     gmb0.grid(row=1, column=0, sticky=S)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=0, column=0,sticky=S)
+    CreateToolTip(cmkei, text=label_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
  
 def cimkeablak_s(rc,frame_name='ablak'):
@@ -1599,7 +1635,7 @@ def scaleablak(rc,frame_name='ablak'):
         msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
         check_state()
     abl2=Toplevel(abl1)
-    abl2.title('Sacale options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
+    abl2.title('Scale options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     bmezo11=Entry(ablak)
@@ -1629,7 +1665,7 @@ def scaleablak(rc,frame_name='ablak'):
     kret51aa=Frame(ablak, relief='flat', borderwidth=1)
     kret51aa.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=N)
     chbox51aa0=Combobox(kret51aa, width=4)
-    chbox51aa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox51aa0['values']=orient_values
     chbox51aa0.current(0)
     chbox51aa0.grid(row=0, column=1,sticky=N)
     cmke51aa0=Label(kret51aa, text='')
@@ -1668,6 +1704,9 @@ def scaleablak(rc,frame_name='ablak'):
     cmke43aa0.grid(row=4, column=3, columnspan=1, rowspan=1, sticky=N)
     gmb50aa0=Button(ablak,text='Apply',command=sc_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=0, column=0,sticky=S)
+    CreateToolTip(cmkei, text=scale_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def progressablak(rc,frame_name='ablak'):
@@ -1717,7 +1756,7 @@ def progressablak(rc,frame_name='ablak'):
     kret51aa=Frame(ablak, relief='flat', borderwidth=1)
     kret51aa.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=N)
     chbox51aa0=Combobox(kret51aa, width=4)
-    chbox51aa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox51aa0['values']=orient_values
     chbox51aa0.current(0)
     chbox51aa0.grid(row=0, column=1,sticky=N)
     cmke51aa0=Label(kret51aa, text='')
@@ -1748,6 +1787,9 @@ def progressablak(rc,frame_name='ablak'):
     cmke43aa0.grid(row=4, column=3, columnspan=1, rowspan=1, sticky=N)
     gmb50aa0=Button(ablak,text='Apply',command=sc_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=0, column=0,sticky=S)
+    CreateToolTip(cmkei, text=progress_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 def spinablak(rc,frame_name='ablak'):
@@ -1795,7 +1837,7 @@ def spinablak(rc,frame_name='ablak'):
     cmke30aa0=Label(kretaa, text='orient.')
     cmke30aa0.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=S)
     chboxaa0=Combobox(kretaa, width=4, state=NORMAL)
-    chboxaa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chboxaa0['values']=orient_values
     chboxaa0.current(0)
     chboxaa0.grid(row=1, column=0,sticky=N)
     lbmezo1=Entry(kretaa, width=6)
@@ -1819,7 +1861,7 @@ def spinablak(rc,frame_name='ablak'):
     scrolly11aa0=Scrollbar(kret11aa, orient=VERTICAL,command=text11aa0.yview)
     text11aa0['yscrollcommand']=scrolly11aa0.set
     text11aa0.grid(row=0, column=0,sticky=N)
-    text11aa0.insert(INSERT,'#if it is empty\n#use "'"from"'" and "'"to"'"\n#fields for numbers')
+    text11aa0.insert(INSERT,'Element1\nElement2\n#comment:\n#if this field is\n#empty, use "'"from"'"\n#and "'"to"'" fields\n#for numbers')
     scrolly11aa0.grid(row=0, column=1 ,sticky=N+S)
     kretab=Frame(ablak, relief='flat', borderwidth=1)
     kretab.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
@@ -1833,6 +1875,9 @@ def spinablak(rc,frame_name='ablak'):
     bmezo32=Entry(kretab, width=7)
     bmezo32.grid(row=3, column=0, sticky=N)
     bmezo32.insert(0,'10')
+    cmkei=Label(kretab, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=4, column=0, sticky=S)
+    CreateToolTip(cmkei, text=spin_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def toolbarablak(rc,frame_name='ablak'):
@@ -1939,7 +1984,7 @@ def toolbarablak(rc,frame_name='ablak'):
     kret41aa=Frame(ablak, relief='flat', borderwidth=1)
     kret41aa.grid(row=4, column=3, columnspan=1, rowspan=1, sticky=W)
     chbox41aa0=Combobox(kret41aa, width=4)
-    chbox41aa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox41aa0['values']=orient_values
     chbox41aa0.current(0)
     chbox41aa0.grid(row=0, column=1,sticky=W)
     cmke41aa0=Label(kret41aa, text='orient.')
@@ -1948,14 +1993,9 @@ def toolbarablak(rc,frame_name='ablak'):
     gmb40aa0.grid(row=4, column=1, columnspan=1, rowspan=1, sticky=W)
     cmkei=Label(ablak, text='hint', foreground='black', background='orange')
     cmkei.grid(row=4, column=2,sticky=W)
-    toolbar_tip='First row: PNG file name (without extension name)\n\
-Select button images from prepared PNG icon file list or write\nthe name of your file (without extension) into entry field.\n\
-In this case please put your PNG files into ico folder.\n\
-For example: If path of your file is c\\myprog\\myprog.py, PNG files\n\
-must be in c:\\myprog\\ico\\\n\n\
-Second row: Tooltip text'
     CreateToolTip(cmkei, text=toolbar_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
+
 
 def nbookablak(rc,frame_name='ablak'):
     global window_counter
@@ -1991,19 +2031,21 @@ def nbookablak(rc,frame_name='ablak'):
     ablak=Frame(abl2, relief='flat', borderwidth=1)
     ablak.grid(row=0, column=0)
     bmezo11=Entry(ablak, width=3) #length
-    bmezo11.grid(row=5, column=4, columnspan=1, rowspan=1, sticky=N)
+    bmezo11.grid(row=5, column=5, columnspan=1, rowspan=1, sticky=N)
     bmezo11.insert(0,'2')
-
     chbox51aa0=Combobox(ablak, width=4)
-    chbox51aa0['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox51aa0['values']=orient_values
     chbox51aa0.current(0)
-    chbox51aa0.grid(row=5, column=2,sticky=N)
+    chbox51aa0.grid(row=5, column=3,sticky=N)
     cmke03aa0=Label(ablak, text='Orient.:')
-    cmke03aa0.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=NW)
+    cmke03aa0.grid(row=5, column=2, columnspan=1, rowspan=1, sticky=NW)
     cmke03aa1=Label(ablak, text='Tab number:\n   (max 10)')
-    cmke03aa1.grid(row=5, column=3, columnspan=1, rowspan=1, sticky=W)
+    cmke03aa1.grid(row=5, column=4, columnspan=1, rowspan=1, sticky=W)
     gmb50aa0=Button(ablak,text='Apply',command=nb_ertek)
     gmb50aa0.grid(row=5, column=0, columnspan=1, rowspan=1, sticky=N)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=4, column=0,sticky=N)
+    CreateToolTip(cmkei, text=notebook_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 
@@ -2102,13 +2144,16 @@ def univablak(rc,nbframe='ablak'):
     kret20=Frame(ablak, relief='flat', borderwidth=1)
     kret20.grid(row=2, column=0, sticky=N)
     chbox200=Combobox(kret20, width=4)
-    chbox200['values']=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+    chbox200['values']=orient_values
     chbox200.current(0)
     chbox200.grid(row=0, column=1,sticky=N)
     cmke200=Label(kret20, text='')
     cmke200.grid(row=0, column=0,sticky=N)
     cells_uni=[u1_1, u1_2,
                u2_1, u2_2]
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=0, column=0,sticky=S)
+    CreateToolTip(cmkei, text=univ_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 
@@ -2117,6 +2162,9 @@ def github():
 
 def contact():
     msg.configure(text='Gmiki (2020) --- email: epromirok(a)gmail(.)com')
+
+def donate():
+    webbrowser.open_new(r"https://www.paypal.com/donate?hosted_button_id=A7QF7LQJM5SGS")
 
 #ToolTip class for button w. image (toolbar) tooltip
 str_tooltip='class ToolTip(object):\n\
@@ -2594,9 +2642,6 @@ def kivalaszto2():
                     toolbarablak(rc)
                 if(cstat[i][0]==22): 
                     nbookablak(rc)
-#        window_counter=countwindows()
-#        msg.configure(text='opened windows: '+str(window_counter)+'; message:')
-#        started=1
         msg.configure(text='opened windows: '+str(window_counter)+'; message: Adjust all option windows')
         gomb2.configure(state=DISABLED) #Finalize button to normal state
         submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu to normal state
@@ -2733,10 +2778,7 @@ def countwindows():
             counter=counter+1
     print(counter)
     return counter
-
-
-
-        
+   
 
 def def_status():
     i1_1.current(0)
@@ -2799,6 +2841,134 @@ welcometext='Tkinter GUI designer\nIt uses tkinter Grid geometry manager. (https
   without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas, Text with slide, Entry, Label, Combobox, Optionmenu,\nRadio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale, Spinbox, Progressbar,\n\
 Toolbar (buttons with images and Tooltip texts), Notebook'
 
+toolbar_tip='Toolbar widget with png images and tooltips\n\n\
+First row: PNG file name (without extension name)\n\
+Select button images from prepared PNG icon file list or write\nthe name of your file (without extension) into entry field.\n\
+In this case please put your PNG files into ico folder.\n\
+For example: If path of your file is c\\myprog\\myprog.py, PNG files\n\
+must be in c:\\myprog\\ico\\\n\n\
+Second row: Tooltip text'
+
+menubar_tip='First row: Main menu\n\
+Other rows: Sub-menu\n\
+Create separate marking: -\n\
+Create checkbox menu: # (e.g: #yes)\n\n\
+Default command is: destroy\n\
+You can modify the command in the generated text:\n\
+command=k_ablak.destroy'
+
+menubutton_tip='First row: Main menu\n\
+Other rows: Sub-menu\n\
+orient.: orientation of your widget\n\n\
+Default command is: destroy\n\
+You can modify the command in the generated text:\n\
+command=k_ablak.destroy'
+
+button_tip='Every cell represents one button.\n\
+Default command is: destroy\n\
+You can modify the command in the generated text:\n\
+command=k_ablak.destroy\n\n\
+orient.: orientation of your widget\n\
+In case of one button you can use E+W orientation\n\
+to create as width button as width your widget.'
+
+canvas_tip='orient.: orientation of your widget\n\
+width: width of your canvas (in pixel). Type numbers only!\n\
+height: height of your canvas (in pixel). Type numbers only!\n\
+color: background color of your canvas.\n\n\
+There are some default colors, but you can pick any with\n\
+"'"pick a color"'" option or use a standard Python color code.'
+
+text_tip='default text: This text will appear in your text area.\n\
+orient.: orientation of your widget\n\
+width: width of your text area (in char). Type numbers only!\n\
+height: height of your canvas (in char). Type numbers only!\n\
+scroll: you can create it with horizontal and/or vertical scrollbar.\n\
+bg color: background color of your text area.\n\
+text color: text color of your text area.\n\n\
+There are some default colors, but you can pick any with\n\
+"'"pick a color"'" option or use a standard Python color code.'
+
+listbox_tip='Write your list elements into text area.\n\
+Use enter to create new list element (new line).\n\n\
+orient.: orientation of your widget\n\
+Width: List element width. Type numbers only!'
+
+label_tip='orient.: orientation of your widget\n\
+text: This text will appear in your text area.'
+
+combox_tip='You can create upto 4 widgets at once.\n\
+If you leave any of them empty it wont be created.\n\n\
+Label-*: label of widget. It can be empty.\n\
+1/1...2/2: Elements of the widget. max 3 elements/label.\n\n\
+orient.: orientation of your widget\n\
+width: width of your cell.\n\
+There are some default numbers, but you can use any.\n\
+Type numbers only!\n\
+In case of auto, the width will be adapted to your content.'
+
+univ_tip='You can select upto 4 widgets in any combination.\n\
+If you leave any of them empty it wont be created.\n\n\
+orient.: orientation of your widget\n\
+Frame name: If you type text, the created widget group\n\
+will be placed in LabelFrame and this text will appear\n\
+above the widget group.'
+
+scale_tip='title: title of your widget\n\
+from: start value; to: end value. Type numbers only!\n\
+resolution: resolution of your scale. Type numbers only!\n\
+scale length: length of your scale (in pixel). Type numbers only!\n\
+scale width: width of your scale (in pixel). Type numbers only!\n\
+tickinterval: value change by one click. Type numbers only!\n\
+set value: scale position to this value. Type numbers only!\n\
+orient.: orientation of your widget\n\
+scale orient.: Horizontal or Vertical scale\n\
+show value: Show actual value'
+
+spin_tip='Write your spinBox elements into the text area.\n\
+Use enter to create new list element (new line).\n\n\
+If row starts with # it will be considered as comment.\n\
+If this area empty (or comment) your widget will use\n\
+from and to fields for numbers. \n\n\
+from: start value; to: end value. Type numbers only!\n\
+orient.: orientation of your widget\n\
+Width: cell width. Type numbers only!\n\
+wrap: selected value can jump back to the begining after\n\
+the last item.'
+
+progress_tip='length: length of progressbar. Type numbers only!\n\
+maximum: maximum value. Type numbers only!\n\
+resolution: resolution of your scale. Type numbers only!\n\
+start value: set the starting state of progressbar. Type numbers only!\n\
+orient.: orientation of your widget\n\
+progressbar orient.: Horizontal or Vertical scale\n\
+mode: determine or indetermine'
+
+notebook_tip='This widget acts as tabs or tabbed notebook.\n\n\
+orient.: orientation of your widget\n\
+Tab number: number of tabs (max 10). Type numbers only!\n\n\
+It will open as many universal frame option windows as\n\
+tab numbers you set.\n\
+You can select upto 4 widgets in any combination for each tab.'
+
+main_tip='1. Select the desired widgets\n\
+2. If you use rowsapan/colspan press "'"Check"'" button\n\
+3. Press "'"Start"'" to generate codes\n\
+4. Set the opened options windows and Apply\n\
+5. Press "'"Finalize"'" and copy the generated code with Ctrl+C\n\n\
+Menu:\n\
+- File: You can save and load cell selection\n\
+- Function: Check, Start, Finalize and Reset\n\
+- info: download latest version from Github and contact email\n\n\
+r0-r8/c0-c4:\n\
+- Every cell represents a cell of grid for widget selection.\n\n\
+Text area:\n\
+Generated code appear here. Use Ctrl+C to copy that.\n\n\
+Bottom message label:\n\
+- Opened windows: It shows the number of opened option windows.\n\
+  You can click Finalizte button only if this number 0.\n\
+- message: system messages'
+
 su='k_ablak.mainloop()'
 toolbar_counter=0
 window_counter=0
@@ -2812,10 +2982,10 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
                 '20: Progressbar','21: Toolbar', '22: Notebook',
                 '98: colspan <', '99: rowspan ^')
 
-
+orient_values=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.5")
+abl1.title("Tkinter GUI designer v0.9.6")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
@@ -2874,8 +3044,6 @@ cellak=[i1_1, i1_2, i1_3, i1_4, i1_5,
         i8_1, i8_2, i8_3, i8_4, i8_5,
         i9_1, i9_2, i9_3, i9_4, i9_5]
 
-
-        
 gombkeret=Frame(abl1, borderwidth=0)
 gombkeret.grid(row=2, column=3)
 gomb=Button(gombkeret,text='Start',command=kivalaszto2)
@@ -2948,8 +3116,6 @@ cmke3x=Label(frame1, foreground='green',text='c2')
 cmke4x=Label(frame1, foreground='green',text='c3')
 cmke5x=Label(frame1, foreground='green',text='c4')
 msg=Label(abl1, foreground='black',text='opened windows: '+str(window_counter)+'; message: Select widgets')
-
-
 cmke1.grid(row=1, column=0,sticky=N)
 cmke2.grid(row=2, column=0,sticky=N)
 cmke3.grid(row=3, column=0,sticky=N)
@@ -2967,11 +3133,14 @@ cmke5x.grid(row=0, column=5,sticky=N)
 msg.grid(row=6, column=1, columnspan=5 ,sticky=W)
 titlekeret=Frame(abl1, borderwidth=0)
 titlekeret.grid(row=0, column=1)
-titlcmke=Label(titlekeret, text='Window title:')
-titlcmke.grid(row=0, column=0,sticky=E)
+titlcmke=Label(titlekeret, text='    Window title:')
+titlcmke.grid(row=0, column=1,sticky=E)
 title_entry=Entry(titlekeret, width=30)
 title_entry.insert(0, "My window")
-title_entry.grid(row=0, column=1, sticky=E)
+title_entry.grid(row=0, column=2, sticky=E)
+cmkei=Label(titlekeret, text='hint', foreground='black', background='orange')
+cmkei.grid(row=0, column=0, sticky=N)
+CreateToolTip(cmkei, text=main_tip)
 
 menubar00aa=Menu(abl1)
 submenu00aa0=Menu(menubar00aa, tearoff=0)
@@ -2991,9 +3160,9 @@ submenu00aa2=Menu(menubar00aa, tearoff=0)
 menubar00aa.add_cascade(label='Info', menu=submenu00aa2)
 submenu00aa2.add_separator()
 submenu00aa2.add_command(label='Open Github', command=github)
-submenu00aa2.add_command(label='Contact', command=contact)
+submenu00aa2.add_command(label='Show email at bottom', command=contact)
+submenu00aa2.add_command(label='Open Paypal donate', command=donate)
 abl1.config(menu=menubar00aa)
-
 
 textkeret=Frame(abl1, relief='flat', borderwidth=1)
 textkeret.grid(row=5, column=1, sticky=NE)
@@ -3051,7 +3220,6 @@ i9_2.grid(row=9, column=2, sticky=W)
 i9_3.grid(row=9,column=3, sticky=W)
 i9_4.grid(row=9,column=4, sticky=W)
 i9_5.grid(row=9,column=5, sticky=W)
-
 gomb4.grid(row=0,column=0, sticky=N)
 gomb.grid(row=1,column=0, sticky=N)
 gomb2.grid(row=2,column=0, sticky=N)
