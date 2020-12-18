@@ -50,6 +50,7 @@
 # v0.9.4  Widget selection save/load
 # v0.9.5  interface improved
 # v0.9.6  hints
+# v0.9.7  it can generate functions and object, too
 #
 #
 from tkinter import *
@@ -255,7 +256,7 @@ class Boxablak:
         self.abl2.destroy()
         window_counter=window_counter-1
         msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget closed.')
-        
+
 # ------ MenuBar generator
 class Menbar:
     "Menubar code generator"
@@ -271,6 +272,9 @@ class Menbar:
         self.kret=''
         self.inputlist.pop(-1) #remove orientation from the list
         self.msz1=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
+#        print(str(self.tab)+str(self.slf))
     def proc(self):
         self.i2=[] #temporary list for work
         self.x=0 #counter
@@ -297,23 +301,23 @@ class Menbar:
                 self.i.append('')
         self.x=0
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='menubar'+self.keretszam+'= Menu(ablak)'
+        self.kret=str(self.tab)+str(self.slf)+'menubar'+self.keretszam+'= Menu('+str(self.slf)+'ablak)'
         while(self.menuszam<len(self.mainm)):
-            self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'=Menu(menubar'+self.keretszam+', tearoff=0)\nmenubar'+self.keretszam+'.add_cascade(label='+"'"+str(self.mainm[self.menuszam])+"'"+', menu=submenu'+self.keretszam+str(self.menuszam)+')\n'
+            self.msz1=self.msz1+str(self.tab)+str(self.slf)+'submenu'+self.keretszam+str(self.menuszam)+'=Menu('+str(self.slf)+'menubar'+self.keretszam+', tearoff=0)\n'+str(self.tab)+str(self.slf)+'menubar'+self.keretszam+'.add_cascade(label='+"'"+str(self.mainm[self.menuszam])+"'"+', menu='+str(self.slf)+'submenu'+self.keretszam+str(self.menuszam)+')\n'
             while(self.x<len(self.subm[self.menuszam])):
                 if(self.subm[self.menuszam][self.x]=='-'): # '-' = separator
-                    self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'.add_separator()\n'
+                    self.msz1=self.msz1+str(self.tab)+str(self.slf)+'submenu'+self.keretszam+str(self.menuszam)+'.add_separator()\n'
                 try:
                     if(self.subm[self.menuszam][self.x][0]=='#'): #first char of text is # checkbox
-                        self.msz1=self.msz1+'v'+self.keretszam+str(self.menuszam)+str(self.x)+'= BooleanVar(ablak)\nsubmenu'+self.keretszam+str(self.menuszam)+'.add_checkbutton(label='+"'"+str(self.subm[self.menuszam][self.x][1:])+"'"+', variable=v'+self.keretszam+str(self.menuszam)+str(self.x)+')\n'
+                        self.msz1=self.msz1+str(self.tab)+str(self.slf)+'v'+self.keretszam+str(self.menuszam)+str(self.x)+'= BooleanVar('+str(self.slf)+'ablak)\n'+str(self.tab)+str(self.slf)+'submenu'+self.keretszam+str(self.menuszam)+'.add_checkbutton(label='+"'"+str(self.subm[self.menuszam][self.x][1:])+"'"+', variable='+str(self.slf)+'v'+self.keretszam+str(self.menuszam)+str(self.x)+')\n'
                     if((self.subm[self.menuszam][self.x][0]!='#') and (self.subm[self.menuszam][self.x]!='-')):   
-                        self.msz1=self.msz1+'submenu'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+', command=k_ablak.destroy)\n'
+                        self.msz1=self.msz1+str(self.tab)+str(self.slf)+'submenu'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+', command='+str(self.slf)+'k_ablak.destroy)\n'
                 except:
                     pass
                 self.x=self.x+1
             self.x=0
             self.menuszam=self.menuszam+1
-        self.mszv='k_ablak.config(menu=menubar'+self.keretszam+')'
+        self.mszv=str(self.tab)+str(self.slf)+'k_ablak.config(menu='+str(self.slf)+'menubar'+self.keretszam+')'
         self.osszes=self.kret+'\n'+self.msz1+self.mszv
         return self.osszes
            
@@ -338,6 +342,8 @@ class Menuk:
         self.msz1=''
         self.msz2=''
         self.msz3=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def proc(self):
         self.i2=[] #temporary list for work
         self.x=0 #counter
@@ -365,13 +371,13 @@ class Menuk:
 #        print('main: ',self.mainm,'\nsubm: ',self.subm)
         self.x=0
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'"+'raised'+"'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'"+'raised'+"'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
         while(self.menuszam<len(self.mainm)):
-            self.msz1=self.msz1+'menu'+self.keretszam+str(self.menuszam)+'=ttk.Menubutton(kret'+str(self.keretszam)+',text='+"'"+str(self.mainm[self.menuszam])+"'"+')\nmf'+self.keretszam+str(self.menuszam)+'=Menu(menu'+self.keretszam+str(self.menuszam)+')\n'
-            self.msz3=self.msz3+'menu'+self.keretszam+str(self.menuszam)+'.configure(menu=mf'+self.keretszam+str(self.menuszam)+')\n'
-            self.msz3=self.msz3+'menu'+self.keretszam+str(self.menuszam)+'.grid(row=0, column='+str(self.menuszam)+', sticky=NW)\n'
+            self.msz1=self.msz1+str(self.tab)+str(self.slf)+'menu'+self.keretszam+str(self.menuszam)+'=ttk.Menubutton('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.mainm[self.menuszam])+"'"+')\n'+str(self.tab)+str(self.slf)+'mf'+self.keretszam+str(self.menuszam)+'=Menu('+str(self.slf)+'menu'+self.keretszam+str(self.menuszam)+')\n'
+            self.msz3=self.msz3+str(self.tab)+str(self.slf)+'menu'+self.keretszam+str(self.menuszam)+'.configure(menu='+str(self.slf)+'mf'+self.keretszam+str(self.menuszam)+')\n'
+            self.msz3=self.msz3+str(self.tab)+str(self.slf)+'menu'+self.keretszam+str(self.menuszam)+'.grid(row=0, column='+str(self.menuszam)+', sticky=NW)\n'
             while(self.x<len(self.subm[self.menuszam])):
-                self.msz2=self.msz2+'mf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+',command=k_ablak.destroy, state=NORMAL)\n'
+                self.msz2=self.msz2+str(self.tab)+str(self.slf)+'mf'+self.keretszam+str(self.menuszam)+'.add_command(label='+"'"+str(self.subm[self.menuszam][self.x])+"'"+',command='+str(self.slf)+'k_ablak.destroy, state=NORMAL)\n'
                 self.x=self.x+1
             self.x=0
             self.menuszam=self.menuszam+1
@@ -399,6 +405,8 @@ class Gombokx:
         self.f12, self.f22, self.f32=inputlist[6],inputlist[7],inputlist[8]
         self.f13, self.f23, self.f33=inputlist[9],inputlist[10],inputlist[11]
         self.o=self.inputlist[12]
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def butt_number(self):
         for self.i in range(len(self.inputlist)-1):
             if self.inputlist[self.i]!='':
@@ -409,56 +417,56 @@ class Gombokx:
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         self.ombszamstr=self.keretszam+str(self.gombszam)
         if(self.x==1): #in case of 1 button there is no Frame (possible to create wide button with N+W)
-            self.gsz='gmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.frame_name)+',text='+"'"+str(self.f1)+"'"+',command=k_ablak.destroy)'
-            self.gszv='gmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
+            self.gsz=str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+str(self.frame_name)+',text='+"'"+str(self.f1)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
         else:
-            self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
-            self.gsz='gmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f1)+"'"+',command=k_ablak.destroy)'
-            self.gszv='gmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=0)'
+            self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+str(self.frame_name)+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
+            self.gsz=str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f1)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=0)'
         if(self.f2!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f2)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=1)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f2)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=1)'
         if(self.f3!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f3)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=2)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f3)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=0, column=2)'
         if(self.f11!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f11)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=0)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f11)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=0)'
         if(self.f21!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f21)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=1)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f21)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=1)'
         if(self.f31!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f31)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=2)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f31)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=1, column=2)'
         if(self.f12!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f12)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=0)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f12)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=0)'
         if(self.f22!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f22)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=1)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f22)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=1)'
         if(self.f32!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f32)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=2)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f32)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=2, column=2)'
         if(self.f13!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f13)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=0)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f13)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=0)'
         if(self.f23!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f23)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=1)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f23)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=1)'
         if(self.f33!=''):
             self.gombszam=self.gombszam+1
-            self.gsz=self.gsz+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.f33)+"'"+',command=k_ablak.destroy)'
-            self.gszv=self.gszv+'\ngmb'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=2)'
+            self.gsz=self.gsz+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.f33)+"'"+',command='+str(self.slf)+'k_ablak.destroy)'
+            self.gszv=self.gszv+'\n'+str(self.tab)+str(self.slf)+'btn'+str(self.keretszam)+str(self.gombszam)+'.grid(row=3, column=2)'
         self.osszes=self.kret+'\n'+self.gsz+'\n'+self.gszv
         return self.osszes
 
@@ -477,16 +485,18 @@ class Toolbargen:
         self.kret=''
         self.o=inputlist[10] #orient.
         self.gsz=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret=self.kret+'kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')\n'
+        self.kret=self.kret+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')\n'
         for self.i in range(5):
             if(self.inputlist[self.i]!='---'):
-                self.gsz=self.gsz+'photo'+str(self.keretszam)+str(self.i)+'=PhotoImage(file='+"'ico/"+str(self.inputlist[self.i])+'.png'+"'"+')\n'
-                self.gsz=self.gsz+'tb'+str(self.keretszam)+str(self.i)+'=ttk.Button(kret'+str(self.keretszam)+',text='+"'"+str(self.i)+"'"+',image=photo'+str(self.keretszam)+str(self.i)+',command=k_ablak.destroy)\n'
-                self.gsz=self.gsz+'tb'+str(self.keretszam)+str(self.i)+'.grid(row=0, column='+str(self.i)+')\n'
+                self.gsz=self.gsz+str(self.tab)+str(self.slf)+'photo'+str(self.keretszam)+str(self.i)+'=PhotoImage(file='+"'ico/"+str(self.inputlist[self.i])+'.png'+"'"+')\n'
+                self.gsz=self.gsz+str(self.tab)+str(self.slf)+'tb'+str(self.keretszam)+str(self.i)+'=ttk.Button('+str(self.slf)+'frm'+str(self.keretszam)+',text='+"'"+str(self.i)+"'"+',image='+str(self.slf)+'photo'+str(self.keretszam)+str(self.i)+',command='+str(self.slf)+'k_ablak.destroy)\n'
+                self.gsz=self.gsz+str(self.tab)+str(self.slf)+'tb'+str(self.keretszam)+str(self.i)+'.grid(row=0, column='+str(self.i)+')\n'
                 if(self.inputlist[self.i+5]!=''):
-                    self.gsz=self.gsz+'CreateToolTip(tb'+str(self.keretszam)+str(self.i)+',text='+"'"+str(self.inputlist[self.i+5])+"'"+')\n'
+                    self.gsz=self.gsz+str(self.tab)+'CreateToolTip('+str(self.slf)+'tb'+str(self.keretszam)+str(self.i)+',text='+"'"+str(self.inputlist[self.i+5])+"'"+')\n'
         self.osszes=self.kret+self.gsz
         return self.osszes                
 
@@ -507,10 +517,12 @@ class Vaszon:
         self.canc=inputlist[2] #color
         self.cano=inputlist[3] #orientation
         self.keretszam=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.csz='can'+self.keretszam+str(self.canszam)+'=Canvas('+self.frame_name+',bg='+"'"+self.canc+"'"+',height='+str(self.canh)+', width='+str(self.canw)+')'
-        self.cszv='can'+self.keretszam+str(self.canszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+',sticky='+self.cano+')'
+        self.csz=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'=Canvas('+str(self.slf)+str(self.frame_name)+',bg='+"'"+self.canc+"'"+',height='+str(self.canh)+', width='+str(self.canw)+')'
+        self.cszv=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+',sticky='+self.cano+')'
         self.osszes=self.csz+'\n'+self.cszv
         return self.osszes
 
@@ -535,31 +547,33 @@ class Szovegmezocs:
         self.bg=inputlist[5] #background color
         self.fg=inputlist[6] #foreground color
         self.wrap=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         if(self.s[0]=='3' or self.s[0]=='4'):
             self.wrap=',wrap=NONE'
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
-        self.sz1='text'+self.keretszam+str(self.mezoszam)+'=Text(kret'+str(self.keretszam)+',height='+str(self.h)+',width='+str(self.w)+str(self.wrap)+',bg='+"'"+self.bg+"'"+',fg='+"'"+self.fg+"'"+')'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
+        self.sz1=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'=Text('+str(self.slf)+'frm'+str(self.keretszam)+',height='+str(self.h)+',width='+str(self.w)+str(self.wrap)+',bg='+"'"+self.bg+"'"+',fg='+"'"+self.fg+"'"+')'
         if(self.s[0]=='2'): # függ csúszka
-            self.sz2='scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar(kret'+str(self.keretszam)+', orient=VERTICAL,command=text'+self.keretszam+str(self.mezoszam)+'.yview)'
-            self.sz3='text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']=scrolly'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv='scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)'
+            self.sz2=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.yview)'
+            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.set'
+            self.szcsv=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)'
         if(self.s[0]=='3'): # víz csúszka
-            self.sz2='scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar(kret'+str(self.keretszam)+', orient=HORIZONTAL,command=text'+self.keretszam+str(self.mezoszam)+'.xview)'
-            self.sz3='text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']=scrollx'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv='scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
+            self.sz2=str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.xview)'
+            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.set'
+            self.szcsv=str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
         if(self.s[0]=='4'): # mindkettő
-            self.sz2='scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar(kret'+str(self.keretszam)+', orient=VERTICAL,command=text'+self.keretszam+str(self.mezoszam)+'.yview)\n'
-            self.sz2=self.sz2+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar(kret'+str(self.keretszam)+', orient=HORIZONTAL,command=text'+self.keretszam+str(self.mezoszam)+'.xview)'
-            self.sz3='text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']=scrolly'+self.keretszam+str(self.mezoszam)+'.set\n'
-            self.sz3=self.sz3+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']=scrollx'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv='scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)\nscrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
+            self.sz2=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.yview)\n'
+            self.sz2=self.sz2+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.xview)'
+            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.set\n'
+            self.sz3=self.sz3+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.set'
+            self.szcsv=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)\n'+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
         if(self.s[0]=='1'): #nincs csúszka
             self.szcsv, self.sz2, self.sz3='','',''
-        self.szv='text'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=0,sticky='+self.o+')'
+        self.szv=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=0,sticky='+self.o+')'
         if (self.t!=''):
-            self.szv=self.szv+'\ntext'+self.keretszam+str(self.mezoszam)+'.insert(INSERT,'+"'"+str(self.t)+"'"+')'
+            self.szv=self.szv+'\n'+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.insert(INSERT,'+"'"+str(self.t)+"'"+')'
         
         self.osszes=self.kret+'\n'+self.sz1+'\n'+self.sz2+'\n'+self.sz3+'\n'+self.szv+'\n'+self.szcsv
         return self.osszes
@@ -577,10 +591,12 @@ class Beviteli:
         self.base_r=rc[5]
         self.bevszam=0
         self.keretszam=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.b1='bmezo'+self.keretszam+str(self.bevszam)+'=ttk.Entry('+self.frame_name+')'
-        self.bv='bmezo'+self.keretszam+str(self.bevszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
+        self.b1=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'=ttk.Entry('+str(self.slf)+self.frame_name+')'
+        self.bv=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
         self.osszes=self.b1+'\n'+self.bv
         return self.osszes
 
@@ -598,10 +614,12 @@ class Cimke:
         self.labo=labo
         self.cimkeszam=0
         self.keretszam=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.c1='cmke'+self.keretszam+str(self.cimkeszam)+'=Label('+self.frame_name+', text='+"'"+str(self.labtxt)+"'"+')'
-        self.cv='cmke'+self.keretszam+str(self.cimkeszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
+        self.c1=str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cimkeszam)+'=Label('+str(self.slf)+self.frame_name+', text='+"'"+str(self.labtxt)+"'"+')'
+        self.cv=str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cimkeszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
         self.osszes=self.c1+'\n'+self.cv
         return self.osszes
 
@@ -622,18 +640,20 @@ class Keret:
         self.rspan=rc[3]
         self.krtszam=''
         self.krt_name=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.krtszam=str(self.row)+str(self.col)
         if(self.nbframe!='ablak'):
-            self.krt_name='kret'+self.krtszam+str(self.keretszam)+str(self.nbframe)
+            self.krt_name='frm'+self.krtszam+str(self.keretszam)+str(self.nbframe)
         else:
-            self.krt_name='kret'+self.krtszam+str(self.keretszam)
+            self.krt_name='frm'+self.krtszam+str(self.keretszam)
 
         if(self.ftext==''): # if there is not any text: (normal) Frame
-             self.k1=str(self.krt_name)+'=Frame('+str(self.nbframe)+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
+             self.k1=str(self.tab)+str(self.slf)+str(self.krt_name)+'=Frame('+str(self.slf)+str(self.nbframe)+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
         else:  # if there is any text: LabelFrame
-             self.k1=str(self.krt_name)+'=ttk.LabelFrame('+str(self.nbframe)+', text='+"'"+self.ftext+"'"+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
-        self.kv=str(self.krt_name)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
+             self.k1=str(self.tab)+str(self.slf)+str(self.krt_name)+'=ttk.LabelFrame('+str(self.slf)+str(self.nbframe)+', text='+"'"+self.ftext+"'"+', height='+str(self.h)+', width='+str(self.w)+', relief='+"'"+str(self.r)+"'"+', borderwidth='+str(self.bw)+')'
+        self.kv=str(self.tab)+str(self.slf)+str(self.krt_name)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.labo+')'
         self.osszes=self.k1+'\n'+self.kv
         return self.osszes, self.krt_name
 
@@ -650,10 +670,12 @@ class Uzenet:
         self.cspan=rc[2]
         self.rspan=rc[3]
         self.keretszam=''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)
-        self.u1='uzent'+self.keretszam+str(self.uzenszam)+'=Message(ablak, width='+str(self.w)+', pady='+str(self.py)+', padx='+str(self.px)+', text='+"'"+str(self.szoveg)+"'"+')'
-        self.uv='uzent'+self.keretszam+str(self.uzenszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+')'
+        self.u1=str(self.tab)+str(self.slf)+'msg'+self.keretszam+str(self.uzenszam)+'=Message('+str(self.slf)+'ablak, width='+str(self.w)+', pady='+str(self.py)+', padx='+str(self.px)+', text='+"'"+str(self.szoveg)+"'"+')'
+        self.uv=str(self.tab)+str(self.slf)+'msg'+self.keretszam+str(self.uzenszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+')'
         self.osszes=self.u1+'\n'+self.uv
         return self.osszes
 
@@ -681,8 +703,9 @@ class Combox:
         self.l1,self.l2,self.l3,self.l4=self.lista[12],self.lista[13],self.lista[14],self.lista[15] # label values
         self.orient=self.lista[16] #orientation
         self.cw=self.lista[17]     #cell width
-     
         self.x=0
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
         for self.i in range(len(self.v1)): #remove '' empty items from v1 list and make tuple
             if(self.v1[self.i]==''):
                self.x=self.x+1     
@@ -716,30 +739,30 @@ class Combox:
         self.x=0
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
         if(self.v1!=()):
-            self.cb1=self.cb1+'\nchbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+'kret'+str(self.keretszam)+', width='+str(self.cw)+')'
-            self.cb2=self.cb2+'\nchbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v1)
-            self.cb3=self.cb3+'\nchbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
-            self.cbv=self.cbv+'\nchbox'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=1,sticky=N)\ncmke'+self.keretszam+str(self.cboxszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l1+"'"+')\ncmke'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=0,sticky=N)'
+            self.cb1=self.cb1+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.cw)+')'
+            self.cb2=self.cb2+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v1)
+            self.cb3=self.cb3+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
+            self.cbv=self.cbv+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=1,sticky=N)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l1+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=0,sticky=N)'
         if(self.v2!=()):
             self.cboxszam=1
-            self.cb1=self.cb1+'\nchbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+'kret'+str(self.keretszam)+', width='+str(self.cw)+')'
-            self.cb2=self.cb2+'\nchbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v2)
-            self.cb3=self.cb3+'\nchbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
-            self.cbv=self.cbv+'\nchbox'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=3,sticky=N)\ncmke'+self.keretszam+str(self.cboxszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l2+"'"+')\ncmke'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=2,sticky=N)'
+            self.cb1=self.cb1+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.cw)+')'
+            self.cb2=self.cb2+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v2)
+            self.cb3=self.cb3+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
+            self.cbv=self.cbv+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=3,sticky=N)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l2+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'.grid(row=0, column=2,sticky=N)'
         if(self.v3!=()):
             self.cboxszam=2
-            self.cb1=self.cb1+'\nchbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+'kret'+str(self.keretszam)+', width='+str(self.cw)+')'
-            self.cb2=self.cb2+'\nchbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v3)
-            self.cb3=self.cb3+'\nchbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
-            self.cbv=self.cbv+'\nchbox'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=1,sticky=N)\ncmke'+self.keretszam+str(self.cboxszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l3+"'"+')\ncmke'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=0,sticky=N)'
+            self.cb1=self.cb1+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.cw)+')'
+            self.cb2=self.cb2+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v3)
+            self.cb3=self.cb3+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
+            self.cbv=self.cbv+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=1,sticky=N)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l3+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=0,sticky=N)'
         if(self.v4!=()):
             self.cboxszam=3
-            self.cb1=self.cb1+'\nchbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+'kret'+str(self.keretszam)+', width='+str(self.cw)+')'
-            self.cb2=self.cb2+'\nchbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v4)
-            self.cb3=self.cb3+'\nchbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
-            self.cbv=self.cbv+'\nchbox'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=3,sticky=N)\ncmke'+self.keretszam+str(self.cboxszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l4+"'"+')\ncmke'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=2,sticky=N)'
+            self.cb1=self.cb1+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'=ttk.Combobox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.cw)+')'
+            self.cb2=self.cb2+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'['+"'values'"+']='+str(self.v4)
+            self.cb3=self.cb3+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.current(0)'
+            self.cbv=self.cbv+'\n'+str(self.tab)+str(self.slf)+'chbox'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=3,sticky=N)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l4+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.cboxszam)+'.grid(row=1, column=2,sticky=N)'
         self.osszes=self.kret+'\n'+self.cb1+self.cb2+self.cb3+self.cbv
         return self.osszes
         
@@ -765,52 +788,54 @@ class Optmenu:
         self.orient=lista[16] #orient.
         self.osszes=''
         self.om1,self.om2,self.om3,self.omv='','','',''
+        self.tab=getresulttype()[0]
+        self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
         if(self.v1[0]!='' or self.v1[1]!='' or self.v1[2]!=''):
             self.omszam=0
-            self.om1=self.om1+'var'+self.keretszam+str(self.omszam)+' = StringVar(kret'+str(self.keretszam)+')\n'
-            self.om2=self.om2+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu(kret'+str(self.keretszam)+', var'+self.keretszam+str(self.omszam)+', '+"'"+'select'+"'"
+            self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
+            self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+', '+"'"+'select'+"'"
             for self.i in self.v1: #remove empty cells
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
-            self.omv=self.omv+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=1, sticky=W)\ncmke'+self.keretszam+str(self.omszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l1+"'"+')\ncmke'+self.keretszam+str(self.omszam)+'.grid(row=0, column=0,sticky=W)\n'
+            self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=1, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l1+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=0, column=0,sticky=W)\n'
         
         if(self.v2[0]!='' or self.v2[1]!='' or self.v2[2]!=''):
             self.omszam=1
-            self.om1=self.om1+'var'+self.keretszam+str(self.omszam)+' = StringVar(kret'+str(self.keretszam)+')\n'
-            self.om2=self.om2+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu(kret'+str(self.keretszam)+', var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
+            self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
             for self.i in self.v2:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
-            self.omv=self.omv+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=3, sticky=W)\ncmke'+self.keretszam+str(self.omszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l2+"'"+')\ncmke'+self.keretszam+str(self.omszam)+'.grid(row=0, column=2,sticky=W)\n'
+            self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=3, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l2+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=0, column=2,sticky=W)\n'
 
         if(self.v3[0]!='' or self.v3[1]!='' or self.v3[2]!=''):
             self.omszam=2
-            self.om1=self.om1+'var'+self.keretszam+str(self.omszam)+' = StringVar(kret'+str(self.keretszam)+')\n'
-            self.om2=self.om2+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu(kret'+str(self.keretszam)+', var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
+            self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
             for self.i in self.v3:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
-            self.omv=self.omv+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=1, column=1, sticky=W)\ncmke'+self.keretszam+str(self.omszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l3+"'"+')\ncmke'+self.keretszam+str(self.omszam)+'.grid(row=1, column=0,sticky=W)\n'
+            self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=1, column=1, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l3+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=1, column=0,sticky=W)\n'
 
         if(self.v4[0]!='' or self.v4[1]!='' or self.v4[2]!=''):
             self.omszam=3
-            self.om1=self.om1+'var'+self.keretszam+str(self.omszam)+' = StringVar(kret'+str(self.keretszam)+')\n'
-            self.om2=self.om2+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu(kret'+str(self.keretszam)+', var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
+            self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
             for self.i in self.v4:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
-            self.omv=self.omv+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=1, column=3, sticky=W)\ncmke'+self.keretszam+str(self.omszam)+'=Label('+'kret'+str(self.keretszam)+', text='+"'"+self.l4+"'"+')\ncmke'+self.keretszam+str(self.omszam)+'.grid(row=1, column=2,sticky=W)\n'
+            self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=1, column=3, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l4+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=1, column=2,sticky=W)\n'
         self.osszes=self.kret+self.om1+'\n'+self.om2+'\n'+self.om3+'\n'+self.omv
         return self.osszes
 
@@ -837,37 +862,39 @@ class Radiobox:
         self.chb2=''
         self.chb3=''
         self.chbv=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'"+'flat'+"'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'"+'flat'+"'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
         if(self.v1[0]!=''):
-            self.chb1=self.chb1+'v = IntVar()\n'
-            self.chb2=self.chb2+'radiob'+self.keretszam+str(self.chbszam)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v1[0])+"'"+',variable=v, value=1)\nradiob'+self.keretszam+str(self.chbszam)+'.grid(row=0, column=0, sticky=W)\n'
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v = IntVar()\n'
+            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[0])+"'"+',variable='+str(self.slf)+'v, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam)+'.grid(row=0, column=0, sticky=W)\n'
             if(self.v1[1]!=''):
-                self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+1)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v1[1])+"'"+',variable=v, value=2)\nradiob'+self.keretszam+str(self.chbszam+1)+'.grid(row=1, column=0, sticky=W)\n'
+                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+1)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[1])+"'"+',variable='+str(self.slf)+'v, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+1)+'.grid(row=1, column=0, sticky=W)\n'
                 if(self.v1[2]!=''):
-                    self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+2)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v1[2])+"'"+',variable=v, value=3)\nradiob'+self.keretszam+str(self.chbszam+2)+'.grid(row=2, column=0, sticky=W)\n'
+                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+2)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[2])+"'"+',variable='+str(self.slf)+'v, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+2)+'.grid(row=2, column=0, sticky=W)\n'
         if(self.v2[0]!=''):
-            self.chb1=self.chb1+'v1 = IntVar()\n'
-            self.chb2=self.chb2+'radiob'+self.keretszam+str(self.chbszam+3)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v2[0])+"'"+',variable=v1, value=1)\nradiob'+self.keretszam+str(self.chbszam+3)+'.grid(row=0, column=1, sticky=W)\n'
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v1 = IntVar()\n'
+            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+3)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[0])+"'"+',variable='+str(self.slf)+'v1, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+3)+'.grid(row=0, column=1, sticky=W)\n'
             if(self.v2[1]!=''):
-                self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+4)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v2[1])+"'"+',variable=v1, value=2)\nradiob'+self.keretszam+str(self.chbszam+4)+'.grid(row=1, column=1, sticky=W)\n'
+                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+4)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[1])+"'"+',variable='+str(self.slf)+'v1, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+4)+'.grid(row=1, column=1, sticky=W)\n'
                 if(self.v2[2]!=''):
-                    self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+5)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v2[2])+"'"+',variable=v1, value=3)\nradiob'+self.keretszam+str(self.chbszam+5)+'.grid(row=2, column=1, sticky=W)\n'
+                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+5)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[2])+"'"+',variable='+str(self.slf)+'v1, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+5)+'.grid(row=2, column=1, sticky=W)\n'
         if(self.v3[0]!=''):
-            self.chb1=self.chb1+'v2 = IntVar()\n'
-            self.chb2=self.chb2+'radiob'+self.keretszam+str(self.chbszam+6)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v3[0])+"'"+',variable=v2, value=1)\nradiob'+self.keretszam+str(self.chbszam+6)+'.grid(row=3, column=0, sticky=W)\n'
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v2 = IntVar()\n'
+            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+6)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[0])+"'"+',variable='+str(self.slf)+'v2, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+6)+'.grid(row=3, column=0, sticky=W)\n'
             if(self.v3[1]!=''):
-                self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+7)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v3[1])+"'"+',variable=v2, value=2)\nradiob'+self.keretszam+str(self.chbszam+7)+'.grid(row=4, column=0, sticky=W)\n'
+                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+7)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[1])+"'"+',variable='+str(self.slf)+'v2, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+7)+'.grid(row=4, column=0, sticky=W)\n'
                 if(self.v3[2]!=''):
-                    self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+8)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v3[2])+"'"+',variable=v2, value=3)\nradiob'+self.keretszam+str(self.chbszam+8)+'.grid(row=5, column=0, sticky=W)\n'            
+                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+8)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[2])+"'"+',variable='+str(self.slf)+'v2, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+8)+'.grid(row=5, column=0, sticky=W)\n'            
         if(self.v4[0]!=''):
-            self.chb1=self.chb1+'v3 = IntVar()\n'
-            self.chb2=self.chb2+'radiob'+self.keretszam+str(self.chbszam+9)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v4[0])+"'"+',variable=v3, value=1)\nradiob'+self.keretszam+str(self.chbszam+9)+'.grid(row=3, column=1, sticky=W)\n'
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v3 = IntVar()\n'
+            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+9)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[0])+"'"+',variable='+str(self.slf)+'v3, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+9)+'.grid(row=3, column=1, sticky=W)\n'
             if(self.v4[1]!=''):
-                self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+10)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v4[1])+"'"+',variable=v3, value=2)\nradiob'+self.keretszam+str(self.chbszam+10)+'.grid(row=4, column=1, sticky=W)\n'
+                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+10)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[1])+"'"+',variable='+str(self.slf)+'v3, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+10)+'.grid(row=4, column=1, sticky=W)\n'
                 if(self.v4[2]!=''):
-                    self.chb3=self.chb3+'radiob'+self.keretszam+str(self.chbszam+11)+'=ttk.Radiobutton(kret'+str(self.keretszam)+', text='+"'"+str(self.v4[2])+"'"+',variable=v3, value=3)\nradiob'+self.keretszam+str(self.chbszam+11)+'.grid(row=5, column=1, sticky=W)'            
+                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+11)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[2])+"'"+',variable='+str(self.slf)+'v3, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+11)+'.grid(row=5, column=1, sticky=W)'            
 
         self.osszes=self.kret+'\n'+self.chb1+'\n'+self.chb2+'\n'+self.chb3+'\n'
         return self.osszes
@@ -891,14 +918,16 @@ class Listboxgen:
         self.orient=inputlist[1] #orient.
         self.w=inputlist[2]
         self.lbx1=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def proc(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
-        self.lbx1=self.lbx1+'lb'+self.keretszam+'= Listbox(kret'+str(self.keretszam)+', width='+str(self.w)+')\n'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+str(self.frame_name)+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.lbx1=self.lbx1+str(self.tab)+str(self.slf)+'lbx'+self.keretszam+'= Listbox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.w)+')\n'
         for self.i in range(len(self.listitems)):
             if (self.listitems[self.i]!=''):
-                self.lbx1=self.lbx1+'lb'+self.keretszam+'.insert('+str(self.i)+','+"'"+str(self.listitems[self.i])+"'"+')\n'
-        self.lbx1=self.lbx1+'lb'+self.keretszam+'.grid(row=0, column=0, sticky=N)\n'
+                self.lbx1=self.lbx1+str(self.tab)+str(self.slf)+'lbx'+self.keretszam+'.insert('+str(self.i)+','+"'"+str(self.listitems[self.i])+"'"+')\n'
+        self.lbx1=self.lbx1+str(self.tab)+str(self.slf)+'lbx'+self.keretszam+'.grid(row=0, column=0, sticky=N)\n'
         self.osszes=self.kret+self.lbx1
         return self.osszes
 
@@ -922,11 +951,13 @@ class Spinboxgen:
         self.kret=''
         self.keretszam=''
         self.sbx1=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
-        self.sbx1=self.sbx1+'spb'+self.keretszam+'=Spinbox(kret'+str(self.keretszam)+', width='+str(self.w)+', from_='+str(self.from_)+', to='+str(self.to_)+', wrap='+str(self.wrp)+', values='+str(self.items)+')\n'      
-        self.sbx1=self.sbx1+'spb'+self.keretszam+'.grid(row=0, column=0, sticky=N)'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+str(self.frame_name)+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.sbx1=self.sbx1+str(self.tab)+str(self.slf)+'spb'+self.keretszam+'=Spinbox('+str(self.slf)+'frm'+str(self.keretszam)+', width='+str(self.w)+', from_='+str(self.from_)+', to='+str(self.to_)+', wrap='+str(self.wrp)+', values='+str(self.items)+')\n'      
+        self.sbx1=self.sbx1+str(self.tab)+str(self.slf)+'spb'+self.keretszam+'.grid(row=0, column=0, sticky=N)'
         self.osszes=self.kret+self.sbx1
         return self.osszes
 
@@ -954,15 +985,18 @@ class Scalegen:
         self.orient=inputlist[8] #widget orien
         self.sc_ori=inputlist[9] #scale orien
         self.sc1=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         if (self.inputlist[10]=='on'):
             self.sv='1' #show value on
         else:
             self.sv='0' #show value off
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret='kret'+str(self.keretszam)+'=Frame('+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\nkret'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
-        self.sc1=self.sc1+'scal'+str(self.keretszam)+'=Scale(kret'+str(self.keretszam)+', label='+"'"+self.title+"'"+', from_='+self.from_+', to='+self.to_+', tickinterval='+self.thick+', length='+self.l+', width='+self.w+', resolution='+self.res+', orient='+self.sc_ori+', showvalue='+self.sv+')\n'
-        self.sc1=self.sc1+'scal'+str(self.keretszam)+'.grid(row=0, column=0, sticky=N)'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+str(self.frame_name)+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.sc1=self.sc1+str(self.tab)+str(self.slf)+'scal'+str(self.keretszam)+'=Scale('+str(self.slf)+'frm'+str(self.keretszam)+', label='+"'"+self.title+"'"+', from_='+self.from_+', to='+self.to_+', tickinterval='+self.thick+', length='+self.l+', width='+self.w+', resolution='+self.res+', orient='+self.sc_ori+', showvalue='+self.sv+')\n'
+        self.sc1=self.sc1+str(self.tab)+str(self.slf)+'scal'+str(self.keretszam)+'.grid(row=0, column=0, sticky=N)\n'
+        self.sc1=self.sc1+str(self.tab)+str(self.slf)+'scal'+str(self.keretszam)+'.set('+str(self.set)+')'
         self.osszes=self.kret+self.sc1
         return self.osszes
 
@@ -987,10 +1021,12 @@ class Progressgen:
         self.pb_ori=inputlist[4] #pbar orient.
         self.mod=inputlist[5] #mode
         self.pb1=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.pb1=self.pb1+'prgress'+str(self.keretszam)+'=ttk.Progressbar('+self.frame_name+', orient='+self.pb_ori+', length='+self.l+', maximum='+self.max+', mode='+"'"+self.mod+"'"+', value='+self.v+')\n'
-        self.pb1=self.pb1+'prgress'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.pb1=self.pb1+str(self.tab)+str(self.slf)+'prgress'+str(self.keretszam)+'=ttk.Progressbar('+str(self.slf)+str(self.frame_name)+', orient='+str(self.pb_ori)+', length='+str(self.l)+', maximum='+str(self.max)+', mode='+"'"+str(self.mod)+"'"+', value='+str(self.v)+')\n'
+        self.pb1=self.pb1+str(self.tab)+str(self.slf)+'prgress'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
         self.osszes=self.pb1
         return self.osszes
 
@@ -1013,16 +1049,18 @@ class Nbookgen:
         self.nb1=''
         self.nb2=''
         self.nv=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.nb1=self.nb1+'nb'+str(self.keretszam)+'=ttk.Notebook(ablak)\nnb'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.nb1=self.nb1+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'=ttk.Notebook('+str(self.slf)+'ablak)\n'+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
         for self.i in range(self.count):
             self.nbframe='f'+str(self.i)
             univablak(self.rc,self.nbframe)
-            self.nb2=self.nb2+'f'+str(self.i)+'=Frame(nb'+str(self.keretszam)+')\n'
-            self.nb2=self.nb2+'nb'+str(self.keretszam)+'.add(f'+str(self.i)+',text='+"'tab"+str(self.i)+"'"+')\n'
-        self.nv=self.nv+'nb'+str(self.keretszam)+'.select(f0)\n'
-        self.nv=self.nv+'nb'+str(self.keretszam)+'.enable_traversal()'
+            self.nb2=self.nb2+str(self.tab)+str(self.slf)+'f'+str(self.i)+'=Frame('+str(self.slf)+'nb'+str(self.keretszam)+')\n'
+            self.nb2=self.nb2+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'.add('+str(self.slf)+'f'+str(self.i)+',text='+"'tab"+str(self.i)+"'"+')\n'
+        self.nv=self.nv+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'.select('+str(self.slf)+'f0)\n'
+        self.nv=self.nv+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'.enable_traversal()'
         self.osszes=self.nb1+self.nb2+self.nv
         return self.osszes
     
@@ -1893,7 +1931,7 @@ def toolbarablak(rc,frame_name='ablak'):
        'preferences','refresh','save','search','server','smiley','smileysad','stop')
     def tb_ertek():
         global toolbar_counter, window_counter
-        toolbar_counter=toolbar_counter+1
+        toolbar_counter=1
         output=['','','','','','','','','','',''] 
         output[0]=chbox11aa0.get() #button 1. image name
         output[1]=chbox12aa0.get() #button 2. image name
@@ -1908,8 +1946,6 @@ def toolbarablak(rc,frame_name='ablak'):
         output[10]=chbox41aa0.get() #tooltip orient.
         tbar=Toolbargen(rc,output,frame_name)
         osszes=tbar.generator()
-        if(toolbar_counter==1):
-            kiir(str_tooltip)
         kiir('#-'+str(m)+'----Toolbar: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
         abl2.destroy()
@@ -2586,11 +2622,13 @@ def letilto(cstat):
 
 def kivalaszto2():
         reset() #close all opened sub-windows
+#        print(resulttype.get())
         cstat=updatecell()
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
                 submenu00aa1.entryconfig(2,label="Restart") # Start menu to Restart
+                submenu00aa2.entryconfig(1,state=DISABLED) # Settings menu OFF
                 rc=['','','','','a','a',0,'m',0] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv, cell index
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
@@ -2684,19 +2722,27 @@ def clearlist(list,out_type):
 def kiir(x):
     if(x!=''):
         check_state()
-        #gomb2.configure(state=NORMAL) #Finalize button to normal state
-        #submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
         text1.insert(INSERT,x)        #text insert
         text1.insert(INSERT,'\n')
 
 def finalize():
+    tooltipclass=''
+    tab=getresulttype()[0]
+    slf=getresulttype()[1]
+    init=getresulttype()[2]
+    end=getresulttype()[3]
     sajatcim=title_entry.get()
-    s1_f='from tkinter import *\nfrom tkinter import ttk\nk_ablak=Tk()\nk_ablak.title('+"'"+str(sajatcim)+"'"+')\
-        \nablak=Frame(k_ablak, relief='+"'"+'flat'+"'"+', borderwidth=1)\nablak.grid(row=0, column=0)\n'
+    if(toolbar_counter==1):
+        tooltipclass=str_tooltip
+    else:
+        tooltipclass=''
+    s1_f='from tkinter import *\nfrom tkinter import ttk\n\n'+tooltipclass+str(init)+str(tab)+str(slf)+'k_ablak=Tk()\n'+str(tab)+str(slf)+'k_ablak.title('+"'"+str(sajatcim)+"'"+')\
+        \n'+str(tab)+str(slf)+'ablak=Frame('+str(slf)+'k_ablak, relief='+"'"+'flat'+"'"+', borderwidth=1)\n'+str(tab)+str(slf)+'ablak.grid(row=0, column=0)\n'
     text1.insert(1.0,s1_f) #insert to the begining
-    text1.insert(END,su)   #insert to the end
+    text1.insert(END,str(tab)+str(slf)+su+str(end))   #insert to the end
     gomb2.configure(state=DISABLED) # Disable to avoid repeated button click
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
+    submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
     msg.configure(text='opened windows: '+str(window_counter)+'; message: Code finalized')
 
 def colorset(): #color selection modul
@@ -2723,6 +2769,7 @@ def reset2():
     submenu00aa1.entryconfig(2,label="Start") # Start menu
     gomb2.configure(state=DISABLED) #Finalize button OFF
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
+    submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
     text1.delete(1.0,END) #Erase text area
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
@@ -2778,7 +2825,21 @@ def countwindows():
             counter=counter+1
     print(counter)
     return counter
-   
+
+def getresulttype():
+    tab_slf=['','','',''] # tab, self., init of obj., ending of obj.
+    rtype=resulttype.get()
+    if(rtype==True):
+        tab_slf[0]='        '
+        tab_slf[1]='self.'
+        tab_slf[2]='class Mywindow:\n    def __init__(self):\n'
+        tab_slf[3]='\n\nif __name__ == "'"__main__"'":\n    mw=Mywindow()'
+    else:
+        tab_slf[0]=''
+        tab_slf[1]=''
+        tab_slf[2]=''
+        tab_slf[3]=''
+    return tab_slf   
 
 def def_status():
     i1_1.current(0)
@@ -2949,7 +3010,9 @@ orient.: orientation of your widget\n\
 Tab number: number of tabs (max 10). Type numbers only!\n\n\
 It will open as many universal frame option windows as\n\
 tab numbers you set.\n\
-You can select upto 4 widgets in any combination for each tab.'
+You can select upto 4 widgets in any combination for each tab.\n\n\
+Tab text can be modified in generated code:\n\
+default 1st tab: nb*.add(text="'"tab0"'")'
 
 main_tip='1. Select the desired widgets\n\
 2. If you use rowsapan/colspan press "'"Check"'" button\n\
@@ -2959,6 +3022,7 @@ main_tip='1. Select the desired widgets\n\
 Menu:\n\
 - File: You can save and load cell selection\n\
 - Function: Check, Start, Finalize and Reset\n\
+- Settings: Generated code: Object (if selected) or Functions (default)\n\
 - info: download latest version from Github and contact email\n\n\
 r0-r8/c0-c4:\n\
 - Every cell represents a cell of grid for widget selection.\n\n\
@@ -2985,7 +3049,7 @@ selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
 orient_values=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.6")
+abl1.title("Tkinter GUI designer v0.9.7")
 frame1=Frame(abl1, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
@@ -3156,12 +3220,18 @@ submenu00aa1.add_command(label='Start', command=kivalaszto2)
 submenu00aa1.add_command(label='Finalize', command=finalize, state=DISABLED)
 submenu00aa1.add_separator()
 submenu00aa1.add_command(label='Reset', command=reset2)
+
 submenu00aa2=Menu(menubar00aa, tearoff=0)
-menubar00aa.add_cascade(label='Info', menu=submenu00aa2)
+menubar00aa.add_cascade(label='Settings', menu=submenu00aa2)
 submenu00aa2.add_separator()
-submenu00aa2.add_command(label='Open Github', command=github)
-submenu00aa2.add_command(label='Show email at bottom', command=contact)
-submenu00aa2.add_command(label='Open Paypal donate', command=donate)
+resulttype= BooleanVar(abl1)
+submenu00aa2.add_checkbutton(label='Generated code type: Func/Obj.', variable=resulttype)
+submenu00aa3=Menu(menubar00aa, tearoff=0)
+menubar00aa.add_cascade(label='Info', menu=submenu00aa3)
+submenu00aa3.add_separator()
+submenu00aa3.add_command(label='Open Github', command=github)
+submenu00aa3.add_command(label='Show email at bottom', command=contact)
+submenu00aa3.add_command(label='Open Paypal donate', command=donate)
 abl1.config(menu=menubar00aa)
 
 textkeret=Frame(abl1, relief='flat', borderwidth=1)
