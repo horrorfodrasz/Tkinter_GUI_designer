@@ -51,6 +51,7 @@
 # v0.9.5  interface improved
 # v0.9.6  hints
 # v0.9.7  it can generate functions and object, too
+# v0.9.8  default parameter settings applied
 #
 #
 from tkinter import *
@@ -124,11 +125,11 @@ class Boxablak:
                      '','']         #orient.
         self.abl1=abl1
         self.abl2=Toplevel(self.abl1)
-        if(self.tipus==9):
+        if(self.tipus==12):
             self.abl2.title('ComboBox options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
-        if(self.tipus==11):
+        if(self.tipus==14):
             self.abl2.title('Option menu options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
-        if(self.tipus==13):
+        if(self.tipus==16):
             self.abl2.title('Radio options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
         self.ablak=Frame(self.abl2, relief='flat', borderwidth=1)
         self.ablak.grid(row=0, column=0)
@@ -158,7 +159,7 @@ class Boxablak:
         self.bmezo2_2_2.grid(row=5, column=4,sticky=N)
         self.bmezo2_2_3=Entry(self.ablak)
         self.bmezo2_2_3.grid(row=6, column=4,sticky=N)
-        if(self.tipus==9 or self.tipus==11):
+        if(self.tipus==12 or self.tipus==14):
             self.bmezo1=Entry(self.ablak)
             self.bmezo1.grid(row=1, column=1,sticky=N)
             self.bmezo2=Entry(self.ablak)
@@ -195,7 +196,7 @@ class Boxablak:
         self.chbox2['values']=('auto','4','6','10','12','14','')
         self.chbox2.current(0)
         self.chbox2.grid(row=4, column=0,sticky=S)
-        if (self.tipus==11 or self.tipus==13):
+        if (self.tipus==14 or self.tipus==16):
             self.chbox2.configure(state=DISABLED)
         self.cmkei=Label(self.ablak, text='hint', foreground='black', background='orange')
         self.cmkei.grid(row=0, column=0,sticky=S)
@@ -207,7 +208,7 @@ class Boxablak:
         self.output[3],self.output[4],self.output[5]=self.bmezo1_2_1.get(),self.bmezo1_2_2.get(),self.bmezo1_2_3.get() #first 12 elements of combox values
         self.output[6],self.output[7],self.output[8]=self.bmezo2_1_1.get(),self.bmezo2_1_2.get(),self.bmezo2_1_3.get()
         self.output[9],self.output[10],self.output[11]=self.bmezo2_2_1.get(),self.bmezo2_2_2.get(),self.bmezo2_2_3.get()
-        if(self.tipus==9 or self.tipus==11):
+        if(self.tipus==12 or self.tipus==14):
             self.output[12],self.output[13],self.output[14],self.output[15]=self.bmezo1.get(),self.bmezo2.get(),self.bmezo3.get(),self.bmezo4.get() #label texts
         self.output[16]=self.chbox1.get() #oriantation
         self.output[17]=self.chbox2.get() #cell width
@@ -217,11 +218,11 @@ class Boxablak:
         window_counter=window_counter-1
         msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget code generated')
         check_state()
-        if (self.tipus==9):
+        if (self.tipus==12):
             self.comboxablak()
-        if (self.tipus==11):
+        if (self.tipus==14):
             self.omenuablak()
-        if (self.tipus==13):
+        if (self.tipus==16):
             self.radioboxablak()
     def kiir(self,x):
         self.x=x
@@ -581,7 +582,7 @@ class Szovegmezocs:
 
 class Beviteli:
     "Entry generator modul"
-    def __init__(self,rc,frame_name):
+    def __init__(self,rc,output,frame_name):
         self.frame_name=frame_name
         self.col=rc[0]
         self.row=rc[1]
@@ -591,18 +592,23 @@ class Beviteli:
         self.base_r=rc[5]
         self.bevszam=0
         self.keretszam=''
+        self.o=output[0] # orient.
+        self.w=output[1] # width
+        self.value=output[2] # default value
         self.tab=getresulttype()[0]
         self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.b1=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'=ttk.Entry('+str(self.slf)+self.frame_name+')'
-        self.bv=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
-        self.osszes=self.b1+'\n'+self.bv
+        self.b1=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'=ttk.Entry('+str(self.slf)+self.frame_name+' ,width='+"'"+str(self.w)+"'"+')\n'
+        self.bv=str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+str(self.o)+')'
+        if(self.value!=''):
+            self.bv=self.bv+'\n'+str(self.tab)+str(self.slf)+'entr'+self.keretszam+str(self.bevszam)+'.insert(0,'+'"'+str(self.value)+'"'+')'
+        self.osszes=self.b1+self.bv
         return self.osszes
 
 class Cimke:
     "Label generator modul"
-    def __init__(self,rc,labtxt,labo,frame_name):
+    def __init__(self,rc,output,frame_name):
         self.frame_name=frame_name
         self.col=rc[0]
         self.row=rc[1]
@@ -610,8 +616,8 @@ class Cimke:
         self.rspan=rc[3]
         self.base_c=rc[4]
         self.base_r=rc[5]
-        self.labtxt=labtxt
-        self.labo=labo
+        self.labtxt=output[0]
+        self.labo=output[1]
         self.cimkeszam=0
         self.keretszam=''
         self.tab=getresulttype()[0]
@@ -1070,7 +1076,7 @@ class Nbookgen:
 def menbarablak(rc,frame_name='ablak'):
     global window_counter
     window_counter=window_counter+1
-    tipus=rc[6]
+    tipus=rc[6] #1: menubar 5: menubutton
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
@@ -1092,7 +1098,7 @@ def menbarablak(rc,frame_name='ablak'):
             window_counter=window_counter-1
             msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
             check_state()
-        if(tipus==2):
+        if(tipus==5):
             mbutt=Menuk(rc,output,frame_name)
             osszes=mbutt.proc()
             kiir('#-'+str(m)+'----Menubutton: c'+str(c)+', r'+str(r)+'----')
@@ -1317,6 +1323,16 @@ def gombablak(rc,frame_name='ablak'):
     CreateToolTip(cmkei, text=button_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
+def vaszonablak_s(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+#    defaults=['200','250','white','N'] # width, height, color, irány
+    vaszon=Vaszon(rc,canvas_defaults,frame_name)
+    osszes=vaszon.generator()
+    kiir('#-'+str(m)+'----Canvas: c'+str(c)+', r'+str(r)+'------')
+    kiir(osszes)
+
 def vaszonablak(rc,frame_name='ablak'):
     global window_counter
     window_counter=window_counter+1
@@ -1388,6 +1404,15 @@ def vaszonablak(rc,frame_name='ablak'):
     cmkei.grid(row=0, column=0,sticky=S)
     CreateToolTip(cmkei, text=canvas_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
+
+def szovegmezablak_s(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    szovegmezo=Szovegmezocs(rc,text_defaults,frame_name)
+    osszes=szovegmezo.generator()
+    kiir('#-'+str(m)+'----Text: c'+str(c)+', r'+str(r)+'------')
+    kiir(osszes)
     
 def szovegmezablak(rc,frame_name='ablak'):
     global window_counter
@@ -1405,7 +1430,7 @@ def szovegmezablak(rc,frame_name='ablak'):
            output[0]=int(bmezo3.get())
            output[1]=int(bmezo4.get())
        except:
-           print('Számot kell megadni!')
+           print('Enter numbers only!')
            return
        output[2]=chbox3.get() #orient.
        output[3]=chbox4.get() #slide
@@ -1487,7 +1512,8 @@ def beviteliablak(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
-    beviteli=Beviteli(rc,frame_name)
+#    entry_defaults=['N','17',''] # orient, width, text
+    beviteli=Beviteli(rc,entry_defaults,frame_name)
     osszes=beviteli.generator()
     kiir('#-'+str(m)+'----Entry: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
@@ -1502,9 +1528,10 @@ def cimkeablak(rc,frame_name='ablak'):
     name=selection[rc[6]][3:]
     def c_ertek():
         global window_counter
-        labtxt=bmezo0.get()
-        labo=chbox0.get()
-        cimke=Cimke(rc,labtxt,labo,frame_name)
+        output=['',''] #title, orient
+        output[0]=bmezo0.get() #title
+        output[1]=chbox0.get() #orient
+        cimke=Cimke(rc,output,frame_name)
         osszes=cimke.generator()
         kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
         kiir(osszes)
@@ -1545,9 +1572,8 @@ def cimkeablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
-    labtxt='title'
-    labo='N'
-    cimke=Cimke(rc,labtxt,labo,frame_name)
+#    defaults=['title','N']
+    cimke=Cimke(rc,label_defaults,frame_name)
     osszes=cimke.generator()
     kiir('#-'+str(m)+'----Label: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
@@ -1576,26 +1602,20 @@ def uzenablak(rc):
 
         
 def comboxablak(rc,frame_name='ablak'):
-    tipus=0
+#    tipus=0
     cmbx1=Boxablak(abl1,rc,frame_name) 
 
 def comboxablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
-    lista=['One','Two','Three', #cells 0-11
-           '','','',
-           '','','',
-           '','','',
-           '','','','', #title cell
-           'N','16']      #orientation, cell width
-    combox=Combox(rc,lista,frame_name)
+    combox=Combox(rc,chbox_defaults,frame_name)
     osszes=combox.generator()
     kiir('#-'+str(m)+'----ComboBox: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def omenuablak(rc,frame_name='ablak'):
-    tipus=1
+#    tipus=1
     optmenu=Boxablak(abl1,rc,frame_name)
 
 
@@ -1604,19 +1624,13 @@ def omenuablak_s(rc,frame_name='ablak'):
     r=rc[1]
     m=rc[7] #started from main or univ.frame
     name=selection[rc[6]][3:]
-    lista=['One','Two','Three', #cells 0-11
-           '','','',
-           '','','',
-           '','','',
-           '','','','', #title cell
-           'N','16']      #orientation, cell width
-    optmenu=Optmenu(rc,lista,frame_name)
+    optmenu=Optmenu(rc,optmenu_defaults,frame_name)
     osszes=optmenu.generator()
     kiir('#-'+str(m)+'-----Option menu: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def radioxablak(rc,frame_name='ablak'):
-    tipus=2
+#    tipus=2
     radio=Boxablak(abl1,rc,frame_name)
 
 
@@ -1625,13 +1639,7 @@ def radioxablak_s(rc,frame_name='ablak'):
     r=rc[1]
     m=rc[7] #started from main or univ.frame
     name=selection[rc[6]][3:]
-    lista=['One','Two','Three', #cells 0-11
-           '','','',
-           '','','',
-           '','','',
-           '','','','', #title cell
-           'N','16']      #orientation, cell width
-    radiobox=Radiobox(rc,lista,frame_name)
+    radiobox=Radiobox(rc,radio_defaults,frame_name)
     osszes=radiobox.generator()
     kiir('#-'+str(m)+'-----Radio: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
@@ -2106,30 +2114,30 @@ def univablak(rc,nbframe='ablak'):
         window_counter=window_counter-1
         msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(base_col)+', r'+str(base_row)+' '+str(name)+' widget closed')
         check_state()
-    selection_uni1_1=('00: ---','02: MenuButton','03: Button','04: Canvas',
-                '05: Text', '06: Entry','07: Label',
-                '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
-                '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox','18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar')
-    selection_uni1_2=('00: ---','02: MenuButton','03: Button','04: Canvas',
-                '05: Text', '06: Entry','07: Label',
-                '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
-                '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar','98: colspan <')
-    selection_uni2_1=('00: ---','02: MenuButton','03: Button','04: Canvas',
-                '05: Text', '06: Entry','07: Label',
-                '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
-                '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar','99: rowspan ^')
-    selection_uni2_2=('00: ---','02: MenuButton','04: Button','04: Canvas',
-                '05: Text', '06: Entry','07: Label',
-                '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
-                '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '17: Listbox', '18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar','98: colspan <', '99: rowspan ^')
+    selection_uni1_1=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
+                '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
+                '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
+                '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
+                '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
+                '22: Progressbar','23: Toolbar')
+    selection_uni1_2=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
+                '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
+                '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
+                '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
+                '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
+                '22: Progressbar','23: Toolbar','98: colspan <')
+    selection_uni2_1=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
+                '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
+                '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
+                '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
+                '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
+                '22: Progressbar','23: Toolbar','99: rowspan ^')
+    selection_uni2_2=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
+                '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
+                '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
+                '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
+                '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
+                '22: Progressbar','23: Toolbar','98: colspan <', '99: rowspan ^')
     nb_select=0
     base_col=rc[0]              
     base_row=rc[1]
@@ -2253,13 +2261,13 @@ def updatecell_uni(cells_uni):
             if((i>1) and (cstat[i][0]==99)): #rowspan must be in valid place/area
                 if(cstat[i-2][0]<30 and cstat[i-2][0]!=0):                          # above rs (the 1st cell) there is valid cell (between 1-17) 
                     cstat[i-2][2][1]=cstat[i-2][2][1]+1                             # fölötte lévő cella rowspan értékét növelje 1-el
-                if(cstat[i-2][0]==0 or cstat[i-2][0]==98 or cstat[i-2][0]==4):      # ha rs fölött üres cella vagy cs vagy canvas van akkor törölje
+                if(cstat[i-2][0]<4 or cstat[i-2][0]==98):      # ha rs fölött üres cella vagy cs vagy canvas van akkor törölje
                        cells_uni[i].current(0)
 ###colspan            
             if((i!=0 and i!=2) and (cstat[i][0]==98)):                            #colspan must be in valid place/area
                 if(cstat[i-1][0]<30 and cstat[i-1][0]!=0):                          #on the left side there is valid cell
                     cstat[i-1][2][0]=cstat[i-1][2][0]+1                             #balra lévő cella colspan értékét növelje 1-el
-                if(cstat[i-1][0]==0 or cstat[i-1][0]==99 or cstat[i-1][0]==4):                          # ha cs -től balra üres cella vagy rs vagy canvas van akkor törölje
+                if(cstat[i-1][0]<4 or cstat[i-1][0]==99):     # ha cs -től balra üres cella vagy rs vagy canvas van akkor törölje
                     cells_uni[i].current(0)
 #        print(cstat)
         for i in range(len(cstat)):
@@ -2284,40 +2292,44 @@ def kivalaszto_uni(base_rc,cells_uni,output,nbframe):
                 rc[6]=cstat[i][0]    #save type selector
                 rc[8]=i              #cell index
                 if(cstat[i][0]==2):
-                    menuablak(rc,keretszam)
-                if(cstat[i][0]==3):
-                    gombablak(rc,keretszam)
-                if(cstat[i][0]==4):
                     vaszonablak(rc,keretszam)
+                if(cstat[i][0]==3):
+                    vaszonablak_s(rc,keretszam)
                 if(cstat[i][0]==5):
-                    szovegmezablak(rc,keretszam)
+                    menuablak(rc,keretszam)
                 if(cstat[i][0]==6):
+                    gombablak(rc,keretszam)
+                if(cstat[i][0]==7):
+                    szovegmezablak(rc,keretszam)
+                if(cstat[i][0]==8):
+                    szovegmezablak_s(rc,keretszam)
+                if(cstat[i][0]==9):
                     beviteliablak(rc,keretszam)
-                if(cstat[i][0]==7):    
-                    cimkeablak(rc,keretszam)
-                if(cstat[i][0]==8):    
-                    cimkeablak_s(rc,keretszam)
-                if(cstat[i][0]==9):    
-                    comboxablak(rc,keretszam)
                 if(cstat[i][0]==10):    
-                    comboxablak_s(rc,keretszam)
+                    cimkeablak(rc,keretszam)
                 if(cstat[i][0]==11):    
-                    omenuablak(rc,keretszam)
+                    cimkeablak_s(rc,keretszam)
                 if(cstat[i][0]==12):    
-                    omenuablak_s(rc,keretszam)
+                    comboxablak(rc,keretszam)
                 if(cstat[i][0]==13):    
-                    radioxablak(rc,keretszam)
+                    comboxablak_s(rc,keretszam)
                 if(cstat[i][0]==14):    
-                    radioxablak_s(rc,keretszam)
+                    omenuablak(rc,keretszam)
+                if(cstat[i][0]==15):    
+                    omenuablak_s(rc,keretszam)
+                if(cstat[i][0]==16):    
+                    radioxablak(rc,keretszam)
                 if(cstat[i][0]==17):    
+                    radioxablak_s(rc,keretszam)
+                if(cstat[i][0]==19):    
                     listboxablak(rc,keretszam)
-                if(cstat[i][0]==18): 
-                    scaleablak(rc,keretszam)
-                if(cstat[i][0]==19): 
-                    spinablak(rc,keretszam)
                 if(cstat[i][0]==20): 
-                    progressablak(rc,keretszam)
+                    scaleablak(rc,keretszam)
                 if(cstat[i][0]==21): 
+                    spinablak(rc,keretszam)
+                if(cstat[i][0]==22): 
+                    progressablak(rc,keretszam)
+                if(cstat[i][0]==23): 
                     toolbarablak(rc,keretszam)
             
 
@@ -2348,42 +2360,42 @@ def updatecell():
                 cellak[i].current(0)
 ###rowspan
             if((i>4) and (cstat[i][0]==99)): #rowspan must be in valid place/area
-                if(cstat[i-5][0]<30 and cstat[i-5][0]>1 and cstat[i-5][0]!=4):                          # ha fölötte 1-el érvényes (1-17 közötti) cella van 
+                if(cstat[i-5][0]<30 and cstat[i-5][0]>3):      # ha fölötte 1-el érvényes (1-17 közötti) cella van 
                     cstat[i-5][2][1]=cstat[i-5][2][1]+1                             # fölötte lévő cella rowspan értékét növelje 1-el
-                if(cstat[i-5][0]<2 or cstat[i-5][0]==98 or cstat[i-5][0]==4):                          # ha rs fölött üres cella vagy cs vagy canvas,menubar van akkor törölje
+                if(cstat[i-5][0]<4 or cstat[i-5][0]==98):                          # ha rs fölött üres cella vagy cs vagy canvas,menubar van akkor törölje
                        cellak[i].current(0)
-                if((cstat[i-5][0]==99) and (cstat[i-10][0]<2 or cstat[i-10][0]==98 or cstat[i-10][0]==4)):  # ha rs fölött 1-el üres cella vagy cs vagy cancas ill menubar van akkor törölje
+                if((cstat[i-5][0]==99) and (cstat[i-10][0]<4 or cstat[i-10][0]==98)):  # ha rs fölött 1-el üres cella vagy cs vagy cancas ill menubar van akkor törölje
                        cellak[i].current(0)
-                if((cstat[i-5][0]==99 and cstat[i-10][0]==99) and (cstat[i-15][0]<2 or cstat[i-15][0]==98 or cstat[i-15][0]==4)):  # ha rs fölött 2-vel üres cella vagy cs van akkor törölje
+                if((cstat[i-5][0]==99 and cstat[i-10][0]==99) and (cstat[i-15][0]<4 or cstat[i-15][0]==98)):  # ha rs fölött 2-vel üres cella vagy cs van akkor törölje
                        cellak[i].current(0)
-                if((cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99) and (cstat[i-20][0]<2 or cstat[i-20][0]==98 or cstat[i-20][0]==4)):  # ha rs fölött 2-vel üres cella vagy cs,canvas,manubar van akkor törölje
+                if((cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99) and (cstat[i-20][0]<4 or cstat[i-20][0]==98)):  # ha rs fölött 2-vel üres cella vagy cs,canvas,manubar van akkor törölje
                        cellak[i].current(0)
                 if(cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and cstat[i-20][0]==99):  # az 5.rs kijelölés már nem engedélyezett
                        cellak[i].current(0)
-                if(i>9 and cstat[i-5][0]==99 and (cstat[i-10][0]<30 and cstat[i-10][0]>1 and cstat[i-10][0]!=4)): #ha a cella fölött rs utána érvényes cella 
+                if(i>9 and cstat[i-5][0]==99 and (cstat[i-10][0]<30 and cstat[i-10][0]>3)): #ha a cella fölött rs utána érvényes cella 
                    cstat[i-10][2][1]=cstat[i-10][2][1]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>14 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and (cstat[i-15][0]<30 and cstat[i-15][0]>1 and cstat[i-15][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
+                if(i>14 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and (cstat[i-15][0]<30 and cstat[i-15][0]>3)): #ha a cella fölött rs+rs utána érvényes cella 
                    cstat[i-15][2][1]=cstat[i-15][2][1]+1                            # 2-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>19 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and (cstat[i-20][0]<30 and cstat[i-20][0]>1 and cstat[i-20][0]!=4)): #ha a cella fölött rs+rs utána érvényes cella 
+                if(i>19 and cstat[i-5][0]==99 and cstat[i-10][0]==99 and cstat[i-15][0]==99 and (cstat[i-20][0]<30 and cstat[i-20][0]>3)): #ha a cella fölött rs+rs utána érvényes cella 
                    cstat[i-20][2][1]=cstat[i-20][2][1]+1 
 
 ###colspan            
             if((i!=0 and i%5!=0) and (cstat[i][0]==98)):                            #colspan must be in valid place/area
-                if(cstat[i-1][0]<30 and cstat[i-1][0]>1 and cstat[i-1][0]!=4):                          #ha balra érvényes cella van
+                if(cstat[i-1][0]<30 and cstat[i-1][0]>3):      #ha balra érvényes cella van
                     cstat[i-1][2][0]=cstat[i-1][2][0]+1                             #balra lévő cella colspan értékét növelje 1-el
-                if(cstat[i-1][0]<2 or cstat[i-1][0]==99 or cstat[i-1][0]==4):                          # ha cs -től balra üres cella vagy rs vagy canvas,menubar van akkor törölje
+                if(cstat[i-1][0]<4 or cstat[i-1][0]==99):                          # ha cs -től balra üres cella vagy rs vagy canvas,menubar van akkor törölje
                     cellak[i].current(0)
-                if(cstat[i-1][0]==98 and (cstat[i-2][0]<2 or cstat[i-2][0]==99 or cstat[i-2][0]==4)):  # ha cs -től balra 1-el cs, de utána üres cella vagy rs van akkor törölje
+                if(cstat[i-1][0]==98 and (cstat[i-2][0]<4 or cstat[i-2][0]==99)):  # ha cs -től balra 1-el cs, de utána üres cella vagy rs van akkor törölje
                     cellak[i].current(0)
-                if(cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<2  or cstat[i-3][0]==99 or cstat[i-3][0]==4)):  # ha cs -től balra 2-vel cs, de utána üres cella vagy rs van akkor törölje
+                if(cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<4  or cstat[i-3][0]==99)):  # ha cs -től balra 2-vel cs, de utána üres cella vagy rs van akkor törölje
                     cellak[i].current(0)
-                if(cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<2 or cstat[i-4][0]==99 or cstat[i-4][0]==4)):  # ha cs -től balra 3-al cs, de utána üres cella vagy rs van akkor törölje
+                if(cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<4 or cstat[i-4][0]==99)):  # ha cs -től balra 3-al cs, de utána üres cella vagy rs van akkor törölje
                     cellak[i].current(0)
-                if(i>0 and cstat[i-1][0]==98 and (cstat[i-2][0]<30 and cstat[i-2][0]>1 and cstat[i-2][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>0 and cstat[i-1][0]==98 and (cstat[i-2][0]<30 and cstat[i-2][0]>3)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-2][2][0]=cstat[i-2][2][0]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>1 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<30 and cstat[i-3][0]>1 and cstat[i-3][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>1 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and (cstat[i-3][0]<30 and cstat[i-3][0]>3)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-3][2][0]=cstat[i-3][2][0]+1                            # 1-el fölötte lévő cella rowspan értékét növelje 1-el
-                if(i>2 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<30 and cstat[i-4][0]>1 and cstat[i-4][0]!=4)):                #ha a cella fölött rs utána érvényes cella 
+                if(i>2 and cstat[i-1][0]==98 and cstat[i-2][0]==98 and cstat[i-3][0]==98 and (cstat[i-4][0]<30 and cstat[i-4][0]>3)):                #ha a cella fölött rs utána érvényes cella 
                     cstat[i-4][2][0]=cstat[i-4][2][0]+1
         #check menubar only one widget possible
         counter=0
@@ -2628,7 +2640,9 @@ def kivalaszto2():
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
                 submenu00aa1.entryconfig(2,label="Restart") # Start menu to Restart
-                submenu00aa2.entryconfig(1,state=DISABLED) # Settings menu OFF
+                #submenu00aa2.entryconfig(1,state=DISABLED) # Settings menu OFF
+                radiob0.configure(state=DISABLED)
+                radiob1.configure(state=DISABLED)
                 rc=['','','','','a','a',0,'m',0] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv, cell index
                 rc[0]=cstat[i][1][0] #col             
                 rc[1]=cstat[i][1][1] #row
@@ -2639,46 +2653,50 @@ def kivalaszto2():
                 if(cstat[i][0]==1):
                     menbarablak(rc)
                 if(cstat[i][0]==2):
-                    menuablak(rc)
-                if(cstat[i][0]==3):
-                    gombablak(rc)
-                if(cstat[i][0]==4):
                     vaszonablak(rc)
-                if(cstat[i][0]==5):
-                    szovegmezablak(rc)
-                if(cstat[i][0]==6):
-                    beviteliablak(rc)
-                if(cstat[i][0]==7):    
-                    cimkeablak(rc)
-                if(cstat[i][0]==8):    
-                    cimkeablak_s(rc)
-                if(cstat[i][0]==9):    
-                    comboxablak(rc)
-                if(cstat[i][0]==10):    
-                    comboxablak_s(rc)
-                if(cstat[i][0]==11):    
-                    omenuablak(rc)
-                if(cstat[i][0]==12):    
-                    omenuablak_s(rc)
-                if(cstat[i][0]==13):    
-                    radioxablak(rc)
-                if(cstat[i][0]==14):    
-                    radioxablak_s(rc)
-                if(cstat[i][0]==15):    
-                    uzenablak(rc)
-                if(cstat[i][0]==16):    
+                if(cstat[i][0]==3):
+                    vaszonablak_s(rc)
+                if(cstat[i][0]==4):    
                     univablak(rc)
+                if(cstat[i][0]==5):
+                    menuablak(rc)
+                if(cstat[i][0]==6):
+                    gombablak(rc)
+                if(cstat[i][0]==7):
+                    szovegmezablak(rc)
+                if(cstat[i][0]==8):
+                    szovegmezablak_s(rc)
+                if(cstat[i][0]==9):
+                    beviteliablak(rc)
+                if(cstat[i][0]==10):    
+                    cimkeablak(rc)
+                if(cstat[i][0]==11):    
+                    cimkeablak_s(rc)
+                if(cstat[i][0]==12):    
+                    comboxablak(rc)
+                if(cstat[i][0]==13):    
+                    comboxablak_s(rc)
+                if(cstat[i][0]==14):    
+                    omenuablak(rc)
+                if(cstat[i][0]==15):    
+                    omenuablak_s(rc)
+                if(cstat[i][0]==16):    
+                    radioxablak(rc)
                 if(cstat[i][0]==17):    
+                    radioxablak_s(rc)
+                if(cstat[i][0]==18):    
+                    uzenablak(rc)
+                if(cstat[i][0]==19):    
                     listboxablak(rc)
-                if(cstat[i][0]==18): 
-                    scaleablak(rc)
-                if(cstat[i][0]==19): 
-                    spinablak(rc)
                 if(cstat[i][0]==20): 
-                    progressablak(rc)
+                    scaleablak(rc)
                 if(cstat[i][0]==21): 
-                    toolbarablak(rc)
+                    spinablak(rc)
                 if(cstat[i][0]==22): 
+                    progressablak(rc)
+                if(cstat[i][0]==23): 
+                    toolbarablak(rc)
+                if(cstat[i][0]==24): 
                     nbookablak(rc)
         msg.configure(text='opened windows: '+str(window_counter)+'; message: Adjust all option windows')
         gomb2.configure(state=DISABLED) #Finalize button to normal state
@@ -2742,7 +2760,9 @@ def finalize():
     text1.insert(END,str(tab)+str(slf)+su+str(end))   #insert to the end
     gomb2.configure(state=DISABLED) # Disable to avoid repeated button click
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
-    submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
+    #submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
+    radiob0.configure(state=NORMAL)
+    radiob1.configure(state=NORMAL)
     msg.configure(text='opened windows: '+str(window_counter)+'; message: Code finalized')
 
 def colorset(): #color selection modul
@@ -2769,7 +2789,9 @@ def reset2():
     submenu00aa1.entryconfig(2,label="Start") # Start menu
     gomb2.configure(state=DISABLED) #Finalize button OFF
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
-    submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
+    #submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
+    radiob0.configure(state=NORMAL)
+    radiob1.configure(state=NORMAL)
     text1.delete(1.0,END) #Erase text area
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
@@ -2810,9 +2832,9 @@ def savestr2cell(cstr): # save string convert to cell state list
             x=x+cstr[i]
         else:
             if(x=='98'): # colspan index 23
-                x='23'
+                x='25'
             if(x=='99'): # rowspan index 24 
-                x='24'
+                x='26'
             cellak[counter].current(int(x))
             counter=counter+1
             x=''
@@ -2840,6 +2862,62 @@ def getresulttype():
         tab_slf[2]=''
         tab_slf[3]=''
     return tab_slf   
+
+def defaults():
+    global label_defaults, chbox_defaults, optmenu_defaults, radio_defaults, entry_defaults, chbox_defaults, text_defaults
+           
+    label_defaults[0]=entr1.get()   # title
+    label_defaults[1]=chbox1.get()  # orient
+    chbox_defaults[0]=entr21.get()  # value1
+    chbox_defaults[1]=entr22.get()  # value2
+    chbox_defaults[2]=entr23.get()  # value3
+    chbox_defaults[16]=chbox2.get() # orient
+    optmenu_defaults[0]=entr31.get()  # value1
+    optmenu_defaults[1]=entr32.get()  # value2
+    optmenu_defaults[2]=entr33.get()  # value3
+    optmenu_defaults[16]=chbox3.get() # orient
+    radio_defaults[0]=entr41.get()  # value1
+    radio_defaults[1]=entr42.get()  # value2
+    radio_defaults[2]=entr43.get()  # value3
+    radio_defaults[16]=chbox4.get() # orient
+    entry_defaults[0]=chbox5.get() # orient
+    entry_defaults[1]=entr51.get() # width
+    entry_defaults[2]=entr52.get() # def.value
+    canvas_defaults[0]=entr61.get() # width
+    canvas_defaults[1]=entr62.get() # height
+    canvas_defaults[2]=chbox62.get() # color
+    if (canvas_defaults[2]=='pick a color'):
+        canvas_defaults[2]=colorset()
+        chbox62.delete(0,END)
+        chbox62.insert(0,canvas_defaults[2])
+    canvas_defaults[3]=chbox61.get() # orient
+    text_defaults[0]=entr71.get() # width
+    text_defaults[1]=entr72.get() # height
+    text_defaults[2]=chbox71.get() # orient
+    text_defaults[3]=chbox72.get() # scroll
+    text_defaults[4]=entr73.get() # def.text
+    entry_defaults[0]=chbox5.get() # orient
+    msg.configure(text='opened windows: '+str(window_counter)+'; message: Default parameters applied')
+
+
+def set_defaults():
+    entr1.insert(0,label_defaults[0])   # label title
+    entr21.insert(0,chbox_defaults[0])  # chbox value1
+    entr22.insert(0,chbox_defaults[1])  # chboxvalue2
+    entr23.insert(0,chbox_defaults[2])  # chboxvalue3
+    entr31.insert(0,optmenu_defaults[0])  # optm. value1
+    entr32.insert(0,optmenu_defaults[1])  # optm. value2
+    entr33.insert(0,optmenu_defaults[2])  # optm.value3
+    entr41.insert(0,radio_defaults[0])  # radio value1
+    entr42.insert(0,radio_defaults[1])  # radio value2
+    entr43.insert(0,radio_defaults[2])  # radio value3
+    entr51.insert(0,entry_defaults[1]) # entry width
+    entr52.insert(0,entry_defaults[2]) # entry def.value
+    entr61.insert(0,canvas_defaults[0]) # canvas width
+    entr62.insert(0,canvas_defaults[1]) # canvas height
+    entr71.insert(0,text_defaults[0]) # text width
+    entr72.insert(0,text_defaults[1]) # text height
+    entr73.insert(0,text_defaults[4]) # text height
 
 def def_status():
     i1_1.current(0)
@@ -3022,8 +3100,11 @@ main_tip='1. Select the desired widgets\n\
 Menu:\n\
 - File: You can save and load cell selection\n\
 - Function: Check, Start, Finalize and Reset\n\
-- Settings: Generated code: Object (if selected) or Functions (default)\n\
 - info: download latest version from Github and contact email\n\n\
+Tabs:\n\
+- Widget selection\n\
+- Settings:\n  Generated code: Functions or Object\n\
+  Set the default parameters for simplified widgets\n\n\
 r0-r8/c0-c4:\n\
 - Every cell represents a cell of grid for widget selection.\n\n\
 Text area:\n\
@@ -3037,20 +3118,53 @@ su='k_ablak.mainloop()'
 toolbar_counter=0
 window_counter=0
 started=0
-selection=('00: ---','01: Menu','02: MenuButton','03: Button','04: Canvas',
-                '05: Text', '06: Entry','07: Label',
-                '08: Label (s)', '09: Combobox', '10: ComboBox (s)',
-                '11: OptionMenu', '12: OptionMenu (s)', '13: Radio',
-                '14: Radio (s)', '15: Message', '16: Univ.Frame',
-                '17: Listbox', '18: Scale', '19: Spinbox',
-                '20: Progressbar','21: Toolbar', '22: Notebook',
-                '98: colspan <', '99: rowspan ^')
+selection=('00: ---', '01: Menu', '02: Canvas', '03: Canvas (s)', '04: Univ.Frame',
+           '05: MenuButton','06: Button', '07: Text', '08: Text (s)', '09: Entry (s)',
+           '10: Label', '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
+           '14: OptionMenu', '15: OptionMenu (s)', '16: Radio', '17: Radio (s)',
+           '18: Message', '19: Listbox', '20: Scale', '21: Spinbox',
+           '22: Progressbar','23: Toolbar', '24: Notebook',
+           '98: colspan <', '99: rowspan ^')
 
 orient_values=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
+
+label_defaults=['title','N']
+chbox_defaults=['One','Two','Three', #cells 0-11
+                '','','',
+                '','','',
+                '','','',
+                '','','','', #title cell
+                'N','16']    #orientation, cell width
+optmenu_defaults=['One','Two','Three', #cells 0-11
+                '','','',
+                '','','',
+                '','','',
+                '','','','', #title cell
+                'N','16']    #orientation, cell width
+radio_defaults=['One','Two','Three', #cells 0-11
+                '','','',
+                '','','',
+                '','','',
+                '','','','', #title cell
+                'N','16']    #orientation, cell width
+entry_defaults=['N','17',''] # orient, width, text
+canvas_defaults=['200','250','white','N'] # width, height, color, orient
+text_defaults=['10','10','N','1: w/o scroll','','white','black'] # w,h,orient,slide,def.text,bg.color, text.color
+
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.7")
-frame1=Frame(abl1, borderwidth=1)
+abl1.title("Tkinter GUI designer v0.9.8")
+
+nb00aa=Notebook(abl1)
+nb00aa.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+f0=Frame(nb00aa)
+nb00aa.add(f0,text='Widget selection')
+f1=Frame(nb00aa)
+nb00aa.add(f1,text='Settings')
+nb00aa.select(f0)
+nb00aa.enable_traversal()
+
+frame1=Frame(f0, borderwidth=1)
 frame1.grid(row=2, column=1)
 i1_1=Combobox(frame1)
 i1_2=Combobox(frame1)
@@ -3108,11 +3222,11 @@ cellak=[i1_1, i1_2, i1_3, i1_4, i1_5,
         i8_1, i8_2, i8_3, i8_4, i8_5,
         i9_1, i9_2, i9_3, i9_4, i9_5]
 
-gombkeret=Frame(abl1, borderwidth=0)
+gombkeret=Frame(f0, borderwidth=0)
 gombkeret.grid(row=2, column=3)
 gomb=Button(gombkeret,text='Start',command=kivalaszto2)
 gomb2=Button(gombkeret,text='Finalize',command=finalize, state=DISABLED) # Finalize button OFF, avoid early or repeated click
-gomb3=Button(abl1,text='Reset',command=reset2)                      
+gomb3=Button(f0,text='Reset',command=reset2)                      
 gomb4=Button(gombkeret,text='Check',command=updatecell) #colspan,rowspan update
 i1_1['values']=selection
 i1_2['values']=selection
@@ -3194,8 +3308,8 @@ cmke2x.grid(row=0, column=2,sticky=N)
 cmke3x.grid(row=0, column=3,sticky=N)
 cmke4x.grid(row=0, column=4,sticky=N)
 cmke5x.grid(row=0, column=5,sticky=N)
-msg.grid(row=6, column=1, columnspan=5 ,sticky=W)
-titlekeret=Frame(abl1, borderwidth=0)
+msg.grid(row=1, column=0, columnspan=5 ,sticky=W)
+titlekeret=Frame(f0, borderwidth=0)
 titlekeret.grid(row=0, column=1)
 titlcmke=Label(titlekeret, text='    Window title:')
 titlcmke.grid(row=0, column=1,sticky=E)
@@ -3220,12 +3334,6 @@ submenu00aa1.add_command(label='Start', command=kivalaszto2)
 submenu00aa1.add_command(label='Finalize', command=finalize, state=DISABLED)
 submenu00aa1.add_separator()
 submenu00aa1.add_command(label='Reset', command=reset2)
-
-submenu00aa2=Menu(menubar00aa, tearoff=0)
-menubar00aa.add_cascade(label='Settings', menu=submenu00aa2)
-submenu00aa2.add_separator()
-resulttype= BooleanVar(abl1)
-submenu00aa2.add_checkbutton(label='Generated code type: Func/Obj.', variable=resulttype)
 submenu00aa3=Menu(menubar00aa, tearoff=0)
 menubar00aa.add_cascade(label='Info', menu=submenu00aa3)
 submenu00aa3.add_separator()
@@ -3234,7 +3342,7 @@ submenu00aa3.add_command(label='Show email at bottom', command=contact)
 submenu00aa3.add_command(label='Open Paypal donate', command=donate)
 abl1.config(menu=menubar00aa)
 
-textkeret=Frame(abl1, relief='flat', borderwidth=1)
+textkeret=Frame(f0, relief='flat', borderwidth=1)
 textkeret.grid(row=5, column=1, sticky=NE)
 text1=Text(textkeret,height=18,width=88, background='light yellow', wrap=NONE)
 scrolly1=Scrollbar(textkeret, orient=VERTICAL,command=text1.yview)
@@ -3294,5 +3402,167 @@ gomb4.grid(row=0,column=0, sticky=N)
 gomb.grid(row=1,column=0, sticky=N)
 gomb2.grid(row=2,column=0, sticky=N)
 gomb3.grid(row=5,column=3, sticky=S)
+#2nd tab (default settings
+frm0=LabelFrame(f1, text='Default parameters for widgets without option window.\n(Where is (s) located at the end of widget name)', height=200, width=250, relief='flat', borderwidth=1)
+frm0.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=W, padx=10, pady=10)
+labl1=Label(frm0, text='')
+labl1.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=W)
+#label
+frm1=LabelFrame(frm0, text='Label (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm1.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=W)
+labl1=Label(frm1, text='Orient.:')
+labl1.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl11=Label(frm1, text='Text:')
+labl11.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+chbox1=Combobox(frm1, width=4)
+chbox1['values']=orient_values
+chbox1.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox1.current(0)
+entr1=Entry(frm1)
+entr1.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+#combobox
+frm2=LabelFrame(frm0, text='ComboBox (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm2.grid(row=2, column=1, columnspan=1, rowspan=1, sticky=W)
+labl21=Label(frm2, text='Orient.:')
+labl21.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl22=Label(frm2, text='value 1:')
+labl22.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl23=Label(frm2, text='value 2:')
+labl23.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+labl24=Label(frm2, text='value 3:')
+labl24.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+chbox2=Combobox(frm2, width=4)
+chbox2['values']=orient_values
+chbox2.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox2.current(0)
+entr21=Entry(frm2)
+entr21.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr22=Entry(frm2)
+entr22.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+entr23=Entry(frm2)
+entr23.grid(row=1, column=3, columnspan=1, rowspan=1, sticky=N)
+#optionmenu
+frm3=LabelFrame(frm0, text='OptionMenu (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm3.grid(row=3, column=1, columnspan=1, rowspan=1, sticky=W)
+labl31=Label(frm3, text='Orient.:')
+labl31.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl32=Label(frm3, text='value 1:')
+labl32.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl33=Label(frm3, text='value 2:')
+labl33.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+labl34=Label(frm3, text='value 3:')
+labl34.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+chbox3=Combobox(frm3, width=4)
+chbox3['values']=orient_values
+chbox3.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox3.current(0)
+entr31=Entry(frm3)
+entr31.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr32=Entry(frm3)
+entr32.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+entr33=Entry(frm3)
+entr33.grid(row=1, column=3, columnspan=1, rowspan=1, sticky=N)
+#radio
+frm4=LabelFrame(frm0, text='Radio (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm4.grid(row=4, column=1, columnspan=1, rowspan=1, sticky=W)
+labl41=Label(frm4, text='Orient.:')
+labl41.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl42=Label(frm4, text='value 1:')
+labl42.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl43=Label(frm4, text='value 2:')
+labl43.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+labl44=Label(frm4, text='value 3:')
+labl44.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+chbox4=Combobox(frm4, width=4)
+chbox4['values']=orient_values
+chbox4.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox4.current(0)
+entr41=Entry(frm4)
+entr41.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr42=Entry(frm4)
+entr42.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+entr43=Entry(frm4)
+entr43.grid(row=1, column=3, columnspan=1, rowspan=1, sticky=N)
+#entry
+frm5=LabelFrame(frm0, text='Entry (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm5.grid(row=5, column=1, columnspan=1, rowspan=1, sticky=W)
+labl51=Label(frm5, text='Orient.:')
+labl51.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl52=Label(frm5, text='width:')
+labl52.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl53=Label(frm5, text='default value:')
+labl53.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+chbox5=Combobox(frm5, width=4)
+chbox5['values']=orient_values
+chbox5.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox5.current(0)
+entr51=Entry(frm5)
+entr51.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr52=Entry(frm5)
+entr52.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+#canvas
+frm6=LabelFrame(frm0, text='Canvas (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm6.grid(row=6, column=1, columnspan=1, rowspan=1, sticky=W)
+labl61=Label(frm6, text='Orient.:')
+labl61.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl62=Label(frm6, text='width:')
+labl62.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl63=Label(frm6, text='height:')
+labl63.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+labl63=Label(frm6, text='color:')
+labl63.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+chbox61=Combobox(frm6, width=4)
+chbox61['values']=orient_values
+chbox61.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox61.current(0)
+entr61=Entry(frm6)
+entr61.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr62=Entry(frm6)
+entr62.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+chbox62=Combobox(frm6, width=17)
+chbox62['values']=('white','light yellow','snow','bisque','gray','cyan','sienna1','thistle','pick a color')
+chbox62.current(0)
+chbox62.grid(row=1, column=3,sticky=N)
+#text
+frm7=LabelFrame(frm0, text='Text (s)', height=200, width=250, relief='flat', borderwidth=1)
+frm7.grid(row=7, column=1, columnspan=1, rowspan=1, sticky=W, pady=5)
+labl71=Label(frm7, text='Orient.:')
+labl71.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+labl72=Label(frm7, text='width:')
+labl72.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+labl73=Label(frm7, text='height:')
+labl73.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
+labl73=Label(frm7, text='scroll:')
+labl73.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+labl74=Label(frm7, text='default text:')
+labl74.grid(row=0, column=4, columnspan=1, rowspan=1, sticky=N)
+chbox71=Combobox(frm7, width=4)
+chbox71['values']=orient_values
+chbox71.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+chbox71.current(0)
+entr71=Entry(frm7)
+entr71.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+entr72=Entry(frm7)
+entr72.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+chbox72=Combobox(frm7, width=17)
+chbox72['values']=('1: w/o scroll','2: w vertical scroll','3: w horizontal scroll','4: with v/h scroll')
+chbox72.current(0)
+chbox72.grid(row=1, column=3,sticky=N)
+entr73=Entry(frm7)
+entr73.grid(row=1, column=4, columnspan=1, rowspan=1, sticky=N)
+## func/obj
+frm8=LabelFrame(f1, text='Generated code type:', height=200, width=250, relief='flat', borderwidth=1)
+frm8.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N, padx=10, pady=10)
+resulttype = IntVar()
+radiob0=Radiobutton(frm8, text='Functions',variable=resulttype, value=0)
+radiob0.grid(row=0, column=0, sticky=W)
+radiob1=Radiobutton(frm8, text='Object (class)',variable=resulttype, value=1)
+radiob1.grid(row=1, column=0, sticky=W)
+
+##
+set_defaults()
+btntab1=Button(frm0,text='Apply',command=defaults)
+btntab1.grid(row=10, column=1, columnspan=1, rowspan=1, sticky=SW)
+
 abl1.mainloop()
 
