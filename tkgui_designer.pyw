@@ -52,7 +52,7 @@
 # v0.9.6  hints
 # v0.9.7  it can generate functions and object, too
 # v0.9.8  default parameter settings applied
-#
+# v1.0    it can save/load default parameters with widget selections 
 #
 from tkinter import *
 import tkinter as tk
@@ -2822,31 +2822,68 @@ def cell2savestr(): # cell state list convert string
     cstat=updatecell()
     for i in range(len(cstat)):
         cstr=cstr+str(cstat[i][0])+','
+    cstr=cstr+'\n'+default2str(label_defaults)
+    cstr=cstr+'\n'+default2str(chbox_defaults)
+    cstr=cstr+'\n'+default2str(optmenu_defaults)
+    cstr=cstr+'\n'+default2str(radio_defaults)
+    cstr=cstr+'\n'+default2str(entry_defaults)
+    cstr=cstr+'\n'+default2str(canvas_defaults)
+    cstr=cstr+'\n'+default2str(text_defaults)
+    return cstr
+
+def default2str(default):
+    cstr=''
+    for i in range(len(default)):
+        if(default[i]==''):
+            cstr=cstr+'*'
+        cstr=cstr+str(default[i])+','
     return cstr
 
 def savestr2cell(cstr): # save string convert to cell state list
+    global label_defaults, chbox_defaults, optmenu_defaults, radio_defaults, entry_defaults, canvas_defaults, text_defaults
+    lista=cstr.split('\n')
     x=''
     counter=0
-    for i in range(len(cstr)):
-        if (cstr[i]!=','):
-            x=x+cstr[i]
-        else:
-            if(x=='98'): # colspan index 23
-                x='25'
-            if(x=='99'): # rowspan index 24 
-                x='26'
-            cellak[counter].current(int(x))
-            counter=counter+1
-            x=''
-    updatecell()
+    defs=[[],[],[],[],[],[],[]] #label,chbox,optm,radio,entr,canv,text 
+    for n in range(len(lista)): #write cell state
+        if (n==0):
+            for i in range(len(lista[n])):
+                if (lista[n][i]!=','):
+                    x=x+lista[n][i]
+                else:
+                    if(x=='98'): # colspan index 23
+                        x='25'
+                    if(x=='99'): # rowspan index 24 
+                        x='26'
+                    cellak[counter].current(int(x))
+                    counter=counter+1
+                    x=''
+            updatecell()
+        if (n>0): #write default settings
+            for i in range(len(lista[n])):
+                if (lista[n][i]!=',' and lista[n][i]!='*'):
+                    x=x+lista[n][i]
+                if (lista[n][i]=='*'):
+                    pass
+                if (lista[n][i]==','):
+                    defs[n-1].append(x)
+                    x=''
+    label_defaults = defs[0]
+    chbox_defaults = defs[1]
+    optmenu_defaults = defs[2]
+    radio_defaults = defs[3]
+    entry_defaults = defs[4]
+    canvas_defaults = defs[5]
+    text_defaults = defs[6] 
+    set_defaults()
         
 def countwindows():
     counter=0
     for widget in abl1.winfo_children(): #close all sub-windows
         if isinstance(widget, tk.Toplevel):
             counter=counter+1
-    print(counter)
     return counter
+
 
 def getresulttype():
     tab_slf=['','','',''] # tab, self., init of obj., ending of obj.
@@ -2863,8 +2900,9 @@ def getresulttype():
         tab_slf[3]=''
     return tab_slf   
 
+
 def defaults():
-    global label_defaults, chbox_defaults, optmenu_defaults, radio_defaults, entry_defaults, chbox_defaults, text_defaults
+    global label_defaults, chbox_defaults, optmenu_defaults, radio_defaults, entry_defaults, canvas_defaults, text_defaults
            
     label_defaults[0]=entr1.get()   # title
     label_defaults[1]=chbox1.get()  # orient
@@ -2901,23 +2939,59 @@ def defaults():
 
 
 def set_defaults():
+    entr1.delete(0,END)
     entr1.insert(0,label_defaults[0])   # label title
+    chbox1.delete(0,END)
+    chbox1.insert(0,label_defaults[1])   # label orient
+    entr21.delete(0,END)
     entr21.insert(0,chbox_defaults[0])  # chbox value1
+    entr22.delete(0,END)
     entr22.insert(0,chbox_defaults[1])  # chboxvalue2
+    entr23.delete(0,END)
     entr23.insert(0,chbox_defaults[2])  # chboxvalue3
+    chbox2.delete(0,END)
+    chbox2.insert(0,chbox_defaults[16])   # chbox orient
+    entr31.delete(0,END)
     entr31.insert(0,optmenu_defaults[0])  # optm. value1
+    entr32.delete(0,END)
     entr32.insert(0,optmenu_defaults[1])  # optm. value2
+    entr33.delete(0,END)
     entr33.insert(0,optmenu_defaults[2])  # optm.value3
+    chbox3.delete(0,END)
+    chbox3.insert(0,optmenu_defaults[16])   # optm. orient
+    entr41.delete(0,END)
     entr41.insert(0,radio_defaults[0])  # radio value1
+    entr42.delete(0,END)
     entr42.insert(0,radio_defaults[1])  # radio value2
+    entr43.delete(0,END)
     entr43.insert(0,radio_defaults[2])  # radio value3
+    chbox4.delete(0,END)
+    chbox4.insert(0,radio_defaults[16])   # radio. orient
+    entr51.delete(0,END)
     entr51.insert(0,entry_defaults[1]) # entry width
+    entr52.delete(0,END)
     entr52.insert(0,entry_defaults[2]) # entry def.value
+    chbox5.delete(0,END)
+    chbox5.insert(0,entry_defaults[0])   # entry orient
+    entr61.delete(0,END)
     entr61.insert(0,canvas_defaults[0]) # canvas width
+    entr62.delete(0,END)
     entr62.insert(0,canvas_defaults[1]) # canvas height
+    chbox61.delete(0,END)
+    chbox61.insert(0,canvas_defaults[3])   # canvas orient
+    chbox62.delete(0,END)
+    chbox62.insert(0,canvas_defaults[2])   # canvas color
+    entr71.delete(0,END)
     entr71.insert(0,text_defaults[0]) # text width
+    entr72.delete(0,END)
     entr72.insert(0,text_defaults[1]) # text height
+    entr73.delete(0,END)
     entr73.insert(0,text_defaults[4]) # text height
+    chbox71.delete(0,END)
+    chbox71.insert(0,text_defaults[2])   # text orient
+    chbox72.delete(0,END)
+    chbox72.insert(0,text_defaults[3])   # text scroll
+    
 
 def def_status():
     i1_1.current(0)
@@ -3153,7 +3227,7 @@ text_defaults=['10','10','N','1: w/o scroll','','white','black'] # w,h,orient,sl
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v0.9.8")
+abl1.title("Tkinter GUI designer v1.0")
 
 nb00aa=Notebook(abl1)
 nb00aa.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
@@ -3324,8 +3398,10 @@ menubar00aa=Menu(abl1)
 submenu00aa0=Menu(menubar00aa, tearoff=0)
 menubar00aa.add_cascade(label='File', menu=submenu00aa0)
 submenu00aa0.add_separator()
-submenu00aa0.add_command(label='Open widget selection', command=fileopen)
-submenu00aa0.add_command(label='Save widget selection', command=filesave)
+submenu00aa0.add_command(label='Open selection & settings', command=fileopen)
+submenu00aa0.add_command(label='Save selection & settings', command=filesave)
+submenu00aa0.add_separator()
+submenu00aa0.add_command(label='Exit', command=abl1.destroy)
 submenu00aa1=Menu(menubar00aa, tearoff=0)
 menubar00aa.add_cascade(label='Function', menu=submenu00aa1)
 submenu00aa1.add_separator()
