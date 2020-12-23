@@ -52,7 +52,8 @@
 # v0.9.6  hints
 # v0.9.7  it can generate functions and object, too
 # v0.9.8  default parameter settings applied
-# v1.0    it can save/load default parameters with widget selections 
+# v1.0    it can save/load default parameters with widget selections
+# v1.1    improved Comobox, Optionmenu and Radio
 #
 from tkinter import *
 import tkinter as tk
@@ -98,167 +99,6 @@ def CreateToolTip(widget, text):
     widget.bind("<Enter>", enter)
     widget.bind("<Leave>", leave)
 
-# --- Windows moduls
-class Boxablak:
-    "Checkbox and option selection window modul"
-    def __init__(self,abl1,rc,frame_name):
-        global window_counter
-        window_counter=window_counter+1
-        self.frame_name=frame_name
-        self.rc=rc
-        self.c=rc[0]
-        self.r=rc[1]
-        self.m=rc[7]
-        self.name=selection[rc[6]][3:]
-        self.cspan=rc[2]
-        self.rspan=rc[3]        
-        self.base_c=rc[4]
-        self.base_r=rc[5]
-        self.tipus=rc[6] # (0)9=combobox, (1)11=optionmenu, (2)13=radio
-        self.o=''
-        self.x=''
-        self.output=['','','',      #value lines
-                     '','','',
-                     '','','',
-                     '','','',
-                     '','','','',   #text field texts 1,2,3,4
-                     '','']         #orient.
-        self.abl1=abl1
-        self.abl2=Toplevel(self.abl1)
-        if(self.tipus==12):
-            self.abl2.title('ComboBox options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
-        if(self.tipus==14):
-            self.abl2.title('Option menu options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
-        if(self.tipus==16):
-            self.abl2.title('Radio options: c'+str(self.c)+', r'+str(self.r)+'   ('+str(self.m)+')')
-        self.ablak=Frame(self.abl2, relief='flat', borderwidth=1)
-        self.ablak.grid(row=0, column=0)
-        self.bmezo1_1_1=Entry(self.ablak)
-        self.bmezo1_1_1.grid(row=0, column=2,sticky=N)
-        self.bmezo1_1_1.insert(0, "One")
-        self.bmezo1_1_2=Entry(self.ablak)
-        self.bmezo1_1_2.grid(row=1, column=2,sticky=N)
-        self.bmezo1_1_2.insert(0, "Two")
-        self.bmezo1_1_3=Entry(self.ablak)
-        self.bmezo1_1_3.grid(row=2, column=2,sticky=N)        
-        self.bmezo1_2_1=Entry(self.ablak)
-        self.bmezo1_2_1.grid(row=0, column=4,sticky=N)
-        self.bmezo1_2_2=Entry(self.ablak)
-        self.bmezo1_2_2.grid(row=1, column=4,sticky=N)
-        self.bmezo1_2_3=Entry(self.ablak)
-        self.bmezo1_2_3.grid(row=2, column=4,sticky=N)
-        self.bmezo2_1_1=Entry(self.ablak)
-        self.bmezo2_1_1.grid(row=4, column=2,sticky=N)
-        self.bmezo2_1_2=Entry(self.ablak)
-        self.bmezo2_1_2.grid(row=5, column=2,sticky=N)
-        self.bmezo2_1_3=Entry(self.ablak)
-        self.bmezo2_1_3.grid(row=6, column=2,sticky=N)        
-        self.bmezo2_2_1=Entry(self.ablak)
-        self.bmezo2_2_1.grid(row=4, column=4,sticky=N)
-        self.bmezo2_2_2=Entry(self.ablak)
-        self.bmezo2_2_2.grid(row=5, column=4,sticky=N)
-        self.bmezo2_2_3=Entry(self.ablak)
-        self.bmezo2_2_3.grid(row=6, column=4,sticky=N)
-        if(self.tipus==12 or self.tipus==14):
-            self.bmezo1=Entry(self.ablak)
-            self.bmezo1.grid(row=1, column=1,sticky=N)
-            self.bmezo2=Entry(self.ablak)
-            self.bmezo2.grid(row=1, column=3,sticky=N)
-            self.bmezo3=Entry(self.ablak)
-            self.bmezo3.grid(row=5, column=1,sticky=N)
-            self.bmezo4=Entry(self.ablak)
-            self.bmezo4.grid(row=5, column=3,sticky=N)
-            self.bmezo1.insert(0, "Label-1")
-            self.bmezo2.insert(0, "Label-2")
-            self.bmezo3.insert(0, "Label-3")
-            self.bmezo4.insert(0, "Label-4")
-        self.cmke1=Label(self.ablak, text='Orient.')
-        self.cmke1.grid(row=1, column=0,sticky=N)
-        self.cmke6=Label(self.ablak, text='Cell width')
-        self.cmke6.grid(row=3, column=0,sticky=N)
-        self.cmke2=Label(self.ablak, text='1/1')
-        self.cmke2.grid(row=0, column=1,sticky=E)
-        self.cmke3=Label(self.ablak, text='1/2')
-        self.cmke3.grid(row=0, column=3,sticky=E)
-        self.cmke4=Label(self.ablak, text='2/1')
-        self.cmke4.grid(row=4, column=1,sticky=E)
-        self.cmke5=Label(self.ablak, text='2/2')
-        self.cmke5.grid(row=4, column=3,sticky=E)
-        self.kret60=Frame(self.ablak, relief='flat', borderwidth=1)
-        self.kret60.grid(row=6, column=0, sticky=N)
-        self.gmb1=Button(self.kret60,text='Apply',command=self.cb_ertek)
-        self.gmb1.grid(row=0, column=0)
-        self.chbox1=Combobox(self.ablak, width=4)
-        self.chbox1['values']=orient_values
-        self.chbox1.current(0)
-        self.chbox1.grid(row=2, column=0,sticky=S)
-        self.chbox2=Combobox(self.ablak, width=4)
-        self.chbox2['values']=('auto','4','6','10','12','14','')
-        self.chbox2.current(0)
-        self.chbox2.grid(row=4, column=0,sticky=S)
-        if (self.tipus==14 or self.tipus==16):
-            self.chbox2.configure(state=DISABLED)
-        self.cmkei=Label(self.ablak, text='hint', foreground='black', background='orange')
-        self.cmkei.grid(row=0, column=0,sticky=S)
-        CreateToolTip(self.cmkei, text=combox_tip)
-        self.abl2.protocol('WM_DELETE_WINDOW', self.on_exit)
-    def cb_ertek(self):
-        global window_counter
-        self.output[0],self.output[1],self.output[2]=self.bmezo1_1_1.get(),self.bmezo1_1_2.get(),self.bmezo1_1_3.get() #field value to output list
-        self.output[3],self.output[4],self.output[5]=self.bmezo1_2_1.get(),self.bmezo1_2_2.get(),self.bmezo1_2_3.get() #first 12 elements of combox values
-        self.output[6],self.output[7],self.output[8]=self.bmezo2_1_1.get(),self.bmezo2_1_2.get(),self.bmezo2_1_3.get()
-        self.output[9],self.output[10],self.output[11]=self.bmezo2_2_1.get(),self.bmezo2_2_2.get(),self.bmezo2_2_3.get()
-        if(self.tipus==12 or self.tipus==14):
-            self.output[12],self.output[13],self.output[14],self.output[15]=self.bmezo1.get(),self.bmezo2.get(),self.bmezo3.get(),self.bmezo4.get() #label texts
-        self.output[16]=self.chbox1.get() #oriantation
-        self.output[17]=self.chbox2.get() #cell width
-        if (self.output[17]):
-            self.output[17]=self.cellaw()
-        self.abl2.destroy()
-        window_counter=window_counter-1
-        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget code generated')
-        check_state()
-        if (self.tipus==12):
-            self.comboxablak()
-        if (self.tipus==14):
-            self.omenuablak()
-        if (self.tipus==16):
-            self.radioboxablak()
-    def kiir(self,x):
-        self.x=x
-        if(self.x!=''):
-            #gomb2.configure(state=NORMAL) #activate Finalize button
-            text1.insert(INSERT,self.x)   #text insert
-            text1.insert(INSERT,'\n')
-    def cellaw(self): #determine cell width
-        self.templist=[]
-        for self.i in range(12):
-            self.templist.append(len(self.output[self.i]))
-        self.cw=(max(self.templist))+4
-        return self.cw
-    def comboxablak(self):
-        self.combox=Combox(self.rc,self.output,self.frame_name)
-        self.osszes=self.combox.generator()
-        self.kiir('#-'+str(self.m)+'----ComboBox: c'+str(self.c)+', r'+str(self.r)+'------')
-        self.kiir(self.osszes)
-    def omenuablak(self):
-        self.optmenu=Optmenu(self.rc,self.output,self.frame_name)
-        self.osszes=self.optmenu.generator()
-        self.kiir('#-'+str(self.m)+'----Option menu: c'+str(self.c)+', r'+str(self.r)+'------')
-        self.kiir(self.osszes)
-    def radioboxablak(self):
-        self.radiobox=Radiobox(self.rc,self.output,self.frame_name)
-        self.osszes=self.radiobox.generator()
-        self.kiir('#-'+str(self.m)+'----Radio: c'+str(self.c)+', r'+str(self.r)+'------')
-        self.kiir(self.osszes)
-    def on_exit(self):
-        global window_counter
-        cellak[self.rc[8]].current(0)
-        self.abl2.destroy()
-        window_counter=window_counter-1
-        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(self.c)+', r'+str(self.r)+' '+str(self.name)+' widget closed.')
-
-# ------ MenuBar generator
 class Menbar:
     "Menubar code generator"
     def __init__(self,rc,inputlist,frame_name):
@@ -323,7 +163,6 @@ class Menbar:
         return self.osszes
            
 
-# ------ MenuButton generator
 class Menuk:
     "Menubuton generator modul"
     def __init__(self,rc,inputlist,frame_name):
@@ -384,7 +223,6 @@ class Menuk:
             self.menuszam=self.menuszam+1
         self.osszes=self.kret+'\n'+self.msz1+self.msz2+self.msz3
         return self.osszes
-
 
 class Gombokx:
     "Button generator modul"
@@ -473,6 +311,7 @@ class Gombokx:
 
 
 class Toolbargen:
+    "Toolbar code generator"
     def __init__(self,rc,inputlist,frame_name):
         self.frame_name=frame_name
         self.inputlist=inputlist #img1,img2,img3,img4,img5,tiptxt1,tiptxt2,tiptxt3,tiptxt4,tiptxt5,orient
@@ -687,7 +526,7 @@ class Uzenet:
 
 class Combox:
     "Combox generator modul"
-    def __init__(self,rc,lista,frame_name):
+    def __init__(self,rc,inputs,frame_name):
         self.frame_name=frame_name
         self.cboxszam=0
         self.col=rc[0]
@@ -697,52 +536,25 @@ class Combox:
         self.base_c=rc[4]
         self.base_r=rc[5]
         self.keretszam=''
-        self.lista=lista
+        self.inputs=inputs
         self.cb1=''
         self.cb2=''
         self.cb3=''
         self.cbv=''
-        self.v1=[self.lista[0],self.lista[1],self.lista[2]] #field values
-        self.v2=[self.lista[3],self.lista[4],self.lista[5]]
-        self.v3=[self.lista[6],self.lista[7],self.lista[8]]
-        self.v4=[self.lista[9],self.lista[10],self.lista[11]]
-        self.l1,self.l2,self.l3,self.l4=self.lista[12],self.lista[13],self.lista[14],self.lista[15] # label values
-        self.orient=self.lista[16] #orientation
-        self.cw=self.lista[17]     #cell width
+        self.v1=self.inputs[0] #field values
+        self.v2=self.inputs[1]
+        self.v3=self.inputs[2]
+        self.v4=self.inputs[3]
+        self.l1,self.l2,self.l3,self.l4=self.inputs[4],self.inputs[5],self.inputs[6],self.inputs[7] # label values
+        self.orient=self.inputs[8] #orientation
+        self.cw=self.inputs[9]     #cell width
         self.x=0
         self.tab=getresulttype()[0]
         self.slf=getresulttype()[1]
-        for self.i in range(len(self.v1)): #remove '' empty items from v1 list and make tuple
-            if(self.v1[self.i]==''):
-               self.x=self.x+1     
-        for self.i in range(self.x):
-            self.v1.remove('')
-        self.v1=tuple(self.v1)
-        self.x=0
-
-        for self.i in range(len(self.v2)): #remove '' empty items from v2 list and make tuple
-            if(self.v2[self.i]==''):
-               self.x=self.x+1     
-        for self.i in range(self.x):
-            self.v2.remove('')
-        self.v2=tuple(self.v2)
-        self.x=0
-
-        for self.i in range(len(self.v3)): #remove '' empty items from v3 list and make tuple
-            if(self.v3[self.i]==''):
-               self.x=self.x+1     
-        for self.i in range(self.x):
-            self.v3.remove('')
-        self.v3=tuple(self.v3)
-        self.x=0
-
-        for self.i in range(len(self.v4)): #remove '' empty items from v4 list and make tuple
-            if(self.v4[self.i]==''):
-               self.x=self.x+1     
-        for self.i in range(self.x):
-            self.v4.remove('')
-        self.v4=tuple(self.v4)
-        self.x=0
+        self.v1=list2tuple(self.v1)
+        self.v2=list2tuple(self.v2)
+        self.v3=list2tuple(self.v3)
+        self.v4=list2tuple(self.v4)
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
@@ -775,9 +587,9 @@ class Combox:
 
 class Optmenu:
     "Option menu generator modul"
-    def __init__(self,rc,lista,frame_name):
+    def __init__(self,rc,inputs,frame_name):
         self.frame_name=frame_name
-        self.lista=lista
+        self.inputs=inputs
         self.omszam=0
         self.col=rc[0]
         self.row=rc[1]
@@ -786,12 +598,12 @@ class Optmenu:
         self.base_c=rc[4]
         self.base_r=rc[5]
         self.keretszam=''
-        self.v1=[lista[0],lista[1],lista[2]] #field values
-        self.v2=[lista[3],lista[4],lista[5]]
-        self.v3=[lista[6],lista[7],lista[8]]
-        self.v4=[lista[9],lista[10],lista[11]]
-        self.l1,self.l2,self.l3,self.l4=lista[12],lista[13],lista[14],lista[15] # label values
-        self.orient=lista[16] #orient.
+        self.v1=removeempty(self.inputs[0]) #field values
+        self.v2=removeempty(self.inputs[1])
+        self.v3=removeempty(self.inputs[2])
+        self.v4=removeempty(self.inputs[3])
+        self.l1,self.l2,self.l3,self.l4=self.inputs[4],self.inputs[5],self.inputs[6],self.inputs[7] # label values
+        self.orient=self.inputs[8] #orientation
         self.osszes=''
         self.om1,self.om2,self.om3,self.omv='','','',''
         self.tab=getresulttype()[0]
@@ -799,7 +611,7 @@ class Optmenu:
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
-        if(self.v1[0]!='' or self.v1[1]!='' or self.v1[2]!=''):
+        if(self.v1!=[]):
             self.omszam=0
             self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
             self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
@@ -810,33 +622,33 @@ class Optmenu:
             self.om3=self.om3+')\n'
             self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=1, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l1+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=0, column=0,sticky=W)\n'
         
-        if(self.v2[0]!='' or self.v2[1]!='' or self.v2[2]!=''):
+        if(self.v2!=[]):
             self.omszam=1
             self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
             self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+', '+"'"+'select'+"'"
             for self.i in self.v2:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
             self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=0, column=3, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l2+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=0, column=2,sticky=W)\n'
 
-        if(self.v3[0]!='' or self.v3[1]!='' or self.v3[2]!=''):
+        if(self.v3!=[]):
             self.omszam=2
             self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
             self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+', '+"'"+'select'+"'"
             for self.i in self.v3:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
             self.om3=self.om3+')\n'
             self.omv=self.omv+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'.grid(row=1, column=1, sticky=W)\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'=Label('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+self.l3+"'"+')\n'+str(self.tab)+str(self.slf)+'labl'+self.keretszam+str(self.omszam)+'.grid(row=1, column=0,sticky=W)\n'
 
-        if(self.v4[0]!='' or self.v4[1]!='' or self.v4[2]!=''):
+        if(self.v4!=[]):
             self.omszam=3
             self.om1=self.om1+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+' = StringVar('+str(self.slf)+'frm'+str(self.keretszam)+')\n'
             self.om2=self.om2+str(self.tab)+str(self.slf)+'var'+self.keretszam+str(self.omszam)+'.set(0)\n'
-            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+','+"'"+'select'+"'"
+            self.om3=self.om3+str(self.tab)+str(self.slf)+'opmenu'+self.keretszam+str(self.omszam)+'=ttk.OptionMenu('+str(self.slf)+'frm'+str(self.keretszam)+', '+str(self.slf)+'var'+self.keretszam+str(self.omszam)+', '+"'"+'select'+"'"
             for self.i in self.v4:
                 if (self.i!=''):
                     self.om3=self.om3+','+"'"+str(self.i)+"'"+' '
@@ -847,9 +659,9 @@ class Optmenu:
 
 class Radiobox:
     "Radio box generator modul"
-    def __init__(self,rc,lista,frame_name):
+    def __init__(self,rc,inputs,frame_name):
         self.frame_name=frame_name
-        self.lista=lista
+        self.inputs=inputs
         self.chbszam=0
         self.col=rc[0]
         self.row=rc[1]
@@ -859,50 +671,39 @@ class Radiobox:
         self.base_r=rc[5]
         self.kret=''
         self.keretszam=''
-        self.v1=[lista[0],lista[1],lista[2]] #field values
-        self.v2=[lista[3],lista[4],lista[5]]
-        self.v3=[lista[6],lista[7],lista[8]]
-        self.v4=[lista[9],lista[10],lista[11]]
-        self.orient=lista[16] #orient.
+        self.v1=removeempty(self.inputs[0]) #field values
+        self.v2=removeempty(self.inputs[1])
+        self.v3=removeempty(self.inputs[2])
+        self.v4=removeempty(self.inputs[3])
+        if(len(self.v1)>len(self.v2)): # chbszam the lower (v3 and v4) radio elements starting rows
+            self.chbszam=len(self.v1)
+        else:
+            self.chbszam=len(self.v2)
+        self.orient=self.inputs[8] #orientation
         self.chb1=''
         self.chb2=''
-        self.chb3=''
-        self.chbv=''
         self.tab=getresulttype()[0] #tab for object or empty for function
         self.slf=getresulttype()[1] #self. for object or empty for func.
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'"+'flat'+"'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')'
-        if(self.v1[0]!=''):
-            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v = IntVar()\n'
-            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[0])+"'"+',variable='+str(self.slf)+'v, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam)+'.grid(row=0, column=0, sticky=W)\n'
-            if(self.v1[1]!=''):
-                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+1)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[1])+"'"+',variable='+str(self.slf)+'v, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+1)+'.grid(row=1, column=0, sticky=W)\n'
-                if(self.v1[2]!=''):
-                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+2)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[2])+"'"+',variable='+str(self.slf)+'v, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+2)+'.grid(row=2, column=0, sticky=W)\n'
-        if(self.v2[0]!=''):
-            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v1 = IntVar()\n'
-            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+3)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[0])+"'"+',variable='+str(self.slf)+'v1, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+3)+'.grid(row=0, column=1, sticky=W)\n'
-            if(self.v2[1]!=''):
-                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+4)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[1])+"'"+',variable='+str(self.slf)+'v1, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+4)+'.grid(row=1, column=1, sticky=W)\n'
-                if(self.v2[2]!=''):
-                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+5)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[2])+"'"+',variable='+str(self.slf)+'v1, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+5)+'.grid(row=2, column=1, sticky=W)\n'
-        if(self.v3[0]!=''):
-            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v2 = IntVar()\n'
-            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+6)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[0])+"'"+',variable='+str(self.slf)+'v2, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+6)+'.grid(row=3, column=0, sticky=W)\n'
-            if(self.v3[1]!=''):
-                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+7)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[1])+"'"+',variable='+str(self.slf)+'v2, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+7)+'.grid(row=4, column=0, sticky=W)\n'
-                if(self.v3[2]!=''):
-                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+8)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[2])+"'"+',variable='+str(self.slf)+'v2, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+8)+'.grid(row=5, column=0, sticky=W)\n'            
-        if(self.v4[0]!=''):
-            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v3 = IntVar()\n'
-            self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+9)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[0])+"'"+',variable='+str(self.slf)+'v3, value=1)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+9)+'.grid(row=3, column=1, sticky=W)\n'
-            if(self.v4[1]!=''):
-                self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+10)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[1])+"'"+',variable='+str(self.slf)+'v3, value=2)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+10)+'.grid(row=4, column=1, sticky=W)\n'
-                if(self.v4[2]!=''):
-                    self.chb3=self.chb3+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+11)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[2])+"'"+',variable='+str(self.slf)+'v3, value=3)\n'+str(self.tab)+str(self.slf)+'radiob'+self.keretszam+str(self.chbszam+11)+'.grid(row=5, column=1, sticky=W)'            
-
-        self.osszes=self.kret+'\n'+self.chb1+'\n'+self.chb2+'\n'+self.chb3+'\n'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'"+'flat'+"'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        if(self.v1!=[]):
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v1'+self.keretszam+' = IntVar()\n'
+            for self.i in range(len(self.v1)):
+                self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob1'+self.keretszam+str(self.i)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v1[self.i])+"'"+',variable='+str(self.slf)+'v1'+self.keretszam+', value='+str(self.i+1)+')\n'+str(self.tab)+str(self.slf)+'radiob1'+self.keretszam+str(self.i)+'.grid(row='+str(self.i)+', column=0, sticky=W)\n'
+        if(self.v2!=[]):
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v2'+self.keretszam+' = IntVar()\n'
+            for self.i in range(len(self.v2)):
+                self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob2'+self.keretszam+str(self.i)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v2[self.i])+"'"+',variable='+str(self.slf)+'v2'+self.keretszam+', value='+str(self.i+1)+')\n'+str(self.tab)+str(self.slf)+'radiob2'+self.keretszam+str(self.i)+'.grid(row='+str(self.i)+', column=1, sticky=W)\n'
+        if(self.v3!=[]):
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v3'+self.keretszam+' = IntVar()\n'
+            for self.i in range(len(self.v3)):
+                self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob3'+self.keretszam+str(self.i)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v3[self.i])+"'"+',variable='+str(self.slf)+'v3'+self.keretszam+', value='+str(self.i+1)+')\n'+str(self.tab)+str(self.slf)+'radiob3'+self.keretszam+str(self.i)+'.grid(row='+str(self.i+self.chbszam)+', column=0, sticky=W)\n'
+        if(self.v4!=[]):
+            self.chb1=self.chb1+str(self.tab)+str(self.slf)+'v4'+self.keretszam+' = IntVar()\n'
+            for self.i in range(len(self.v4)):
+                self.chb2=self.chb2+str(self.tab)+str(self.slf)+'radiob4'+self.keretszam+str(self.i)+'=ttk.Radiobutton('+str(self.slf)+'frm'+str(self.keretszam)+', text='+"'"+str(self.v4[self.i])+"'"+',variable='+str(self.slf)+'v4'+self.keretszam+', value='+str(self.i+1)+')\n'+str(self.tab)+str(self.slf)+'radiob4'+self.keretszam+str(self.i)+'.grid(row='+str(self.i+self.chbszam)+', column=1, sticky=W)\n'
+        self.osszes=self.kret+self.chb1+self.chb2
         return self.osszes
 
 
@@ -1327,7 +1128,6 @@ def vaszonablak_s(rc,frame_name='ablak'):
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
-#    defaults=['200','250','white','N'] # width, height, color, irány
     vaszon=Vaszon(rc,canvas_defaults,frame_name)
     osszes=vaszon.generator()
     kiir('#-'+str(m)+'----Canvas: c'+str(c)+', r'+str(r)+'------')
@@ -1403,6 +1203,184 @@ def vaszonablak(rc,frame_name='ablak'):
     cmkei=Label(ablak, text='hint', foreground='black', background='orange')
     cmkei.grid(row=0, column=0,sticky=S)
     CreateToolTip(cmkei, text=canvas_tip)
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
+
+def omenuwindow(rc,frame_name='ablak'):
+    comboxwindow(rc,frame_name)
+
+def omenuablak_s(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
+    optmenu=Optmenu(rc,optmenu_defaults,frame_name)
+    osszes=optmenu.generator()
+    kiir('#-'+str(m)+'-----Option menu: c'+str(c)+', r'+str(r)+'------')
+    kiir(osszes)
+
+def radioxwindow(rc,frame_name='ablak'):
+    comboxwindow(rc,frame_name)
+ 
+def radioxablak_s(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
+    radiobox=Radiobox(rc,radio_defaults,frame_name)
+    osszes=radiobox.generator()
+    kiir('#-'+str(m)+'-----Radio: c'+str(c)+', r'+str(r)+'------')
+    kiir(osszes)
+
+def comboxablak_s(rc,frame_name='ablak'):
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    combox=Combox(rc,chbox_defaults,frame_name)
+    osszes=combox.generator()
+    kiir('#-'+str(m)+'----ComboBox: c'+str(c)+', r'+str(r)+'------')
+    kiir(osszes)
+
+def comboxwindow(rc,frame_name='ablak'):
+    global window_counter
+    window_counter=window_counter+1
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    rspan=rc[2]
+    cspan=rc[3]
+    tipus=rc[6] #12:combo, 14: opt, 16: radio
+    name=selection[rc[6]][3:]
+    def combox_ertek():
+        global window_counter
+        output=[[],[],[],[],'','','','','',''] # elementlist1,2,3,4, label1,2,3,4, orient, width
+        output[0]=(text11.get(0.0,END).split('\n'))
+        output[1]=(text12.get(0.0,END).split('\n'))
+        output[2]=(text21.get(0.0,END).split('\n'))
+        output[3]=(text22.get(0.0,END).split('\n'))
+        if(tipus==12 or tipus==14): # if combo or opt.menu
+            output[4],output[5],output[6],output[7]=entr11.get(),entr12.get(),entr21.get(),entr22.get() #label texts
+        output[8]=chbox1.get() # orient
+        if(tipus==12): #if combo
+            output[9]=chbox2.get() # width
+            if (output[9]=='auto'):
+                output[9]=cellaw(output)
+            combox=Combox(rc,output,frame_name)
+            osszes=combox.generator()
+        if(tipus==14): #if opt.menu
+            optmenu=Optmenu(rc,output,frame_name)
+            osszes=optmenu.generator()
+        if(tipus==16): #if radio
+            radiobox=Radiobox(rc,output,frame_name)
+            osszes=radiobox.generator()
+        kiir('#-'+str(m)+'----'+name+': c'+str(c)+', r'+str(r)+'------')
+        kiir(osszes) 
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget code generated')
+        check_state()
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()    
+    abl2=Toplevel(abl1)
+    abl2.title(name+' options: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
+    ablak=Frame(abl2, relief='flat', borderwidth=1)
+    ablak.grid(row=0, column=0)
+    #-1st------
+    frm11=LabelFrame(ablak, text='1st '+name, height=200, width=250, relief='flat', borderwidth=1)
+    frm11.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+    text11=Text(frm11,height=5,width=12,bg='white',fg='black')
+    scrolly11aa0=Scrollbar(frm11, orient=VERTICAL,command=text11.yview)
+    text11['yscrollcommand']=scrolly11aa0.set
+    text11.grid(row=1, column=1,sticky=N)
+    text11.insert(INSERT,'One\nTwo\nThree')
+    scrolly11aa0.grid(row=1, column=2 , rowspan=2, sticky=N+S)
+    labl1a=Label(frm11, text='Elements:')
+    labl1a.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+    if(tipus!=16):
+        labl1=Label(frm11, text='title:')
+        labl1.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+        entr11=Entry(frm11 ,width='17')
+        entr11.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+        entr11.insert(0,'label')
+    #-2nd------
+    frm12=LabelFrame(ablak, text='2nd '+name, height=200, width=250, relief='flat', borderwidth=1)
+    frm12.grid(row=1, column=3, columnspan=1, rowspan=1, sticky=N)
+    text12=Text(frm12,height=5,width=12,bg='white',fg='black')
+    scrolly12aa0=Scrollbar(frm12, orient=VERTICAL,command=text12.yview)
+    text12['yscrollcommand']=scrolly12aa0.set
+    text12.grid(row=1, column=1,sticky=N)
+    scrolly12aa0.grid(row=1, column=2 , rowspan=2, sticky=N+S)
+    labl12a=Label(frm12, text='Elements:')
+    labl12a.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+    if(tipus!=16):
+        labl12=Label(frm12, text='title:')
+        labl12.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+        entr12=Entry(frm12 ,width='17')
+        entr12.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    #-3rd------
+    frm21=LabelFrame(ablak, text='3rd '+name, height=200, width=250, relief='flat', borderwidth=1)
+    frm21.grid(row=2, column=2, columnspan=1, rowspan=1, sticky=N)
+    text21=Text(frm21,height=5,width=12,bg='white',fg='black')
+    scrolly21aa0=Scrollbar(frm21, orient=VERTICAL,command=text21.yview)
+    text21['yscrollcommand']=scrolly21aa0.set
+    text21.grid(row=1, column=1,sticky=N)
+    scrolly21aa0.grid(row=1, column=2 , rowspan=2, sticky=N+S)
+    labl21a=Label(frm21, text='Elements:')
+    labl21a.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+    if(tipus!=16):
+        labl21=Label(frm21, text='title:')
+        labl21.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+        entr21=Entry(frm21 ,width='17')
+        entr21.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    #-4th------
+    frm22=LabelFrame(ablak, text='4th '+name, height=200, width=250, relief='flat', borderwidth=1)
+    frm22.grid(row=2, column=3, columnspan=1, rowspan=1, sticky=N, padx=5)
+    text22=Text(frm22,height=5,width=12,bg='white',fg='black')
+    scrolly22aa0=Scrollbar(frm22, orient=VERTICAL,command=text22.yview)
+    text22['yscrollcommand']=scrolly22aa0.set
+    text22.grid(row=1, column=1,sticky=N)
+    scrolly22aa0.grid(row=1, column=2 , rowspan=2, sticky=N+S)
+    labl22a=Label(frm22, text='Elements:')
+    labl22a.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
+    if(tipus!=16):
+        labl22=Label(frm22, text='title:')
+        labl22.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+        entr22=Entry(frm22 ,width='17')
+        entr22.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    #-m-
+    frm100=Frame(ablak, height=200, width=250, relief='flat', borderwidth=1)
+    frm100.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    labl=Label(frm100, text='orient.:')
+    labl.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    labl0=Label(frm100, text='hint', foreground='black', background='orange')
+    labl0.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
+    frm1010=Frame(frm100, relief='flat', borderwidth=1)
+    frm1010.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=N)
+    chbox1=Combobox(frm1010, width=4)
+    chbox1['values']=orient_values
+    chbox1.current(0)
+    chbox1.grid(row=0, column=1,sticky=N)
+    labl101=Label(frm1010, text='')
+    labl101.grid(row=0, column=0,sticky=N)
+    labl011=Label(frm100, text='width:')
+    labl011.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=N)
+    frm1110=Frame(frm100, relief='flat', borderwidth=1)
+    frm1110.grid(row=4, column=0, columnspan=1, rowspan=1, sticky=N)
+    chbox2=Combobox(frm1110, width=4)
+    chbox2['values']=('auto','4','6','10','12','14','')
+    chbox2.current(0)
+    chbox2.grid(row=0, column=1,sticky=N)
+    if(tipus!=12):
+        chbox2.configure(state=DISABLED)
+    labl111=Label(frm1110, text='')
+    labl111.grid(row=0, column=0,sticky=N)
+    btn=Button(ablak,text='Apply',command=combox_ertek)
+    btn.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=S)
+    CreateToolTip(labl0, text=combox_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def szovegmezablak_s(rc,frame_name='ablak'):
@@ -1598,50 +1576,6 @@ def uzenablak(rc):
     uzi=Uzenet(rc)
     osszes=uzi.generator()
     kiir('#-'+str(m)+'----Message: c'+str(c)+', r'+str(r)+'------')
-    kiir(osszes)
-
-        
-def comboxablak(rc,frame_name='ablak'):
-#    tipus=0
-    cmbx1=Boxablak(abl1,rc,frame_name) 
-
-def comboxablak_s(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
-    m=rc[7] #started from main or univ.frame
-    combox=Combox(rc,chbox_defaults,frame_name)
-    osszes=combox.generator()
-    kiir('#-'+str(m)+'----ComboBox: c'+str(c)+', r'+str(r)+'------')
-    kiir(osszes)
-
-def omenuablak(rc,frame_name='ablak'):
-#    tipus=1
-    optmenu=Boxablak(abl1,rc,frame_name)
-
-
-def omenuablak_s(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
-    m=rc[7] #started from main or univ.frame
-    name=selection[rc[6]][3:]
-    optmenu=Optmenu(rc,optmenu_defaults,frame_name)
-    osszes=optmenu.generator()
-    kiir('#-'+str(m)+'-----Option menu: c'+str(c)+', r'+str(r)+'------')
-    kiir(osszes)
-
-def radioxablak(rc,frame_name='ablak'):
-#    tipus=2
-    radio=Boxablak(abl1,rc,frame_name)
-
-
-def radioxablak_s(rc,frame_name='ablak'):
-    c=rc[0]              
-    r=rc[1]
-    m=rc[7] #started from main or univ.frame
-    name=selection[rc[6]][3:]
-    radiobox=Radiobox(rc,radio_defaults,frame_name)
-    osszes=radiobox.generator()
-    kiir('#-'+str(m)+'-----Radio: c'+str(c)+', r'+str(r)+'------')
     kiir(osszes)
 
 def scaleablak(rc,frame_name='ablak'):
@@ -2201,15 +2135,6 @@ def univablak(rc,nbframe='ablak'):
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 
-def github():
-    webbrowser.open_new(r"https://github.com/horrorfodrasz/Tkinter_GUI_designer")
-
-def contact():
-    msg.configure(text='Gmiki (2020) --- email: epromirok(a)gmail(.)com')
-
-def donate():
-    webbrowser.open_new(r"https://www.paypal.com/donate?hosted_button_id=A7QF7LQJM5SGS")
-
 #ToolTip class for button w. image (toolbar) tooltip
 str_tooltip='class ToolTip(object):\n\
 #https://stackoverflow.com/questions/20399243/display-message-when-hovering-over-something-with-mouse-cursor-in-python\n\
@@ -2310,15 +2235,15 @@ def kivalaszto_uni(base_rc,cells_uni,output,nbframe):
                 if(cstat[i][0]==11):    
                     cimkeablak_s(rc,keretszam)
                 if(cstat[i][0]==12):    
-                    comboxablak(rc,keretszam)
+                    comboxwindow(rc,keretszam) #comboxablak(rc,keretszam)
                 if(cstat[i][0]==13):    
                     comboxablak_s(rc,keretszam)
                 if(cstat[i][0]==14):    
-                    omenuablak(rc,keretszam)
+                    omenuwindow(rc,keretszam) #omenuablak(rc,keretszam)
                 if(cstat[i][0]==15):    
                     omenuablak_s(rc,keretszam)
                 if(cstat[i][0]==16):    
-                    radioxablak(rc,keretszam)
+                    radioxwindow(rc,keretszam) #radioxablak(rc,keretszam)
                 if(cstat[i][0]==17):    
                     radioxablak_s(rc,keretszam)
                 if(cstat[i][0]==19):    
@@ -2634,13 +2559,11 @@ def letilto(cstat):
 
 def kivalaszto2():
         reset() #close all opened sub-windows
-#        print(resulttype.get())
         cstat=updatecell()
         for i in range(len(cstat)):
             if cstat[i][0]!=0:
                 gomb.configure(text="Restart")
                 submenu00aa1.entryconfig(2,label="Restart") # Start menu to Restart
-                #submenu00aa2.entryconfig(1,state=DISABLED) # Settings menu OFF
                 radiob0.configure(state=DISABLED)
                 radiob1.configure(state=DISABLED)
                 rc=['','','','','a','a',0,'m',0] #c,r,rspan,cspan,base_c,base_r, type, startred from main window or univframe m-main u-iniv, cell index
@@ -2673,15 +2596,15 @@ def kivalaszto2():
                 if(cstat[i][0]==11):    
                     cimkeablak_s(rc)
                 if(cstat[i][0]==12):    
-                    comboxablak(rc)
+                    comboxwindow(rc) 
                 if(cstat[i][0]==13):    
                     comboxablak_s(rc)
                 if(cstat[i][0]==14):    
-                    omenuablak(rc)
+                    omenuwindow(rc)
                 if(cstat[i][0]==15):    
                     omenuablak_s(rc)
                 if(cstat[i][0]==16):    
-                    radioxablak(rc)
+                    radioxwindow(rc) 
                 if(cstat[i][0]==17):    
                     radioxablak_s(rc)
                 if(cstat[i][0]==18):    
@@ -2710,7 +2633,16 @@ def check_state():
         submenu00aa1.entryconfig(3,state=NORMAL) # Finalize menu to normal state
         msg.configure(text='opened windows: '+str(window_counter)+'; message: All code generated. Press Finalize')
 
-        
+
+def github():
+    webbrowser.open_new(r"https://github.com/horrorfodrasz/Tkinter_GUI_designer")
+
+def contact():
+    msg.configure(text='Gmiki (2020) --- email: epromirok(a)gmail(.)com')
+
+def donate():
+    webbrowser.open_new(r"https://www.paypal.com/donate?hosted_button_id=A7QF7LQJM5SGS")
+    
 
 def clearenter(text):
     "replace in text enters with space"
@@ -2736,6 +2668,13 @@ def clearlist(list,out_type):
     else:
         return list_new
 
+def cellaw(lista): #determine cell width
+    templist=[]
+    for x in range(4):
+        for i in range(len(lista[x])):
+           templist.append(len(lista[x][i]))
+        cw=(max(templist))+4
+    return cw
 
 def kiir(x):
     if(x!=''):
@@ -2760,7 +2699,6 @@ def finalize():
     text1.insert(END,str(tab)+str(slf)+su+str(end))   #insert to the end
     gomb2.configure(state=DISABLED) # Disable to avoid repeated button click
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
-    #submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
     radiob0.configure(state=NORMAL)
     radiob1.configure(state=NORMAL)
     msg.configure(text='opened windows: '+str(window_counter)+'; message: Code finalized')
@@ -2789,7 +2727,6 @@ def reset2():
     submenu00aa1.entryconfig(2,label="Start") # Start menu
     gomb2.configure(state=DISABLED) #Finalize button OFF
     submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu OFF
-    #submenu00aa2.entryconfig(1,state=NORMAL) # Settings menu ON
     radiob0.configure(state=NORMAL)
     radiob1.configure(state=NORMAL)
     text1.delete(1.0,END) #Erase text area
@@ -2823,13 +2760,19 @@ def cell2savestr(): # cell state list convert string
     for i in range(len(cstat)):
         cstr=cstr+str(cstat[i][0])+','
     cstr=cstr+'\n'+default2str(label_defaults)
-    cstr=cstr+'\n'+default2str(chbox_defaults)
-    cstr=cstr+'\n'+default2str(optmenu_defaults)
-    cstr=cstr+'\n'+default2str(radio_defaults)
+    cstr=cstr+'\n'+default2str(chbox_defaults[0])+default2str(chbox_defaults[8:])
+    cstr=cstr+'\n'+default2str(optmenu_defaults[0])+default2str(optmenu_defaults[8:])
+    cstr=cstr+'\n'+default2str(radio_defaults[0])+default2str(radio_defaults[8:])
     cstr=cstr+'\n'+default2str(entry_defaults)
     cstr=cstr+'\n'+default2str(canvas_defaults)
     cstr=cstr+'\n'+default2str(text_defaults)
     return cstr
+
+def chdefault2str(default):
+    for i in range(len(default[0])):
+        if(default[0][i]==''):
+            cstr=cstr+'*'
+        
 
 def default2str(default):
     cstr=''
@@ -2869,9 +2812,18 @@ def savestr2cell(cstr): # save string convert to cell state list
                     defs[n-1].append(x)
                     x=''
     label_defaults = defs[0]
-    chbox_defaults = defs[1]
-    optmenu_defaults = defs[2]
-    radio_defaults = defs[3]
+    chbox_defaults[0][0] = defs[1][0]
+    chbox_defaults[0][1] = defs[1][1]
+    chbox_defaults[0][2] = defs[1][2]
+    chbox_defaults[8] = defs[1][3]
+    optmenu_defaults[0][0] = defs[2][0]
+    optmenu_defaults[0][1] = defs[2][1]
+    optmenu_defaults[0][2] = defs[2][2]
+    optmenu_defaults[8] = defs[2][3]
+    radio_defaults[0][0] = defs[3][0]
+    radio_defaults[0][1] = defs[3][1]
+    radio_defaults[0][2] = defs[3][2]
+    radio_defaults[8] = defs[3][3]
     entry_defaults = defs[4]
     canvas_defaults = defs[5]
     text_defaults = defs[6] 
@@ -2906,18 +2858,18 @@ def defaults():
            
     label_defaults[0]=entr1.get()   # title
     label_defaults[1]=chbox1.get()  # orient
-    chbox_defaults[0]=entr21.get()  # value1
-    chbox_defaults[1]=entr22.get()  # value2
-    chbox_defaults[2]=entr23.get()  # value3
-    chbox_defaults[16]=chbox2.get() # orient
-    optmenu_defaults[0]=entr31.get()  # value1
-    optmenu_defaults[1]=entr32.get()  # value2
-    optmenu_defaults[2]=entr33.get()  # value3
-    optmenu_defaults[16]=chbox3.get() # orient
-    radio_defaults[0]=entr41.get()  # value1
-    radio_defaults[1]=entr42.get()  # value2
-    radio_defaults[2]=entr43.get()  # value3
-    radio_defaults[16]=chbox4.get() # orient
+    chbox_defaults[0][0]=entr21.get()  # value1
+    chbox_defaults[0][1]=entr22.get()  # value2
+    chbox_defaults[0][2]=entr23.get()  # value3
+    chbox_defaults[8]=chbox2.get() # orient
+    optmenu_defaults[0][0]=entr31.get()  # value1
+    optmenu_defaults[0][1]=entr32.get()  # value2
+    optmenu_defaults[0][2]=entr33.get()  # value3
+    optmenu_defaults[8]=chbox3.get() # orient
+    radio_defaults[0][0]=entr41.get()  # value1
+    radio_defaults[0][1]=entr42.get()  # value2
+    radio_defaults[0][2]=entr43.get()  # value3
+    radio_defaults[8]=chbox4.get() # orient
     entry_defaults[0]=chbox5.get() # orient
     entry_defaults[1]=entr51.get() # width
     entry_defaults[2]=entr52.get() # def.value
@@ -2944,29 +2896,29 @@ def set_defaults():
     chbox1.delete(0,END)
     chbox1.insert(0,label_defaults[1])   # label orient
     entr21.delete(0,END)
-    entr21.insert(0,chbox_defaults[0])  # chbox value1
+    entr21.insert(0,chbox_defaults[0][0])  # chbox value1
     entr22.delete(0,END)
-    entr22.insert(0,chbox_defaults[1])  # chboxvalue2
+    entr22.insert(0,chbox_defaults[0][1])  # chboxvalue2
     entr23.delete(0,END)
-    entr23.insert(0,chbox_defaults[2])  # chboxvalue3
+    entr23.insert(0,chbox_defaults[0][2])  # chboxvalue3
     chbox2.delete(0,END)
-    chbox2.insert(0,chbox_defaults[16])   # chbox orient
+    chbox2.insert(0,chbox_defaults[8])   # chbox orient
     entr31.delete(0,END)
-    entr31.insert(0,optmenu_defaults[0])  # optm. value1
+    entr31.insert(0,optmenu_defaults[0][0])  # optm. value1
     entr32.delete(0,END)
-    entr32.insert(0,optmenu_defaults[1])  # optm. value2
+    entr32.insert(0,optmenu_defaults[0][1])  # optm. value2
     entr33.delete(0,END)
-    entr33.insert(0,optmenu_defaults[2])  # optm.value3
+    entr33.insert(0,optmenu_defaults[0][2])  # optm.value3
     chbox3.delete(0,END)
-    chbox3.insert(0,optmenu_defaults[16])   # optm. orient
+    chbox3.insert(0,optmenu_defaults[8])   # optm. orient
     entr41.delete(0,END)
-    entr41.insert(0,radio_defaults[0])  # radio value1
+    entr41.insert(0,radio_defaults[0][0])  # radio value1
     entr42.delete(0,END)
-    entr42.insert(0,radio_defaults[1])  # radio value2
+    entr42.insert(0,radio_defaults[0][1])  # radio value2
     entr43.delete(0,END)
-    entr43.insert(0,radio_defaults[2])  # radio value3
+    entr43.insert(0,radio_defaults[0][2])  # radio value3
     chbox4.delete(0,END)
-    chbox4.insert(0,radio_defaults[16])   # radio. orient
+    chbox4.insert(0,radio_defaults[8])   # radio. orient
     entr51.delete(0,END)
     entr51.insert(0,entry_defaults[1]) # entry width
     entr52.delete(0,END)
@@ -2991,7 +2943,23 @@ def set_defaults():
     chbox71.insert(0,text_defaults[2])   # text orient
     chbox72.delete(0,END)
     chbox72.insert(0,text_defaults[3])   # text scroll
-    
+
+def list2tuple(lista):
+        x=0
+        for i in range(len(lista)): #remove '' empty items from v1 list and make tuple
+            if(lista[i]==''):
+               x=x+1     
+        for i in range(x):
+            lista.remove('')
+        lista=tuple(lista)
+        return lista
+
+def removeempty(lista):
+        newlist=[]
+        for i in range(len(lista)):
+            if (lista[i]!=''):
+                newlist.append(lista[i])
+        return newlist    
 
 def def_status():
     i1_1.current(0)
@@ -3112,8 +3080,9 @@ text: This text will appear in your text area.'
 
 combox_tip='You can create upto 4 widgets at once.\n\
 If you leave any of them empty it wont be created.\n\n\
-Label-*: label of widget. It can be empty.\n\
-1/1...2/2: Elements of the widget. max 3 elements/label.\n\n\
+Title: label of widget. It can be empty.\n\
+Elements of the widget: Any elements/label\n\
+can be created.\n\n\
 orient.: orientation of your widget\n\
 width: width of your cell.\n\
 There are some default numbers, but you can use any.\n\
@@ -3203,22 +3172,16 @@ selection=('00: ---', '01: Menu', '02: Canvas', '03: Canvas (s)', '04: Univ.Fram
 orient_values=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
 
 label_defaults=['title','N']
-chbox_defaults=['One','Two','Three', #cells 0-11
-                '','','',
-                '','','',
-                '','','',
+chbox_defaults=[['One','Two','Three'], #values of 1st
+                [],[],[],
                 '','','','', #title cell
                 'N','16']    #orientation, cell width
-optmenu_defaults=['One','Two','Three', #cells 0-11
-                '','','',
-                '','','',
-                '','','',
+optmenu_defaults=[['One','Two','Three'], #values of 1st
+                [],[],[],
                 '','','','', #title cell
                 'N','16']    #orientation, cell width
-radio_defaults=['One','Two','Three', #cells 0-11
-                '','','',
-                '','','',
-                '','','',
+radio_defaults=[['One','Two','Three'], #values of 1st
+                [],[],[],
                 '','','','', #title cell
                 'N','16']    #orientation, cell width
 entry_defaults=['N','17',''] # orient, width, text
@@ -3227,7 +3190,7 @@ text_defaults=['10','10','N','1: w/o scroll','','white','black'] # w,h,orient,sl
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v1.0")
+abl1.title("Tkinter GUI designer v1.1")
 
 nb00aa=Notebook(abl1)
 nb00aa.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
