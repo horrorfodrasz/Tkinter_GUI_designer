@@ -2,7 +2,7 @@
 Python Tkinter GUI designer
 
 It uses tkinter Grid geometry manager. (https://effbot.org/tkinterbook/grid.htm)
-You will get pure Python tkinter code.
+You will get pure Python (v3.x) tkinter code.
 
 1. Select the desired widgets*
 2. If you use rowsapan/colspan press "Check" button
@@ -22,7 +22,8 @@ Hint:
   without closing the running GUI generator
 - widget name with (s) means simple. It uses default parameters and does not open
   option window.
-- You can save and load widget selection
+- You can save and load widget selection with default widget parameters
+- Generated code can be Function or Object type
 
 Supported widgets: 
 Menubar, MenuButton, Button, Canvas, Text with scroll, Entry, Label, Combobox, Optionmenu,
