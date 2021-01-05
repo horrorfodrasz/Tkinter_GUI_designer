@@ -77,7 +77,7 @@ v0.9.8  default parameter settings added
 
 v1.0    it can save/load default parameters with widget selections
 
-v1.1    improved Comobox, Optionmenu and Radio
+v1.1    improved Combobox, Optionmenu and Radio
 
 v1.2    Treeview added, scrollbar supported in case of Canvas and Treeview, minor bug fixes
 
