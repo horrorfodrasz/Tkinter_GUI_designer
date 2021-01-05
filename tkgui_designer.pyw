@@ -54,6 +54,7 @@
 # v0.9.8  default parameter settings applied
 # v1.0    it can save/load default parameters with widget selections
 # v1.1    improved Comobox, Optionmenu and Radio
+# v1.2    Treeview added, scrollbar supported in case of Canvas and Treeview, minor bug fixes
 #
 from tkinter import *
 import tkinter as tk
@@ -356,14 +357,25 @@ class Vaszon:
         self.canh=inputlist[1] #height
         self.canc=inputlist[2] #color
         self.cano=inputlist[3] #orientation
+        self.scroll=inputlist[4] #scroll
         self.keretszam=''
+        self.kret=''
         self.tab=getresulttype()[0]
         self.slf=getresulttype()[1]
     def generator(self):
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
-        self.csz=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'=Canvas('+str(self.slf)+str(self.frame_name)+',bg='+"'"+self.canc+"'"+',height='+str(self.canh)+', width='+str(self.canw)+')'
-        self.cszv=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+',sticky='+self.cano+')'
-        self.osszes=self.csz+'\n'+self.cszv
+        self.kret=self.kret+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', sticky='+str(self.cano)+')\n'
+        self.csz=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'=Canvas('+str(self.slf)+'frm'+str(self.keretszam)+',bg='+"'"+self.canc+"'"+',height='+str(self.canh)+', width='+str(self.canw)+')\n'
+        self.cszv=str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'.grid(row=0, column=0)\n'
+        if (self.scroll[0]=='2' or self.scroll[0]=='4'):
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'.yview)\n'
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+'.set\n'
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+'.grid(row=0, column=1 ,sticky=N+S)\n'
+        if (self.scroll[0]=='3' or self.scroll[0]=='4'):
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'.xview)\n'
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'can'+self.keretszam+str(self.canszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+'.set\n'
+            self.cszv=self.cszv+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+'.grid(row=1, column=0 ,sticky=E+W)\n'
+        self.osszes=self.kret+self.csz+self.cszv
         return self.osszes
 
 class Szovegmezocs:
@@ -393,29 +405,20 @@ class Szovegmezocs:
         self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
         if(self.s[0]=='3' or self.s[0]=='4'):
             self.wrap=',wrap=NONE'
-        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)'
-        self.sz1=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'=Text('+str(self.slf)+'frm'+str(self.keretszam)+',height='+str(self.h)+',width='+str(self.w)+str(self.wrap)+',bg='+"'"+self.bg+"'"+',fg='+"'"+self.fg+"'"+')'
-        if(self.s[0]=='2'): # függ csúszka
-            self.sz2=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.yview)'
-            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)'
-        if(self.s[0]=='3'): # víz csúszka
-            self.sz2=str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.xview)'
-            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv=str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
-        if(self.s[0]=='4'): # mindkettő
-            self.sz2=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.yview)\n'
-            self.sz2=self.sz2+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.xview)'
-            self.sz3=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.set\n'
-            self.sz3=self.sz3+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.set'
-            self.szcsv=str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)\n'+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)'
-        if(self.s[0]=='1'): #nincs csúszka
-            self.szcsv, self.sz2, self.sz3='','',''
-        self.szv=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=0,sticky='+self.o+')'
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky=N)\n'
+        self.sz1=str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'=Text('+str(self.slf)+'frm'+str(self.keretszam)+',height='+str(self.h)+',width='+str(self.w)+str(self.wrap)+',bg='+"'"+self.bg+"'"+',fg='+"'"+self.fg+"'"+')\n'
+        self.sz1=self.sz1+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=0,sticky='+self.o+')\n'
+        if (self.s[0]=='2' or self.s[0]=='4'):
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.yview)\n'
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.set\n'
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+str(self.mezoszam)+'.grid(row=0, column=1 ,sticky=N+S)\n'
+        if (self.s[0]=='3' or self.s[0]=='4'):
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.xview)\n'
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.set\n'
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+str(self.mezoszam)+'.grid(row=1, column=0 ,sticky=E+W)\n'
         if (self.t!=''):
-            self.szv=self.szv+'\n'+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.insert(INSERT,'+"'"+str(self.t)+"'"+')'
-        
-        self.osszes=self.kret+'\n'+self.sz1+'\n'+self.sz2+'\n'+self.sz3+'\n'+self.szv+'\n'+self.szcsv
+            self.sz1=self.sz1+str(self.tab)+str(self.slf)+'text'+self.keretszam+str(self.mezoszam)+'.insert(INSERT,'+"'"+str(self.t)+"'"+')'
+        self.osszes=self.kret+self.sz1
         return self.osszes
 
 
@@ -870,11 +873,81 @@ class Nbookgen:
         self.nv=self.nv+str(self.tab)+str(self.slf)+'nb'+str(self.keretszam)+'.enable_traversal()'
         self.osszes=self.nb1+self.nb2+self.nv
         return self.osszes
-    
-        
+
+class Treegen:
+    "Treeview generator modul"
+    def __init__(self, rc, width_output, header_output, main_output, elements_output, frame_name):
+        self.frame_name=frame_name
+        self.rc=rc
+        self.col=rc[0]
+        self.row=rc[1]
+        self.cspan=rc[2]
+        self.rspan=rc[3]
+        self.base_c=rc[4]
+        self.base_r=rc[5]
+        self.width_output=width_output
+        self.header_output=header_output
+        self.main_output=main_output
+        self.elements_output=elements_output
+        self.keretszam=''
+        self.orient=rc[9] #orient
+        self.scroll=rc[10] #scroll 
+        self.columns=self.columns()
+        self.columns_wo_i0=self.columns_wo_i0()
+        self.tv1=''
+        self.tv2=''
+        self.tv3=''
+        self.tvv=''
+        self.tab=getresulttype()[0] #tab for object or empty for function
+        self.slf=getresulttype()[1] #self. for object or empty for func.
+        self.kret=''
+    def columns(self):
+        self.column=[]
+        for i in range(len(self.header_output)):
+            self.column.append('#'+str(i))
+        self.column=tuple(self.column)
+        return self.column
+    def columns_wo_i0(self):
+        self.column=[]
+        for i in range(len(self.header_output)):
+            self.column.append('#'+str(i))
+        del self.column[0]
+        self.column=tuple(self.column)
+        return self.column
+    def generator(self):
+        self.keretszam=str(self.row)+str(self.col)+str(self.base_r)+str(self.base_c)
+        self.kret=str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'=Frame('+str(self.slf)+self.frame_name+', relief='+"'flat'"+', borderwidth=1)\n'+str(self.tab)+str(self.slf)+'frm'+str(self.keretszam)+'.grid(row='+str(self.row)+', column='+str(self.col)+', columnspan='+str(self.cspan)+', rowspan='+str(self.rspan)+', sticky='+self.orient+')\n'
+        self.tv1=self.tv1+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'=ttk.Treeview('+str(self.slf)+'frm'+str(self.keretszam)+', height=10, columns='+str(self.columns_wo_i0)+')\n'
+        for self.i in range(len(self.columns)):
+            self.tv2=self.tv2+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'.column('+"'"+str(self.columns[self.i])+"'"+', width='+str(self.width_output[self.i])+', minwidth='+str(self.width_output[self.i])+', stretch=NO)\n'
+            self.tv2=self.tv2+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'.heading('+"'"+str(self.columns[self.i])+"'"+',text='+"'"+str(self.header_output[self.i])+"'"+',anchor=W)\n'
+        self.tempname=''
+        self.counter=0
+        for self.i in range(len(self.main_output)):
+            if (self.main_output[self.i]=='main'):
+                self.counter=self.counter+1
+                self.tv3=self.tv3+str(self.tab)+str(self.slf)+'m'+str(self.keretszam)+str(self.counter)+'='+str(self.slf)+'tree'+str(self.keretszam)+'.insert('+'""'+', END, text='+"'"+str(self.elements_output[self.i][0])+"'"+', values='+str(tuple(self.elements_output[self.i][1:]))+')\n'
+                self.tempname=self.main_output[self.i]
+            if (self.main_output[self.i]=='sub' and self.tempname=='main'):
+                self.tv3=self.tv3+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'.insert('+str(self.slf)+'m'+str(self.keretszam)+str(self.counter)+', END, text='+"'"+str(self.elements_output[self.i][0])+"'"+', values='+str(tuple(self.elements_output[self.i][1:]))+')\n'
+            if (self.main_output[self.i]=='sub' and self.tempname=='sub'):
+                self.tv3=self.tv3+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'.insert('+'""'+', END, text='+"'"+str(self.elements_output[self.i][0])+"'"+', values='+str(tuple(self.elements_output[self.i][1:]))+')\n'
+        self.tvv=self.tvv+str(self.tab)+str(self.slf)+'tree'+str(self.keretszam)+'.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)\n'
+        if (self.scroll[0]=='2' or self.scroll[0]=='4'):
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=VERTICAL,command='+str(self.slf)+'tree'+self.keretszam+'.yview)\n'
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'tree'+self.keretszam+'['+"'yscrollcommand'"+']='+str(self.slf)+'scrolly'+self.keretszam+'.set\n'
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'scrolly'+self.keretszam+'.grid(row=0, column=1 ,sticky=N+S)\n'
+        if (self.scroll[0]=='3' or self.scroll[0]=='4'):
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+'=Scrollbar('+str(self.slf)+'frm'+str(self.keretszam)+', orient=HORIZONTAL,command='+str(self.slf)+'tree'+self.keretszam+'.xview)\n'
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'tree'+self.keretszam+'['+"'xscrollcommand'"+']='+str(self.slf)+'scrollx'+self.keretszam+'.set\n'
+            self.tvv=self.tvv+str(self.tab)+str(self.slf)+'scrollx'+self.keretszam+'.grid(row=1, column=0 ,sticky=E+W)\n'
+        self.osszes=self.kret+self.tv1+self.tv2+self.tv3+self.tvv
+        return self.osszes
+
 #---- Option windows
 # menubar/menubutton windows    
 def menbarablak(rc,frame_name='ablak'):
+    "Menubar and Menubutton option window"
     global window_counter
     window_counter=window_counter+1
     tipus=rc[6] #1: menubar 5: menubutton
@@ -985,6 +1058,7 @@ def menuablak(rc,frame_name='ablak'):
     menbarablak(rc,frame_name)
 
 def listboxablak(rc,frame_name='ablak'):
+    "Listbox option window"
     global window_counter
     window_counter=window_counter+1
     tipus=rc[6]
@@ -1049,6 +1123,7 @@ def listboxablak(rc,frame_name='ablak'):
     
 
 def gombablak(rc,frame_name='ablak'):
+    "Button option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1125,6 +1200,7 @@ def gombablak(rc,frame_name='ablak'):
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def vaszonablak_s(rc,frame_name='ablak'):
+    "Canvas simplified"
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
@@ -1134,6 +1210,7 @@ def vaszonablak_s(rc,frame_name='ablak'):
     kiir(osszes)
 
 def vaszonablak(rc,frame_name='ablak'):
+    "Canvas option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1144,7 +1221,7 @@ def vaszonablak(rc,frame_name='ablak'):
     name=selection[rc[6]][3:]
     def v_ertek():
         global window_counter
-        output=['','','',''] # width, height, color, irány
+        output=['','','','',''] # width, height, color, orient, scroll
         try:
             output[0]=int(bmezo1.get())
             output[1]=int(bmezo2.get())
@@ -1154,7 +1231,8 @@ def vaszonablak(rc,frame_name='ablak'):
         output[2]=chbox2.get()
         if(output[2]=='pick a color'):
             output[2]=colorset()
-        output[3]=chbox1.get()
+        output[3]=chbox1.get() #orient
+        output[4]=chbox3.get() #scroll
         vaszon=Vaszon(rc,output,frame_name)
         osszes=vaszon.generator()
         kiir('#-'+str(m)+'----Canvas: c'+str(c)+', r'+str(r)+'------')
@@ -1184,10 +1262,14 @@ def vaszonablak(rc,frame_name='ablak'):
     bmezo2=Entry(ablak, width=14)
     bmezo2.grid(row=1, column=3,sticky=N)
     bmezo2.insert(0,'250')
-    chbox2=Combobox(ablak)
+    chbox2=Combobox(ablak, width=11)
     chbox2['values']=('white','light yellow','snow','bisque','gray','cyan','sienna1','thistle','pick a color')
     chbox2.current(0)
-    chbox2.grid(row=1, column=4,sticky=W)
+    chbox2.grid(row=1, column=4, sticky=W)
+    chbox3=Combobox(ablak, width=11, state='readonly')
+    chbox3['values']=('1: w/o scroll','2: v scroll','3: h scroll','4: v/h scroll')
+    chbox3.current(0)
+    chbox3.grid(row=1, column=5, sticky=W)
     kret60=Frame(ablak, relief='flat', borderwidth=1)
     kret60.grid(row=6, column=0, sticky=N)
     gmb0=Button(kret60,text='Apply',command=v_ertek)
@@ -1200,6 +1282,8 @@ def vaszonablak(rc,frame_name='ablak'):
     cmke3.grid(row=0, column=3,sticky=S)
     cmke4=Label(ablak, text='color:')
     cmke4.grid(row=0, column=4,sticky=S)
+    cmke5=Label(ablak, text='sroll:')
+    cmke5.grid(row=0, column=5,sticky=S)
     cmkei=Label(ablak, text='hint', foreground='black', background='orange')
     cmkei.grid(row=0, column=0,sticky=S)
     CreateToolTip(cmkei, text=canvas_tip)
@@ -1241,6 +1325,7 @@ def comboxablak_s(rc,frame_name='ablak'):
     kiir(osszes)
 
 def comboxwindow(rc,frame_name='ablak'):
+    "Combobox, Option menu, Radio option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1393,6 +1478,7 @@ def szovegmezablak_s(rc,frame_name='ablak'):
     kiir(osszes)
     
 def szovegmezablak(rc,frame_name='ablak'):
+    "Text option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1450,8 +1536,8 @@ def szovegmezablak(rc,frame_name='ablak'):
     bmezo4=Entry(ablak, width=14)
     bmezo4.grid(row=3, column=3,sticky=N)
     bmezo4.insert(0,'10')
-    chbox4=Combobox(ablak)
-    chbox4['values']=('1: w/o scroll','2: w vertical scroll','3: w horizontal scroll','4: with v/h scroll')
+    chbox4=Combobox(ablak, width=11, state='readonly')
+    chbox4['values']=('1: w/o scroll','2: v scroll','3: h scroll','4: v/h scroll')
     chbox4.current(0)
     chbox4.grid(row=3, column=4,sticky=W)
     chbox5=Combobox(ablak, width=11)
@@ -1475,7 +1561,7 @@ def szovegmezablak(rc,frame_name='ablak'):
     cmke2=Label(ablak, text='height:')
     cmke2.grid(row=2, column=3,sticky=S)
     cmke2=Label(ablak, text='scrollbar')
-    cmke2.grid(row=2, column=4,sticky=S)
+    cmke2.grid(row=2, column=4,sticky=SW)
     cmke3=Label(ablak, text='bg color:')
     cmke3.grid(row=4, column=3, sticky=S)
     cmke4=Label(ablak, text='text color:')
@@ -1487,6 +1573,7 @@ def szovegmezablak(rc,frame_name='ablak'):
 
 
 def beviteliablak(rc,frame_name='ablak'):
+    "Entry"
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
@@ -1498,6 +1585,7 @@ def beviteliablak(rc,frame_name='ablak'):
 
 
 def cimkeablak(rc,frame_name='ablak'):
+    "Label option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1570,6 +1658,7 @@ def keretablak(rc,output,nbframe): #col-row, orientation
     return keretszam
 
 def uzenablak(rc):
+    "Message option"
     c=rc[0]              
     r=rc[1]
     m=rc[7] #started from main or univ.frame
@@ -1579,6 +1668,7 @@ def uzenablak(rc):
     kiir(osszes)
 
 def scaleablak(rc,frame_name='ablak'):
+    "Scale option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1690,6 +1780,7 @@ def scaleablak(rc,frame_name='ablak'):
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def progressablak(rc,frame_name='ablak'):
+    "Progressbar option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1773,6 +1864,7 @@ def progressablak(rc,frame_name='ablak'):
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
 def spinablak(rc,frame_name='ablak'):
+    "Spinbar option window"
     global window_counter
     window_counter=window_counter+1
     tipus=rc[6]
@@ -1861,6 +1953,7 @@ def spinablak(rc,frame_name='ablak'):
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
 
 def toolbarablak(rc,frame_name='ablak'):
+    "Toolbar option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -1976,6 +2069,7 @@ def toolbarablak(rc,frame_name='ablak'):
 
 
 def nbookablak(rc,frame_name='ablak'):
+    "Notebook option window"
     global window_counter
     window_counter=window_counter+1
     c=rc[0]              
@@ -2026,6 +2120,187 @@ def nbookablak(rc,frame_name='ablak'):
     CreateToolTip(cmkei, text=notebook_tip)
     abl2.protocol('WM_DELETE_WINDOW', on_exit)
     
+def treeablak(rc,frame_name='ablak'):
+    "Treeview option window"
+    global window_counter
+    window_counter=window_counter+1
+    c=rc[0]              
+    r=rc[1]
+    m=rc[7] #started from main or univ.frame
+    name=selection[rc[6]][3:]
+    klikk=0
+    rowklikk=0
+    headerlista=[''] #empty list for headers entrys
+    widthlista=['']  #empty list for width entrys
+    elementlista=[['']] #empty list for element entrys
+    elementname=['']    #empty list for name entrys
+    def modify_add():
+        nonlocal klikk, headerlista, widthlista, elementlista, rowklikk
+        klikk=klikk+1
+        headerlista.append('') #create new empty element
+        widthlista.append('') 
+        for i in range(len(elementlista)):
+            elementlista[i].append('') #put 1 new empty element (by click)
+    def newcell():
+        modify_add() # add 1 new elelement to name register list
+        headerlista[klikk]=tk.Entry(frm1 ,width='10')
+        headerlista[klikk].grid(row=2, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+        headerlista[klikk].insert(0,'header')
+        widthlista[klikk]=tk.Entry(frm1 ,width='10')
+        widthlista[klikk].grid(row=1, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+        widthlista[klikk].insert(0,'100')
+        for i in range(len(elementlista)):
+            elementlista[i][klikk]=tk.Entry(frm1 ,width='10')
+            elementlista[i][klikk].grid(row=i+4, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+    def newrow():
+        modify_rowadd()
+        elementname[rowklikk]=Combobox(frm1, width=5, state='readonly')
+        elementname[rowklikk]['values']=('main','sub')
+        elementname[rowklikk].current(0)
+        elementname[rowklikk].grid(row=rowklikk+4, column=0, columnspan=1, rowspan=1, sticky=N)
+        for i in range(len(elementlista[rowklikk])):
+            elementlista[rowklikk][i]=tk.Entry(frm1 ,width='10')
+            elementlista[rowklikk][i].grid(row=rowklikk+4, column=i+1, columnspan=1, rowspan=1, sticky=N)
+    def modify_rowadd():
+        nonlocal elementlista, rowklikk
+        rowklikk=rowklikk+1
+        elementname.append('')
+        elementlista.append(['']) #minden egyes + kattintás után rakjon hozzá egy új üres tagot
+        for i in range(klikk):
+            elementlista[rowklikk].append('')
+    def getdata():
+        global window_counter
+        header_output=[]
+        width_output=[]
+        name_output=[]
+        elements_output=[]
+        for i in range(len(headerlista)):
+           header_output.append(headerlista[i].get())
+        for i in range(len(widthlista)):
+           width_output.append(widthlista[i].get())
+        for x in range(len(elementlista)):
+            elements_output.append([])
+            for i in range(len(elementlista[x])):
+                elements_output[x].append(elementlista[x][i].get())
+        for i in range(len(elementname)):
+            name_output.append(elementname[i].get())
+        rc.append(chbox20aa0.get()) #orient
+        rc.append(chbox4.get())     #scrollbar
+        abl2.destroy()
+        tree=Treegen(rc, width_output, header_output, name_output, elements_output, frame_name)
+        osszes=tree.generator()
+        kiir('#-'+str(m)+'----Treeview: c'+str(c)+', r'+str(r)+'------')
+        kiir(osszes)
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: Treeview widget(s) code generated')
+        check_state()
+        var_reset()
+    def removerow():
+        if (rowklikk>0):
+            for i in range(len(elementlista[rowklikk])):
+                    elementlista[rowklikk][i].destroy()
+            elementname[rowklikk].destroy()
+            modify_rowremove()
+    def removecell():
+        if (klikk>0):
+            headerlista[klikk].destroy()
+            widthlista[klikk].destroy()
+            for i in range(len(elementlista)):
+                elementlista[i][klikk].destroy()
+            modify_remove() # removes last element
+    def modify_remove():
+        nonlocal klikk, headerlista, widthlista, elementlista, rowklikk
+        klikk=klikk-1
+        headerlista.pop() #removes the last element
+        widthlista.pop() 
+        for i in range(len(elementlista)):
+            elementlista[i].pop() #removes the last element
+    def modify_rowremove():
+        nonlocal klikk, elementlista, elementname, rowklikk
+        rowklikk=rowklikk-1
+        elementname.pop() #removes the last element
+        elementlista.pop() 
+    def var_reset():
+        nonlocal klikk, rowklikk, headerlista, widthlista, elementlista, elementname
+        klikk=0
+        rowklikk=0
+        headerlista=[''] #empty list for headers
+        widthlista=[''] #empty list for width
+        elementlista=[['']] #empty list for elements
+        elementname=[''] #empty list for type
+    def on_exit():
+        global window_counter
+        cellak[rc[8]].current(0)
+        abl2.destroy()
+        window_counter=window_counter-1
+        msg.configure(text='opened windows: '+str(window_counter)+'; message: c'+str(c)+', r'+str(r)+' ('+str(m)+') '+str(name)+' widget closed')
+        check_state()
+        var_reset()
+    abl2=Toplevel(abl1, width=250)
+    abl2.title('Treeview: c'+str(c)+', r'+str(r)+'   ('+str(m)+')')
+    ablak=Frame(abl2, relief='flat', borderwidth=1)
+    ablak.grid(row=0, column=0)
+    frm3=Frame(ablak, relief='flat', borderwidth=1)
+    frm3.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=N)
+    btn1=Button(ablak,text='+',command=newcell)
+    btn1.grid(row=1, column=4, sticky=N)
+    btn3=Button(ablak,text='-',command=removecell)
+    btn3.grid(row=1, column=3, sticky=N)
+    btn4=Button(ablak,text='+',command=newrow)
+    btn4.grid(row=3, column=4, sticky=S)
+    btn5=Button(ablak,text='-',command=removerow)
+    btn5.grid(row=2, column=4, sticky=S)
+    btn2=Button(frm3,text='Apply',command=getdata)
+    btn2.grid(row=1, column=0)
+    frm20aa=Frame(ablak, relief='flat', borderwidth=1)
+    frm20aa.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=N)
+    labl0=Label(frm20aa, text='orient:')
+    labl0.grid(row=3, column=1, columnspan=1, rowspan=1, sticky=N)
+    labl0=Label(frm20aa, text='scroll:')
+    labl0.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+    chbox20aa0=Combobox(frm20aa, width=4)
+    chbox20aa0['values']=orient_values
+    chbox20aa0.current(0)
+    chbox20aa0.grid(row=4, column=1,sticky=N)
+    chbox4=Combobox(frm20aa, width=11, state='readonly')
+    chbox4['values']=('1: w/o scroll','2: v scroll','3: h scroll','4: v/h scroll')
+    chbox4.current(0)
+    chbox4.grid(row=2, column=1,sticky=W)
+    labl20aa0=Label(frm20aa, text='')
+    labl20aa0.grid(row=2, column=0,sticky=N)
+    frm2=Frame(ablak, relief='flat', borderwidth=1)
+    frm2.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
+    frm1=Frame(ablak, relief='flat', borderwidth=1)
+    frm1.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
+    lb2=Label(frm1, text='width')
+    lb2.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
+    lbl=Label(frm1, text='header')
+    lbl.grid(row=2, column=0, columnspan=1, rowspan=1, sticky=N)
+    lb3=Label(frm1, text='type:')
+    lb3.grid(row=3, column=0, columnspan=1, rowspan=1, sticky=N)
+    lb4=Label(frm1, text='row elements:')
+    lb4.grid(row=3, column=1, columnspan=2, sticky=W)
+    lb5=Label(frm1, text='elements:')
+    lb5.grid(row=0, column=1, columnspan=2, rowspan=1, sticky=W)
+    cmkei=Label(ablak, text='hint', foreground='black', background='orange')
+    cmkei.grid(row=1, column=0,sticky=N)
+    CreateToolTip(cmkei, text=tree_tip)
+    widthlista[klikk]=tk.Entry(frm1 ,width='10')
+    widthlista[klikk].grid(row=1, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+    widthlista[klikk].insert(0,'100')
+    headerlista[klikk]=tk.Entry(frm1 ,width='10')
+    headerlista[klikk].grid(row=2, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+    headerlista[klikk].insert(0,'header')
+    elementname[rowklikk]=Combobox(frm1, width=5, state='readonly')
+    elementname[rowklikk]['values']=('main','sub')
+    elementname[rowklikk].current(0)
+    elementname[rowklikk].grid(row=4, column=0, columnspan=1, rowspan=1, sticky=N)
+    elementlista[rowklikk][klikk]=tk.Entry(frm1 ,width='10')
+    elementlista[rowklikk][klikk].grid(row=4, column=klikk+1, columnspan=1, rowspan=1, sticky=N)
+    for i in range(2):
+        newcell()
+    abl2.protocol('WM_DELETE_WINDOW', on_exit)
+
 
 def univablak(rc,nbframe='ablak'):
     global window_counter
@@ -2053,25 +2328,25 @@ def univablak(rc,nbframe='ablak'):
                 '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
                 '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
                 '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
-                '22: Progressbar','23: Toolbar')
+                '22: Progressbar','23: Toolbar', '25: Treeview')
     selection_uni1_2=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
                 '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
                 '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
                 '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
                 '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
-                '22: Progressbar','23: Toolbar','98: colspan <')
+                '22: Progressbar','23: Toolbar', '25: Treeview', '98: colspan <')
     selection_uni2_1=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
                 '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
                 '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
                 '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
                 '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
-                '22: Progressbar','23: Toolbar','99: rowspan ^')
+                '22: Progressbar','23: Toolbar', '25: Treeview', '99: rowspan ^')
     selection_uni2_2=('00: ---', '02: Canvas', '03: Canvas (s)', '05: MenuButton','06: Button',
                 '07: Text', '08: Text (s)', '09: Entry (s)','10: Label',
                 '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
                 '14: OptionMenu', '15: OptionMenu (s)', '16: Radio',
                 '17: Radio (s)', '19: Listbox', '20: Scale', '21: Spinbox',
-                '22: Progressbar','23: Toolbar','98: colspan <', '99: rowspan ^')
+                '22: Progressbar','23: Toolbar', '25: Treeview', '98: colspan <', '99: rowspan ^')
     nb_select=0
     base_col=rc[0]              
     base_row=rc[1]
@@ -2101,21 +2376,21 @@ def univablak(rc,nbframe='ablak'):
     cmkefl.grid(row=0, column=2,sticky=N)    
     gmb500=Button(ablak,text='Apply',command=uni_ertek)
     gmb500.grid(row=2, column=0, sticky=SW)
-    u1_1=Combobox(kret12)
+    u1_1=Combobox(kret12, state='readonly')
     u1_1['values']=selection_uni1_1
     u1_1.current(0)
     u1_1.grid(row=1, column=2,sticky=N)
-    u1_2=Combobox(kret12)
+    u1_2=Combobox(kret12, state='readonly')
     u1_2['values']=selection_uni1_2
     u1_2.current(0)
     u1_2.grid(row=1, column=3,sticky=N)
     cmke100=Label(ablak, text='Orientat.')
     cmke100.grid(row=1, column=0,sticky=N)
-    u2_1=Combobox(kret12)
+    u2_1=Combobox(kret12, state='readonly')
     u2_1['values']=selection_uni2_1
     u2_1.current(0)
     u2_1.grid(row=2, column=2,sticky=N)
-    u2_2=Combobox(kret12)
+    u2_2=Combobox(kret12, state='readonly')
     u2_2['values']=selection_uni2_2
     u2_2.current(0)
     u2_2.grid(row=2, column=3,sticky=N)
@@ -2256,7 +2531,8 @@ def kivalaszto_uni(base_rc,cells_uni,output,nbframe):
                     progressablak(rc,keretszam)
                 if(cstat[i][0]==23): 
                     toolbarablak(rc,keretszam)
-            
+                if(cstat[i][0]==25): 
+                    treeablak(rc,keretszam)
 
       
                
@@ -2621,6 +2897,8 @@ def kivalaszto2():
                     toolbarablak(rc)
                 if(cstat[i][0]==24): 
                     nbookablak(rc)
+                if(cstat[i][0]==25): 
+                    treeablak(rc)
         msg.configure(text='opened windows: '+str(window_counter)+'; message: Adjust all option windows')
         gomb2.configure(state=DISABLED) #Finalize button to normal state
         submenu00aa1.entryconfig(3,state=DISABLED) # Finalize menu to normal state
@@ -2795,9 +3073,9 @@ def savestr2cell(cstr): # save string convert to cell state list
                     x=x+lista[n][i]
                 else:
                     if(x=='98'): # colspan index 23
-                        x='25'
-                    if(x=='99'): # rowspan index 24 
                         x='26'
+                    if(x=='99'): # rowspan index 24 
+                        x='27'
                     cellak[counter].current(int(x))
                     counter=counter+1
                     x=''
@@ -2855,7 +3133,6 @@ def getresulttype():
 
 def defaults():
     global label_defaults, chbox_defaults, optmenu_defaults, radio_defaults, entry_defaults, canvas_defaults, text_defaults
-           
     label_defaults[0]=entr1.get()   # title
     label_defaults[1]=chbox1.get()  # orient
     chbox_defaults[0][0]=entr21.get()  # value1
@@ -2881,6 +3158,7 @@ def defaults():
         chbox62.delete(0,END)
         chbox62.insert(0,canvas_defaults[2])
     canvas_defaults[3]=chbox61.get() # orient
+    canvas_defaults[4]=chbox63.get() # scroll
     text_defaults[0]=entr71.get() # width
     text_defaults[1]=entr72.get() # height
     text_defaults[2]=chbox71.get() # orient
@@ -2888,7 +3166,6 @@ def defaults():
     text_defaults[4]=entr73.get() # def.text
     entry_defaults[0]=chbox5.get() # orient
     msg.configure(text='opened windows: '+str(window_counter)+'; message: Default parameters applied')
-
 
 def set_defaults():
     entr1.delete(0,END)
@@ -2933,6 +3210,8 @@ def set_defaults():
     chbox61.insert(0,canvas_defaults[3])   # canvas orient
     chbox62.delete(0,END)
     chbox62.insert(0,canvas_defaults[2])   # canvas color
+    chbox63.delete(0,END)
+    chbox63.insert(0,canvas_defaults[4])   # canvas scroll
     entr71.delete(0,END)
     entr71.insert(0,text_defaults[0]) # text width
     entr72.delete(0,END)
@@ -3019,8 +3298,8 @@ welcometext='Tkinter GUI designer\nIt uses tkinter Grid geometry manager. (https
 \n\nHint:\n- rowspan must be placed under the expanded widget\n- columnspan must be placed to right side of the widget\n- maximum 4 column and 4 rowspan cells can be selected for one widget \n  (rowspan/col.span=5)\
 \n- if you use col.span and/or rowspan press "'"Check"'" button to check your selection.\n  (all missplaced span selection will be reseted and common merged cells disabled)\
 \n- Canvas, Manubar does not accept col./rowspan\n- Open second session of Python IDLE and use it for checking the generated code\n\
-  without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas, Text with slide, Entry, Label, Combobox, Optionmenu,\nRadio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale, Spinbox, Progressbar,\n\
-Toolbar (buttons with images and Tooltip texts), Notebook'
+  without closing the running GUI generator\n- widget name with (s) means simple. It uses default parameters and does not open\n  option window.\n\nSupported widgets: \nMenubar, Menubutton, Button, Canvas with scroll, Text with scroll, Entry, Label,\nOptionmenu, Radio, Message, Frame/LabelFrame (universal 2x2), Listbox, Scale,\nSpinbox, Progressbar, \
+Toolbar (buttons with images and Tooltip texts), Notebook,\nTreeview with scroll'
 
 toolbar_tip='Toolbar widget with png images and tooltips\n\n\
 First row: PNG file name (without extension name)\n\
@@ -3058,7 +3337,8 @@ width: width of your canvas (in pixel). Type numbers only!\n\
 height: height of your canvas (in pixel). Type numbers only!\n\
 color: background color of your canvas.\n\n\
 There are some default colors, but you can pick any with\n\
-"'"pick a color"'" option or use a standard Python color code.'
+"'"pick a color"'" option or use a standard Python color code.\n\n\
+scroll: you can create it with horizontal and/or vertical scrollbar.'
 
 text_tip='default text: This text will appear in your text area.\n\
 orient.: orientation of your widget\n\
@@ -3135,6 +3415,18 @@ You can select upto 4 widgets in any combination for each tab.\n\n\
 Tab text can be modified in generated code:\n\
 default 1st tab: nb*.add(text="'"tab0"'")'
 
+tree_tip='orient.: orientation of your widget\n\
+scroll: you can create it with horizontal and/or vertical scrollbar.\n\
+width: width of columns (in pixel). Type numbers only!\n\
+header: label of headers\n\
+row element: row elements (you can leave it empty)\n\
+type: row can be main or sub (sub related to the upper main element)\n\
++/-: add or remove columns\n\
++/-: add or remove rows\n\n\
+Height of treeview window can be modified in the generated code:\n\
+tree...=ttk.Treeview(ablak, height=10,... \n\
+Default height=10 char.'
+
 main_tip='1. Select the desired widgets\n\
 2. If you use rowsapan/colspan press "'"Check"'" button\n\
 3. Press "'"Start"'" to generate codes\n\
@@ -3166,7 +3458,7 @@ selection=('00: ---', '01: Menu', '02: Canvas', '03: Canvas (s)', '04: Univ.Fram
            '10: Label', '11: Label (s)', '12: Combobox', '13: ComboBox (s)',
            '14: OptionMenu', '15: OptionMenu (s)', '16: Radio', '17: Radio (s)',
            '18: Message', '19: Listbox', '20: Scale', '21: Spinbox',
-           '22: Progressbar','23: Toolbar', '24: Notebook',
+           '22: Progressbar','23: Toolbar', '24: Notebook', '25: Treeview',
            '98: colspan <', '99: rowspan ^')
 
 orient_values=('N','NE','E','SE','S','SW','W','NW','N+S','E+W')
@@ -3185,12 +3477,14 @@ radio_defaults=[['One','Two','Three'], #values of 1st
                 '','','','', #title cell
                 'N','16']    #orientation, cell width
 entry_defaults=['N','17',''] # orient, width, text
-canvas_defaults=['200','250','white','N'] # width, height, color, orient
+canvas_defaults=['200','250','white','N', '1: w/o scroll'] # width, height, color, orient, scroll
 text_defaults=['10','10','N','1: w/o scroll','','white','black'] # w,h,orient,slide,def.text,bg.color, text.color
+
+
 
 ### main window
 abl1=Tk()
-abl1.title("Tkinter GUI designer v1.1")
+abl1.title("Tkinter GUI designer v1.2")
 
 nb00aa=Notebook(abl1)
 nb00aa.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N)
@@ -3203,51 +3497,51 @@ nb00aa.enable_traversal()
 
 frame1=Frame(f0, borderwidth=1)
 frame1.grid(row=2, column=1)
-i1_1=Combobox(frame1)
-i1_2=Combobox(frame1)
-i1_3=Combobox(frame1)
-i1_4=Combobox(frame1)
-i1_5=Combobox(frame1)
-i2_1=Combobox(frame1)
-i2_2=Combobox(frame1)
-i2_3=Combobox(frame1)
-i2_4=Combobox(frame1)
-i2_5=Combobox(frame1)
-i3_1=Combobox(frame1)
-i3_2=Combobox(frame1)
-i3_3=Combobox(frame1)
-i3_4=Combobox(frame1)
-i3_5=Combobox(frame1)
-i4_1=Combobox(frame1)
-i4_2=Combobox(frame1)
-i4_3=Combobox(frame1)
-i4_4=Combobox(frame1)
-i4_5=Combobox(frame1)
-i5_1=Combobox(frame1)
-i5_2=Combobox(frame1)
-i5_3=Combobox(frame1)
-i5_4=Combobox(frame1)
-i5_5=Combobox(frame1)
-i6_1=Combobox(frame1)
-i6_2=Combobox(frame1)
-i6_3=Combobox(frame1)
-i6_4=Combobox(frame1)
-i6_5=Combobox(frame1)
-i7_1=Combobox(frame1)
-i7_2=Combobox(frame1)
-i7_3=Combobox(frame1)
-i7_4=Combobox(frame1)
-i7_5=Combobox(frame1)
-i8_1=Combobox(frame1)
-i8_2=Combobox(frame1)
-i8_3=Combobox(frame1)
-i8_4=Combobox(frame1)
-i8_5=Combobox(frame1)
-i9_1=Combobox(frame1)
-i9_2=Combobox(frame1)
-i9_3=Combobox(frame1)
-i9_4=Combobox(frame1)
-i9_5=Combobox(frame1)
+i1_1=Combobox(frame1, state='readonly')
+i1_2=Combobox(frame1, state='readonly')
+i1_3=Combobox(frame1, state='readonly')
+i1_4=Combobox(frame1, state='readonly')
+i1_5=Combobox(frame1, state='readonly')
+i2_1=Combobox(frame1, state='readonly')
+i2_2=Combobox(frame1, state='readonly')
+i2_3=Combobox(frame1, state='readonly')
+i2_4=Combobox(frame1, state='readonly')
+i2_5=Combobox(frame1, state='readonly')
+i3_1=Combobox(frame1, state='readonly')
+i3_2=Combobox(frame1, state='readonly')
+i3_3=Combobox(frame1, state='readonly')
+i3_4=Combobox(frame1, state='readonly')
+i3_5=Combobox(frame1, state='readonly')
+i4_1=Combobox(frame1, state='readonly')
+i4_2=Combobox(frame1, state='readonly')
+i4_3=Combobox(frame1, state='readonly')
+i4_4=Combobox(frame1, state='readonly')
+i4_5=Combobox(frame1, state='readonly')
+i5_1=Combobox(frame1, state='readonly')
+i5_2=Combobox(frame1, state='readonly')
+i5_3=Combobox(frame1, state='readonly')
+i5_4=Combobox(frame1, state='readonly')
+i5_5=Combobox(frame1, state='readonly')
+i6_1=Combobox(frame1, state='readonly')
+i6_2=Combobox(frame1, state='readonly')
+i6_3=Combobox(frame1, state='readonly')
+i6_4=Combobox(frame1, state='readonly')
+i6_5=Combobox(frame1, state='readonly')
+i7_1=Combobox(frame1, state='readonly')
+i7_2=Combobox(frame1, state='readonly')
+i7_3=Combobox(frame1, state='readonly')
+i7_4=Combobox(frame1, state='readonly')
+i7_5=Combobox(frame1, state='readonly')
+i8_1=Combobox(frame1, state='readonly')
+i8_2=Combobox(frame1, state='readonly')
+i8_3=Combobox(frame1, state='readonly')
+i8_4=Combobox(frame1, state='readonly')
+i8_5=Combobox(frame1, state='readonly')
+i9_1=Combobox(frame1, state='readonly')
+i9_2=Combobox(frame1, state='readonly')
+i9_3=Combobox(frame1, state='readonly')
+i9_4=Combobox(frame1, state='readonly')
+i9_5=Combobox(frame1, state='readonly')
 
 cellak=[i1_1, i1_2, i1_3, i1_4, i1_5,
         i2_1, i2_2, i2_3, i2_4, i2_5,
@@ -3562,6 +3856,12 @@ chbox62=Combobox(frm6, width=17)
 chbox62['values']=('white','light yellow','snow','bisque','gray','cyan','sienna1','thistle','pick a color')
 chbox62.current(0)
 chbox62.grid(row=1, column=3,sticky=N)
+chbox63=Combobox(frm6, width=11)
+chbox63['values']=('1: w/o scroll','2: v scroll','3: h scroll','4: v/h scroll')
+chbox63.current(0)
+chbox63.grid(row=1, column=4,sticky=N)
+labl64=Label(frm6, text='scroll:')
+labl64.grid(row=0, column=4, columnspan=1, rowspan=1, sticky=N)
 #text
 frm7=LabelFrame(frm0, text='Text (s)', height=200, width=250, relief='flat', borderwidth=1)
 frm7.grid(row=7, column=1, columnspan=1, rowspan=1, sticky=W, pady=5)
@@ -3572,9 +3872,9 @@ labl72.grid(row=0, column=1, columnspan=1, rowspan=1, sticky=N)
 labl73=Label(frm7, text='height:')
 labl73.grid(row=0, column=2, columnspan=1, rowspan=1, sticky=N)
 labl73=Label(frm7, text='scroll:')
-labl73.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
+labl73.grid(row=0, column=4, columnspan=1, rowspan=1, sticky=N)
 labl74=Label(frm7, text='default text:')
-labl74.grid(row=0, column=4, columnspan=1, rowspan=1, sticky=N)
+labl74.grid(row=0, column=3, columnspan=1, rowspan=1, sticky=N)
 chbox71=Combobox(frm7, width=4)
 chbox71['values']=orient_values
 chbox71.grid(row=1, column=0, columnspan=1, rowspan=1, sticky=N)
@@ -3583,12 +3883,12 @@ entr71=Entry(frm7)
 entr71.grid(row=1, column=1, columnspan=1, rowspan=1, sticky=N)
 entr72=Entry(frm7)
 entr72.grid(row=1, column=2, columnspan=1, rowspan=1, sticky=N)
-chbox72=Combobox(frm7, width=17)
-chbox72['values']=('1: w/o scroll','2: w vertical scroll','3: w horizontal scroll','4: with v/h scroll')
+chbox72=Combobox(frm7, width=11)
+chbox72['values']=('1: w/o scroll','2: v scroll','3: h scroll','4: v/h scroll')
 chbox72.current(0)
-chbox72.grid(row=1, column=3,sticky=N)
+chbox72.grid(row=1, column=4,sticky=N)
 entr73=Entry(frm7)
-entr73.grid(row=1, column=4, columnspan=1, rowspan=1, sticky=N)
+entr73.grid(row=1, column=3, columnspan=1, rowspan=1, sticky=N)
 ## func/obj
 frm8=LabelFrame(f1, text='Generated code type:', height=200, width=250, relief='flat', borderwidth=1)
 frm8.grid(row=0, column=0, columnspan=1, rowspan=1, sticky=N, padx=10, pady=10)
