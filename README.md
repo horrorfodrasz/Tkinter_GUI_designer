@@ -33,7 +33,9 @@ Toolbar with Tooltip text (sample PNG files are in the package), Notebook, Treev
 << please download the user maual >>
 
 update history:
+
  ...
+ 
  v0.7:  rowspan,columnspan implemented, 5x9 widget selection area
  
  v0.8:  universal 2x2 frame added
