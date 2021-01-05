@@ -26,8 +26,8 @@ Hint:
 - Generated code can be Function or Object type
 
 Supported widgets: 
-Menubar, MenuButton, Button, Canvas, Text with scroll, Entry, Label, Combobox, Optionmenu,
+Menubar, MenuButton, Button, Canvas with scroll, Text with scroll, Entry, Label, Combobox, Optionmenu,
 Radio, Message, Frame/LabelFrame (universal 2x2 widget selection), Listbox, Scale, Spinbox,
-Toolbar with Tooltip text (sample PNG files are in the package), Notebook
+Toolbar with Tooltip text (sample PNG files are in the package), Notebook, Treeview with scroll
 
 << please download the user maual >>
