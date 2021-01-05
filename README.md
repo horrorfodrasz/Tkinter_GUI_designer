@@ -25,12 +25,13 @@ Hint:
 - You can save and load widget selection with default widget parameters
 - Generated code can be Function or Object type
 
-Supported widgets: 
+*Supported widgets: 
 Menubar, MenuButton, Button, Canvas with scroll, Text with scroll, Entry, Label, Combobox, Optionmenu,
 Radio, Message, Frame/LabelFrame (universal 2x2 widget selection), Listbox, Scale, Spinbox,
 Toolbar with Tooltip text (sample PNG files are in the package), Notebook, Treeview with scroll
 
 << please download the user maual >>
+
 
 update history:
 
