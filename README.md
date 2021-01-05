@@ -31,3 +31,30 @@ Radio, Message, Frame/LabelFrame (universal 2x2 widget selection), Listbox, Scal
 Toolbar with Tooltip text (sample PNG files are in the package), Notebook, Treeview with scroll
 
 << please download the user maual >>
+
+update history:
+ ...
+ v0.7:  rowspan,columnspan implemented, 5x9 widget selection area
+ v0.8:  universal 2x2 frame added
+ v0.8.1 Improved Button widget. In case of 1 button there is no frame. You can use W+E to span button
+        Universal frame numbering bugs fixed
+v0.8.3  Improved Universal frame: with text: LabelFrame; without: Frame
+v0.8.4  tk and ttk import optimalization (for slide)
+v0.8.5  Menubar and Menubutton added
+v0.8.6  new Menubar function: separate and checkbox
+v0.8.7  new Menubutton options menu
+v0.8.8  Listbox added
+v0.8.9  Scale added
+v0.9    Spinbox added
+v0.9.1  Progressbar added
+v0.9.2  Toolbar (buttons with images and tolltip text) added
+v0.9.3  Notebook added
+v0.9.4  Widget selection save/load added
+v0.9.5  interface improved
+v0.9.6  hints added
+v0.9.7  it can generate functions and object, too
+v0.9.8  default parameter settings added
+v1.0    it can save/load default parameters with widget selections
+v1.1    improved Comobox, Optionmenu and Radio
+v1.2    Treeview added, scrollbar supported in case of Canvas and Treeview, minor bug fixes
+
